@@ -33,6 +33,9 @@ render_target_update_mode = 4
 
 [node name="meta" type="Node2D" parent="h_box_container/view/view/world"]
 
+[node name="darkener" type="CanvasModulate" parent="h_box_container/view/view/world/meta"]
+color = Color(0, 0, 0, 1)
+
 [node name="temp" type="Node2D" parent="h_box_container/view/view/world"]
 
 [node name="terrain" type="Node2D" parent="h_box_container/view/view/world"]
@@ -40,3 +43,5 @@ render_target_update_mode = 4
 [node name="collectables" type="Node2D" parent="h_box_container/view/view/world"]
 
 [node name="enemys" type="Node2D" parent="h_box_container/view/view/world"]
+
+[node name="players" type="Node2D" parent="h_box_container/view/view/world"]

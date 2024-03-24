@@ -21,3 +21,10 @@ Core="*res://core/core.tscn"
 [editor]
 
 naming/node_name_casing=2
+
+[file_customization]
+
+folder_colors={
+"res://core/": "red",
+"res://levels/": "blue"
+}
