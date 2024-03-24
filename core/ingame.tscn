@@ -11,15 +11,32 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ul41f")
 
-[node name="view" type="SubViewportContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="h_box_container" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="view" type="SubViewportContainer" parent="h_box_container"]
+layout_mode = 2
+size_flags_horizontal = 3
 stretch = true
 
-[node name="view" type="SubViewport" parent="view"]
+[node name="view" type="SubViewport" parent="h_box_container/view"]
 handle_input_locally = false
-size = Vector2i(40, 40)
+size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="world" type="Node2D" parent="view/view"]
+[node name="world" type="Node2D" parent="h_box_container/view/view"]
+
+[node name="meta" type="Node2D" parent="h_box_container/view/view/world"]
+
+[node name="temp" type="Node2D" parent="h_box_container/view/view/world"]
+
+[node name="terrain" type="Node2D" parent="h_box_container/view/view/world"]
+
+[node name="collectables" type="Node2D" parent="h_box_container/view/view/world"]
+
+[node name="enemys" type="Node2D" parent="h_box_container/view/view/world"]
