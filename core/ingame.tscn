@@ -36,6 +36,9 @@ render_target_update_mode = 4
 [node name="darkener" type="CanvasModulate" parent="h_box_container/view/view/world/meta"]
 color = Color(0, 0, 0, 1)
 
+[node name="camera" type="Camera2D" parent="h_box_container/view/view/world/meta"]
+position_smoothing_enabled = true
+
 [node name="temp" type="Node2D" parent="h_box_container/view/view/world"]
 
 [node name="terrain" type="Node2D" parent="h_box_container/view/view/world"]
