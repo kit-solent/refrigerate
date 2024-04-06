@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="base"
+run/main_scene="res://core/auth/start.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://core/assets/icon.svg"
 

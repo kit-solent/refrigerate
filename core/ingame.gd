@@ -8,4 +8,3 @@ func _process(delta):
 	$h_box_container/view/view/world/meta/camera.global_position=camera_target.global_position
 
 
-# 12:40

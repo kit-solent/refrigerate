@@ -4,3 +4,7 @@
 
 [node name="core" type="Node"]
 script = ExtResource("1_ktj8o")
+
+[node name="http_request" type="HTTPRequest" parent="."]
+
+[connection signal="request_completed" from="http_request" to="." method="_on_http_request_request_completed"]
