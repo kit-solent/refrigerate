@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://d0un0qo6u4dpf"]
+[gd_scene load_steps=7 format=3 uid="uid://d0un0qo6u4dpf"]
 
 [ext_resource type="Script" path="res://core/player/player.gd" id="1_ryxhe"]
 [ext_resource type="Texture2D" uid="uid://bksvfbykbmg0t" path="res://core/assets/PLACEHOLDER_player.svg" id="2_xcf2i"]
@@ -18,16 +18,28 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0, 0)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_7aeql"]
+radius = 16.0
+
 [node name="player" type="RigidBody2D"]
+lock_rotation = true
+max_contacts_reported = 16
+contact_monitor = true
 script = ExtResource("1_ryxhe")
 
-[node name="collision" type="CollisionShape2D" parent="."]
+[node name="platformer_collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_6jli1")
 
 [node name="light" type="PointLight2D" parent="."]
+shadow_enabled = true
 texture = SubResource("GradientTexture2D_xqc1v")
 texture_scale = 20.0
 
 [node name="sprite" type="Sprite2D" parent="."]
+visible = false
 scale = Vector2(0.0965795, 0.128773)
 texture = ExtResource("2_xcf2i")
+
+[node name="topdown_collision" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_7aeql")

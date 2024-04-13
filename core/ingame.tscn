@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=4 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
+[ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
+[ext_resource type="PackedScene" uid="uid://c6awmk0g3vary" path="res://core/map.tscn" id="3_grcy3"]
 
 [node name="ingame" type="Control"]
 layout_mode = 3
@@ -48,3 +50,8 @@ position_smoothing_enabled = true
 [node name="enemys" type="Node2D" parent="h_box_container/view/view/world"]
 
 [node name="players" type="Node2D" parent="h_box_container/view/view/world"]
+
+[node name="player" parent="h_box_container/view/view/world/players" instance=ExtResource("2_nqatk")]
+position = Vector2(100, 0)
+
+[node name="map" parent="h_box_container/view/view/world" instance=ExtResource("3_grcy3")]

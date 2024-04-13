@@ -1,10 +1,11 @@
 extends Node
 
 func _ready():
-	current_user.from_json({"username":"jeff","password":"1234"})
+	pass
 
-func _process(delta):
-	update_data()
+func _process(_delta):
+	#update_data()
+	pass
 
 # User Authentication
 const host="https://refrigerate-580a7-default-rtdb.firebaseio.com/"
@@ -12,7 +13,7 @@ var is_request_pending:bool=false
 var remote_data:String=""
 var current_user:User=User.new()
 
-func save_user(user:User):
+func save_user(_user:User):
 	pass
 
 func update_data():
@@ -23,7 +24,7 @@ func update_data():
 	remote_data=JSON.stringify(current_user.to_json())
 	$http_request.request(host+"/users/%s.json"%current_user.user_id,[],HTTPClient.METHOD_PUT, remote_data)
 
-func _on_http_request_request_completed(result, response_code, headers, body):
+func _on_http_request_request_completed(result, response_code, _headers, _body):
 	if result != HTTPRequest.RESULT_SUCCESS:
 		printerr("request failed with  response code: "+str(response_code))
 	is_request_pending=false
