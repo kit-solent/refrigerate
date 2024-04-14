@@ -39,6 +39,7 @@ render_target_update_mode = 4
 color = Color(0, 0, 0, 1)
 
 [node name="camera" type="Camera2D" parent="h_box_container/view/view/world/meta"]
+ignore_rotation = false
 position_smoothing_enabled = true
 
 [node name="temp" type="Node2D" parent="h_box_container/view/view/world"]

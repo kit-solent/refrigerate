@@ -1,10 +1,6 @@
 extends TileMap
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+#func find_used_cells_by_id()
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+#func load_tiles():
+	#for i in find_used_cells_by_id()

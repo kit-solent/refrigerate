@@ -1,5 +1,10 @@
 extends Node
 
+@export_category("Mode Overide Colors")
+@export var topdown_color:Color
+@export var platformer_color:Color
+
+
 func _ready():
 	pass
 

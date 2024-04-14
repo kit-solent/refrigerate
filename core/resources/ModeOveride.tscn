@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://buv31evgnkci"]
+
+[ext_resource type="Script" path="res://core/resources/ModeOveride.gd" id="1_b20d0"]
+
+[node name="mode_overide" type="Area2D"]
+script = ExtResource("1_b20d0")
