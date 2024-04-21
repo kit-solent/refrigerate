@@ -3,15 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://cy17vuxs8proy" path="res://core/assets/mossy_tileset.png" id="1_c4snc"]
 [ext_resource type="Texture2D" uid="uid://bvbk41xjbvh2y" path="res://core/assets/white.png" id="1_qe3mw"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iq4nk"]
-resource_name = "TopDown"
-texture = ExtResource("1_qe3mw")
-texture_region_size = Vector2i(64, 64)
-0:0/0 = 0
-0:0/0/modulate = Color(0, 0, 100, 0.2)
-0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
-0:0/0/physics_layer_0/angular_velocity = 0.0
-
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_ou2bo"]
 polygon = PackedVector2Array(-16, -16, -16, 32, 32, 32, 32, -16)
 
@@ -709,12 +700,21 @@ texture_region_size = Vector2i(64, 64)
 6:6/0/terrains_peering_bit/left_side = 0
 6:6/0/terrains_peering_bit/top_side = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iq4nk"]
+resource_name = "TopDown"
+texture = ExtResource("1_qe3mw")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/modulate = Color(1, 0, 0, 0.215686)
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fqxxm"]
 resource_name = "PlatformerDown"
 texture = ExtResource("1_qe3mw")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/modulate = Color(0, 100, 100, 0.2)
+0:0/0/modulate = Color(0, 0, 100, 0.2)
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
 
@@ -723,14 +723,7 @@ resource_name = "PlatformerUp"
 texture = ExtResource("1_qe3mw")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
-0:0/0/physics_layer_0/angular_velocity = 0.0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_knsr6"]
-resource_name = "PlatformerRight"
-texture = ExtResource("1_qe3mw")
-texture_region_size = Vector2i(64, 64)
-0:0/0 = 0
+0:0/0/modulate = Color(0, 1, 0, 0.2)
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
 
@@ -739,6 +732,16 @@ resource_name = "PlatformerLeft"
 texture = ExtResource("1_qe3mw")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
+0:0/0/modulate = Color(1, 1, 0, 0.411765)
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_knsr6"]
+resource_name = "PlatformerRight"
+texture = ExtResource("1_qe3mw")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/modulate = Color(1, 0, 1, 0.372549)
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
 
@@ -750,9 +753,9 @@ terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Mossy Terrain"
 terrain_set_0/terrain_0/color = Color(0.501961, 0.345098, 0.25098, 1)
 navigation_layer_0/layers = 1
-sources/1 = SubResource("TileSetAtlasSource_jrbhc")
-sources/0 = SubResource("TileSetAtlasSource_iq4nk")
+sources/0 = SubResource("TileSetAtlasSource_jrbhc")
+sources/1 = SubResource("TileSetAtlasSource_iq4nk")
 sources/2 = SubResource("TileSetAtlasSource_fqxxm")
 sources/3 = SubResource("TileSetAtlasSource_3x4iy")
-sources/4 = SubResource("TileSetAtlasSource_knsr6")
-sources/5 = SubResource("TileSetAtlasSource_qicur")
+sources/4 = SubResource("TileSetAtlasSource_qicur")
+sources/5 = SubResource("TileSetAtlasSource_knsr6")

@@ -6,6 +6,7 @@ extends Node
 
 enum modes {TopDown, PlatformerDown, PlatformerUp, PlatformerLeft, PlatformerRight}
 var gravity = {
+	0:Vector2.ZERO, # TopDown mode has no gravity
 	1:Vector2.DOWN,
 	2:Vector2.UP,
 	3:Vector2.LEFT,

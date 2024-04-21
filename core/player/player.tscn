@@ -23,8 +23,10 @@ radius = 16.0
 
 [node name="player" type="RigidBody2D"]
 lock_rotation = true
+custom_integrator = true
 max_contacts_reported = 16
 contact_monitor = true
+linear_damp = 50.115
 script = ExtResource("1_ryxhe")
 
 [node name="platformer_collision" type="CollisionShape2D" parent="."]
