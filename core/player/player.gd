@@ -5,12 +5,13 @@ extends RigidBody2D
 @export var jump_velocity:float=1000
 var gravity_strength=ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var acceleration:int = 10
+@export var deacceleration:int = 40
 @export var terminal_velocity:int = 1500
 
 func _integrate_forces(_state:PhysicsDirectBodyState2D):
-	if mode==Core.modes.TopDown:
+	if mode==Core.modes.TopDown: # TopDown mode.
 		pass
-	else: # must be one of the Platformer modes.
+	else: # one of the Platformer modes.
 		linear_velocity += Core.gravity[mode]*gravity_strength*_state.step
 		var dir = Input.get_axis("player left","player right")
 		if dir:
@@ -24,9 +25,9 @@ func _integrate_forces(_state:PhysicsDirectBodyState2D):
 				linear_velocity.y = lerp(linear_velocity.y,-dir*move_velocity,acceleration*_state.step)
 		else:
 			if mode in [1,2]: # If the gravity direction is down or up.
-				linear_velocity.x = lerp(linear_velocity.x,0.0,linear_damp*_state.step) 
+				linear_velocity.x = lerp(linear_velocity.x,0.0,deacceleration*_state.step) 
 			elif mode in [3,4]: # If the gravity direction is left or right.
-				linear_velocity.y = lerp(linear_velocity.y,0.0,linear_damp*_state.step)
+				linear_velocity.y = lerp(linear_velocity.y,0.0,deacceleration*_state.step)
 		if Input.is_action_just_pressed("player jump"):
 			if mode == 1: # Gravity down
 				linear_velocity.y += -jump_velocity

@@ -1,37 +1,38 @@
 extends TileMap
 
-func load_tiles():
-	for layer in range(get_layers_count()):
-		for cell in get_used_cells_by_id(layer,0):
-			pass
+func create_regions():
+	for id in [1,2,3,4,5]:
+		var shapes:Array
+		for cell in get_used_cells_by_id(0,id):
+			# Construct a polygon (square) clockwise from the four corners of the cell.
+			shapes.append(PackedVector2Array([
+				map_to_local(cell), # cell origin is in top left. ( ⌜ )
+				map_to_local(cell)+Vector2(tile_set.tile_size.x,0), # top right ( ⌝ )
+				map_to_local(cell)+Vector2(tile_set.tile_size), # bottom right ( ⌟ )
+				map_to_local(cell)+Vector2(0,tile_set.tile_size.y), # bottom left ( ⌞ )
+			]))
+		# now we need to join the seperate polygons.
+		#while true:
+			#var polygons_to_remove = []
+			#for child_index in len(shapes):
+				#var found_polygon:PackedVector2Array = shapes[child_index]
+				#for child_subindex in child_index:
+					#var other_found_polygon:PackedVector2Array = shapes[child_subindex]
+					#var merged_polygon = Geometry2D.merge_polygons(found_polygon,other_found_polygon)
+					#if merged_polygon.size() != 1:
+						#continue
+					#other_found_polygon = merged_polygon[0]
+					#polygons_to_remove.append(found_polygon)
+					#break
+			#if polygons_to_remove.size() == 0:
+				#break
+			#for polygon_to_remove in polygons_to_remove:
+				#shapes.erase(polygon_to_remove)
+		for i in shapes:
+			var new=Area2D.new()
+			new.add_child(CollisionPolygon2D.new())
+			new.get_child(0).polygon=i
+			add_child(new)
 
-func load_tile(layer:int, pos:Vector2i):
-	pass
-
-func find_connected_like_cells(layer:int, pos:Vector2i, exclude:Array=[]):
-	"""
-	Returns all cells adjacently connected to the given cell of the same id on the same layer.
-	"""
-	var results=[]
-	for i in [Vector2i(0,1),Vector2i(1,0),Vector2i(0,-1),Vector2i(-1,0)]:
-		if pos+i in exclude:
-			continue
-		if get_cell_source_id(layer, pos+i) == get_cell_source_id(layer,pos):
-			results.append(pos+i)
-			results+=find_connected_like_cells(layer,pos+i,results+exclude)
-	return results
-
-func create_shape_from_cells(cells:Array) -> ConvexPolygonShape2D:
-	var shape=ConvexPolygonShape2D.new()
-	var points=[]
-	for i in cells:
-		points.append(map_to_local(i))
-		points.append(map_to_local(i)+Vector2(tile_set.tile_size.x,0))
-		points.append(map_to_local(i)+Vector2(0,tile_set.tile_size.y))
-		points.append(map_to_local(i)+Vector2(tile_set.tile_size))
-	shape.set_point_cloud(points)
-	return shape
-
-func _reay():
-	$area_2d.add_child(CollisionPolygon2D.new())
-	$area_2d.get_child(0).polygon=create_shape_from_cells(find_connected_like_cells(0,Vector2i(16,-16))).points
+func _ready():
+	create_regions()
