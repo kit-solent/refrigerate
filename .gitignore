@@ -161,3 +161,6 @@ cython_debug/
 
 # Godot 4+ specific ignores
 .godot/
+
+# Musescore 4 specific ignores
+.mscbackup/
