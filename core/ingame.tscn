@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=5 format=3 uid="uid://c1dv2h730m0gk"]
 
+[ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
 [ext_resource type="PackedScene" uid="uid://c6awmk0g3vary" path="res://core/map.tscn" id="3_grcy3"]
@@ -11,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_sdiib")
 script = ExtResource("1_ul41f")
 
 [node name="h_box_container" type="HBoxContainer" parent="."]
@@ -21,41 +23,45 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="view" type="SubViewportContainer" parent="h_box_container"]
+[node name="panel" type="PanelContainer" parent="h_box_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="view" type="SubViewportContainer" parent="h_box_container/panel"]
 layout_mode = 2
 size_flags_horizontal = 3
 stretch = true
 
-[node name="view" type="SubViewport" parent="h_box_container/view"]
+[node name="view" type="SubViewport" parent="h_box_container/panel/view"]
+transparent_bg = true
 handle_input_locally = false
-size = Vector2i(2, 2)
+size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="world" type="Node2D" parent="h_box_container/view/view"]
+[node name="world" type="Node2D" parent="h_box_container/panel/view/view"]
 
-[node name="meta" type="Node2D" parent="h_box_container/view/view/world"]
+[node name="meta" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
-[node name="darkener" type="CanvasModulate" parent="h_box_container/view/view/world/meta"]
-visible = false
+[node name="darkener" type="CanvasModulate" parent="h_box_container/panel/view/view/world/meta"]
 color = Color(0, 0, 0, 1)
 
-[node name="camera" type="Camera2D" parent="h_box_container/view/view/world/meta"]
+[node name="camera" type="Camera2D" parent="h_box_container/panel/view/view/world/meta"]
 ignore_rotation = false
 position_smoothing_enabled = true
 
-[node name="mode_overides" type="Node2D" parent="h_box_container/view/view/world/meta"]
+[node name="mode_overides" type="Node2D" parent="h_box_container/panel/view/view/world/meta"]
 
-[node name="temp" type="Node2D" parent="h_box_container/view/view/world"]
+[node name="temp" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
-[node name="terrain" type="Node2D" parent="h_box_container/view/view/world"]
+[node name="terrain" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
-[node name="collectables" type="Node2D" parent="h_box_container/view/view/world"]
+[node name="collectables" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
-[node name="enemys" type="Node2D" parent="h_box_container/view/view/world"]
+[node name="enemys" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
-[node name="players" type="Node2D" parent="h_box_container/view/view/world"]
+[node name="players" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
-[node name="player" parent="h_box_container/view/view/world/players" instance=ExtResource("2_nqatk")]
+[node name="player" parent="h_box_container/panel/view/view/world/players" instance=ExtResource("2_nqatk")]
 position = Vector2(100, 0)
 
-[node name="map" parent="h_box_container/view/view/world" instance=ExtResource("3_grcy3")]
+[node name="map" parent="h_box_container/panel/view/view/world" instance=ExtResource("3_grcy3")]

@@ -34,11 +34,11 @@ shape = SubResource("CapsuleShape2D_6jli1")
 
 [node name="light" type="PointLight2D" parent="."]
 shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
 texture = SubResource("GradientTexture2D_xqc1v")
 texture_scale = 20.0
 
 [node name="sprite" type="Sprite2D" parent="."]
-visible = false
 scale = Vector2(0.0965795, 0.128773)
 texture = ExtResource("2_xcf2i")
 
