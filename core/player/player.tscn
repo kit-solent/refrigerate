@@ -1,7 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://d0un0qo6u4dpf"]
 
 [ext_resource type="Script" path="res://core/player/player.gd" id="1_ryxhe"]
-[ext_resource type="Texture2D" uid="uid://bksvfbykbmg0t" path="res://core/assets/PLACEHOLDER_player.svg" id="2_xcf2i"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6jli1"]
 radius = 16.0
@@ -17,6 +16,9 @@ use_hdr = true
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ijsmq"]
+size = Vector2(120, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7aeql"]
 radius = 16.0
@@ -39,8 +41,9 @@ texture = SubResource("GradientTexture2D_xqc1v")
 texture_scale = 20.0
 
 [node name="sprite" type="Sprite2D" parent="."]
-scale = Vector2(0.0965795, 0.128773)
-texture = ExtResource("2_xcf2i")
+position = Vector2(-1.19209e-07, 0.500002)
+scale = Vector2(0.216667, 49)
+texture = SubResource("PlaceholderTexture2D_ijsmq")
 
 [node name="topdown_collision" type="CollisionShape2D" parent="."]
 visible = false

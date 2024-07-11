@@ -36,7 +36,7 @@ func create_regions():
 		for i in shapes:
 			var new=Area2D.new()
 			new.add_child(CollisionPolygon2D.new())
-			new.get_child(0).polygon=i
+			new.get_child(0).polygon=Geometry2D.offset_polygon(i,tile_set.tile_size.x/2)
 			add_child(new)
 
 func _ready():
