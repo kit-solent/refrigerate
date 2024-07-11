@@ -1,4 +1,4 @@
-extends RigidBody2D
+class_name Player extends RigidBody2D
 
 @export_enum("TopDown","PlatformerDown","PlatformerUp","PlatformerLeft","PlaformerRight") var mode=1
 @export var move_velocity:float=1000
