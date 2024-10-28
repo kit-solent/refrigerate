@@ -2,7 +2,7 @@ class_name Player extends RigidBody2D
 
 @export_enum("TopDown","PlatformerDown","PlatformerUp","PlatformerLeft","PlaformerRight") var mode=1
 @export var move_velocity:float=1000
-@export var jump_velocity:float=1000
+@export var jump_velocity:float=500
 var gravity_strength=ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var acceleration:int = 10
 @export var deacceleration:int = 40

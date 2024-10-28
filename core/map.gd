@@ -1,4 +1,4 @@
-extends TileMap
+extends TileMapLayer
 
 func merge_polygons(list:Array):
 	var result=[]
@@ -40,4 +40,5 @@ func create_regions():
 			add_child(new)
 
 func _ready():
-	create_regions()
+	#create_regions()
+	pass

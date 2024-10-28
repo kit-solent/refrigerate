@@ -26,8 +26,8 @@ radius = 16.0
 [node name="player" type="RigidBody2D"]
 lock_rotation = true
 custom_integrator = true
-max_contacts_reported = 16
 contact_monitor = true
+max_contacts_reported = 16
 linear_damp = 40.0
 script = ExtResource("1_ryxhe")
 

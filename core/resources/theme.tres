@@ -10,4 +10,7 @@ anti_aliasing = false
 
 [resource]
 default_font = ExtResource("1_yiw1e")
+BoxContainer/constants/separation = 0
+GridContainer/constants/h_separation = 0
+GridContainer/constants/v_separation = 2
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_dwhqs")

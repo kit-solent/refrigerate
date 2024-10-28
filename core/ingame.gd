@@ -7,4 +7,3 @@ func _ready():
 
 func _process(_delta):
 	$h_box_container/panel/view/view/world/meta/camera.global_transform=camera_target.global_transform
-
