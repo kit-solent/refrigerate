@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ctwsyo8iq6tg8"]
+[gd_scene load_steps=3 format=3 uid="uid://ctwsyo8iq6tg8"]
 
 [ext_resource type="Script" path="res://portals/portal.gd" id="1_pu3ti"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_dyx04"]
+viewport_path = NodePath("sub_viewport")
 
 [node name="portal" type="Node2D"]
 script = ExtResource("1_pu3ti")
@@ -13,10 +16,16 @@ width = 1.0
 position = Vector2(-64, 0)
 
 [node name="view" type="Polygon2D" parent="."]
+texture = SubResource("ViewportTexture_dyx04")
 polygon = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
-
-[node name="camera_2d" type="Camera2D" parent="."]
+uv = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 
 [node name="line_2d2" type="Line2D" parent="."]
-width = 1.0
+points = PackedVector2Array(112, -104, -208, 88, 384, 32)
 default_color = Color(0.400635, 0, 0.140478, 1)
+
+[node name="sub_viewport" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+
+[node name="camera_2d" type="Camera2D" parent="sub_viewport"]

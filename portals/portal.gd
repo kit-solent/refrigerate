@@ -1,18 +1,15 @@
-extends Node2D
+class_name Portal extends Node2D
 
+@export var pair:Portal
 @export var point_a:Vector2 = 32 * Vector2.UP
 @export var point_b:Vector2 = 32 * Vector2.DOWN
 
 func _ready():
-	print(rad_to_deg(Vector2.ZERO.angle_to_point(Vector2(1,-1))))
-	print(rad_to_deg(Vector2.ZERO.angle_to_point(Vector2(1, 1))))
-	print(rad_to_deg(Vector2.ZERO.angle_to_point(Vector2(-1, 1))))
-	print(rad_to_deg(Vector2.ZERO.angle_to_point(Vector2(-1, -1))))
+	pair
+	$sub_viewport.world_2d
 
 func _process(delta: float):
-	if Input.is_action_just_pressed("debug key"):
-		$marker_2d.global_position = get_global_mouse_position()
-		set_view($marker_2d)
+	pass # use set_view here.
 
 func set_view(target:Node):
 	var target_pos = to_local(target.global_position)
@@ -24,39 +21,16 @@ func set_view(target:Node):
 	var viewport_bottom_left = viewport_top_left + Vector2.DOWN * viewport_rect.size.y
 	var viewport_bottom_right = viewport_top_right + Vector2.DOWN * viewport_rect.size.y
 	
-	# if the target is to the left of the portal
-	if target_pos.x < point_a.x:
-		if -target_pos.angle_to_point(point_a) > point_a.angle_to_point(viewport_top_left):
-			print("adding extra point")
+	$line_2d2.points = [
+		viewport_top_left * 0.9,
+		viewport_top_right * 0.9,
+		viewport_bottom_right * 0.9,
+		viewport_bottom_left * 0.9
+	]
 	
-	# if the target is to the right of the portal
-	elif target_pos.x > point_a.x:
-		pass
-	
-	# if the target is vertically aligned with the portal
-	else:
-		pass
-	
-	#
-	#var points = [
-		#Vector2(0,  height/2),
-		#Vector2(0, -height/2)
-	#]
-	#
-#
-	#var theta_a = atan((target_pos.y + height/2) / -target_pos.x)
-	#var theta_b = atan((target_pos.y - height/2) / -target_pos.x)
-	#
-	#var Ax = target_pos.x + distance * cos(theta_a)
-	#var Ay = target_pos.y - distance * sin(theta_a)
-	#
-	#var Bx = target_pos.x + distance * cos(theta_b)
-	#var By = target_pos.y - distance * sin(theta_b)
-	#
-	#points.append(Vector2(Ax, Ay) if Ay < By else Vector2(Bx, By))
-	#points.append(Vector2(Bx, By) if Ay < By else Vector2(Ax, Ay))
-	#
-	#$view.polygon = points
+	var points = [point_a,point_b]
+
+	$view.polygon = points
 	#$line_2d2.points = points
 
 func get_cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
@@ -81,15 +55,29 @@ func get_cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
 	
 	var angle = target.angle_to_point(cast_point)
 	
+	var direction = cast_point - target
+	var xMult = 0
+	var yMult = 0
+	
+	if direction.x != 0:
+		if direction.x > 0:
+			print(viewport_top_right.x - target.x)
+			print(direction.x)
+			xMult = (viewport_top_right.x - target.x)/direction.x
+		else:
+			print(viewport_top_left.x - target.x)
+			print(direction.x)
+			xMult = (viewport_top_left.x - target.x)/direction.x
+	
+	print(xMult)
+	
 	# so that the angle is only ever positive
 	if angle < 0:
 		angle += 2*PI
 	
-	if angle_br < angle <= angle_bl:
-		print("The angle is down including the bottom left point.")
-	elif angle_bl < angle <= angle_tl:
-		print("The angle is to the left including the top left point.")
-	elif angle_tl < angle <= angle_tr:
-		print("The angle is upwards including the top right point.")
-	elif angle_tr < angle <= angle_br:
-		print("The angle is to the right including the bottom right point.")
+	
+func to_local_rect(rect:Rect2):
+	"""
+	Converts a rect in global coordinates to local coordinates.
+	"""
+	return Rect2(to_local(rect.position), rect.size)
