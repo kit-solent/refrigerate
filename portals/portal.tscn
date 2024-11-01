@@ -29,3 +29,12 @@ disable_3d = true
 transparent_bg = true
 
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
+
+[node name="node_2d" type="Node2D" parent="."]
+
+[node name="color_rect" type="ColorRect" parent="node_2d"]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(0, 0.404145, 0.0269874, 1)
