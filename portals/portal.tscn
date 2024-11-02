@@ -12,9 +12,12 @@ position = Vector2(-64, 0)
 polygon = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 uv = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 
+[node name="line2" type="Line2D" parent="."]
+points = PackedVector2Array(24, -32, 80, 112)
+default_color = Color(0.4, 1, 0.141176, 1)
+
 [node name="line" type="Line2D" parent="."]
-position = Vector2(368, 200)
-points = PackedVector2Array(24, -32, 160, 144)
+points = PackedVector2Array(24, -32, 160, 144, 80, 248, 16, 408, -192, 424, -288, 480, -392, 288, -464, 352, -528, 240, -392, 64, -216, 112, -176, -40, -392, -176, -320, -16, -464, -56, -408, -400, 720, -168, 488, 104, 440, 224, 312, -48, 288, 376, 200, 264)
 width = 5.0
 default_color = Color(0.400635, 0, 0.140478, 1)
 
@@ -23,3 +26,5 @@ disable_3d = true
 transparent_bg = true
 
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
+
+[node name="camera_2d" type="Camera2D" parent="."]
