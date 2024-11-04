@@ -52,32 +52,59 @@ func is_between(angle:float, a:float, b:float):
 		return angle < small_angle or angle > big_angle
 
 
-# TODO: This needs finishing. Consider: https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
+enum REGIONS{
+	TOP_LEFT,
+	TOP_CENTRE,
+	TOP_RIGHT,
+	CENTRE_LEFT,
+	CENTRE_CENTRE,
+	CENTRE_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_CENTRE,
+	BOTTOM_RIGHT,
+	CENTRE = 4 # a shortcut to REGIONS.CENTRE_CENTRE
+}
+
+func clip_line(start:Vector2, stop:Vector2, bounds:Rect2):
+	"""
+	Returns the section of the given straight line that lies inside the given bounds.
+	"""
+	if bounds.has_point(start) and bounds.has_point(stop):
+		return PackedVector2Array([start, stop])
+	elif bounds.has_point(start):
+		return PackedVector2Array([start, get_cast_point(start, stop, bounds)])
+	elif bounds.has_point(stop):
+		return PackedVector2Array([stop, get_cast_point(stop, start, bounds)])
+	else:
+		return PackedVector2Array()
+
 func get_portal_line(line:PackedVector2Array, bounds:Rect2):
 	"""
-	returns the portion of the portal line that is inside the given bounds
+	Returns the portion of the portal line that is inside the given bounds.
+	This is an implimentation of the Cohen–Sutherland algorithm (https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm)
+	modified for multi-point lines.
 	"""
-	# remove all points where both the point and the points to either side of it are outside the bounds.
-	# record all points that are outside but that have an adjacent point inside so that these can be moved
-	# to the border.
-	var points = []
+	# break the line into straight sections (two point lines) and store them in `lines`
+	var lines:Array = Array()
+	for i in range(len(line)-1):
+		lines.append(PackedVector2Array([line[i], line[i+1]]))
 	
-	# move all out of bound points toward their previous point
+	# clip all the lines
+	var clipped_lines = []
+	for l in lines:
+		clipped_lines.append(clip_line(l[0], l[1], bounds))
 	
-	# compute the intersection points and use them in place of the out of bounds points.
-	for i in range(len(points)):
-		if bounds.has_point(points[i]):
-			points.append(points[i])
-		else:
-			var in_point = points[i - 1] if i >= 1 else points[i + 1]
-			
-			var cast_point = get_cast_point(in_point, points[i], bounds)
-			
-			points.append(cast_point[0])
+	# reconstruct the line from it's parts. The new_lines array starts with the first
+	# point of the first line in clipped_lines (which is the first point of the total line)
+	var new_lines:Array[PackedVector2Array] = [PackedVector2Array([clipped_lines[0][0]])]
+	var prev_point:Vector2 = clipped_lines[0][1]
+	for i in range(1, len(clipped_lines)):
+		#
+		new_lines.append(PackedVector2Array())
+		new_lines[-1].append(clipped_lines[i][0])
 	
+	# clear all duplicate points
 	
-	
-	return points
 
 func set_view(target:Node):
 	var global_bounds = get_viewport_rect()
