@@ -4,6 +4,8 @@ extends Node
 @export var topdown_color:Color
 @export var platformer_color:Color
 
+var tools = Tools.new()
+
 enum modes {TopDown, PlatformerDown, PlatformerUp, PlatformerLeft, PlatformerRight}
 var gravity = {
 	0:Vector2.ZERO, # TopDown mode has no gravity

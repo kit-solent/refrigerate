@@ -6,18 +6,18 @@
 script = ExtResource("1_pu3ti")
 
 [node name="marker_2d" type="Marker2D" parent="."]
+visible = false
 position = Vector2(-64, 0)
 
 [node name="view" type="Polygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 uv = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 
-[node name="line2" type="Line2D" parent="."]
-points = PackedVector2Array(24, -32, 80, 112)
-default_color = Color(0.4, 1, 0.141176, 1)
+[node name="lines" type="Node2D" parent="."]
 
 [node name="line" type="Line2D" parent="."]
-points = PackedVector2Array(24, -32, 160, 144, 80, 248, 16, 408, -192, 424, -288, 480, -392, 288, -464, 352, -528, 240, -392, 64, -216, 112, -176, -40, -392, -176, -320, -16, -464, -56, -408, -400, 720, -168, 488, 104, 440, 224, 304, 304, 288, 376, 200, 264)
+points = PackedVector2Array(-408, -400, 720, -168)
 width = 5.0
 default_color = Color(0.400635, 0, 0.140478, 1)
 
@@ -28,3 +28,32 @@ transparent_bg = true
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
 
 [node name="camera_2d" type="Camera2D" parent="."]
+zoom = Vector2(0.1, 0.1)
+
+[node name="dot0" type="ColorRect" parent="."]
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0, 0.47451, 0.101961, 0.4)
+
+[node name="dot1" type="ColorRect" parent="."]
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0.701756, 5.77569e-07, 0.410319, 0.4)
+
+[node name="dot2" type="ColorRect" parent="."]
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0.514051, 0.355673, 2.88785e-07, 0.4)
+
+[node name="dot3" type="ColorRect" parent="."]
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0.136284, 0.230823, 1, 0.4)
