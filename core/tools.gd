@@ -164,13 +164,105 @@ func get_cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
 
 func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float):
 	"""
-	Vertically clippes the line from start to stop against the upper and lower limits.
-	Regardless of the input points the line will be returned from the top down.
-	If the line does not lie within the limits return and empty PackedVector2Array
+	Vertically clippes the line segment from start to stop against the upper and lower limits.
+	Regardless of the input points the line segment will be returned from the top down.
+	If the line segment does not lie within the limits return an empty PackedVector2Array
 	"""
-	# order the start and stop points vertically
-	var upper_point = start if start.y < stop.y else stop
-	var lower_point = stop if stop.y < start.y else start
+	# order the start and stop points vertically to ensure that start is above
+	if start.y > stop.y:
+		var temp = start
+		start = stop
+		stop = temp
 	
-	if upper_point.y: 
-		pass # TODO
+	if stop.y < upper_limit or start.y > lower_limit:
+		# if the line is entirly above or below the limit
+		print("failing as entirly above or below limits")
+		print(start)
+		print(stop)
+		print(upper_limit)
+		print(lower_limit)
+		print("END BLOCK")
+		#
+		#failing as entirly above or below limits
+		#(-408, -400)
+		#(720, -168)
+		#0
+		#648
+		#END BLOCK
+		#
+		return PackedVector2Array()
+	
+	var dist
+	if start.y < upper_limit:
+		dist = (upper_limit - start.y)*(start.x - stop.x)/(stop.y - start.y)
+		
+		# replace the start point with the newly calculated one.
+		start = Vector2(start.x + dist, upper_limit)
+	
+	if stop.y > lower_limit:
+		dist = (stop.y - lower_limit)*(stop.x - start.x)/(stop.y - start.y)
+		
+		# replace the stop point with the newly calculated one.
+		stop = Vector2(stop.x + dist, lower_limit)
+	
+	return PackedVector2Array([start, stop])
+
+func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float):
+	"""
+	Vertically clippes the line segment from start to stop against the upper and lower limits.
+	Regardless of the input points the line segment will be returned from the top down.
+	If the line segment does not lie within the limits return an empty PackedVector2Array
+	"""
+	# order the start and stop points horizontally so that start is to the left
+	if start.x > stop.x:
+		var temp = start
+		start = stop
+		stop = temp
+	
+	if stop.x < left_limit or start.x > right_limit:
+		# if the line is entirly to the left or right of the limit
+		return PackedVector2Array()
+	
+	var dist
+	if start.x < left_limit:
+		dist = (left_limit - start.x)*(start.y - stop.y)/(stop.x - start.x)
+		
+		# replace the start point with the newly calculated one.
+		start = Vector2(left_limit, start.y + dist)
+	
+	if stop.x > right_limit:
+		dist = (stop.x - right_limit)*(stop.y - start.y)/(stop.x - start.x)
+		
+		# replace the stop point with the newly calculated one.
+		stop = Vector2(right_limit, stop.y + dist)
+	
+	return PackedVector2Array([start, stop])
+
+func clip_line(start:Vector2, stop:Vector2, bounds:Rect2):
+	"""
+	Returns the section of the given straight line that lies inside the given bounds.
+	Returns an empty PackedVector2Array if the line is entirly outside the bounds.
+	"""
+	var clip
+	
+	# clip the line vertically
+	clip = clip_line_vrt(start, stop, bounds.position.y, bounds.position.y + bounds.size.y)
+	
+	if len(clip)==0:
+		print("vrt clip failed")
+		return clip
+	
+	start = clip[0]
+	stop = clip[1]
+	
+	# clip the line horizontally
+	clip = clip_line_hor(start, stop, bounds.position.x, bounds.position.x + bounds.size.x)
+	
+	if len(clip)==0:
+		print("hor clip failed")
+		return clip
+	
+	start = clip[0]
+	stop = clip[1]
+	
+	return PackedVector2Array([start, stop])

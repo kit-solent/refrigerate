@@ -3,73 +3,17 @@ class_name Portal extends Node2D
 @export var pair:Portal
 
 func _ready():
-	var new = Line2D.new()
-	clip_line($line.points[0], $line.points[1], get_local_bounds())
-	$lines.add_child(new)
+	pass
+	print(get_viewport_rect()) # TODO: manage viewport shenanagans.
+	$line2.points = Core.tools.clip_line($line.points[0], $line.points[1], get_local_bounds())
+
+func _process(delta: float):
+	if Input.is_action_just_pressed("debug key"):
+		
+		print("----------------------------------------")
 
 func get_local_bounds():
 	return Rect2(to_local(get_viewport_rect().position), get_viewport_rect().size)
-
-func clip_line(start:Vector2, stop:Vector2, bounds:Rect2):
-	"""
-	Returns the section of the given straight line that lies inside the given bounds.
-	Returns an empty PackedVector2Array if the line is entirly outside the bounds.
-	"""
-	var direction = stop - start
-	
-	var top_limit    = bounds.position.y
-	var bottom_limit = bounds.position.y + bounds.size.y
-	var left_limit   = bounds.position.x
-	var right_limit  = bounds.position.x + bounds.size.x
-	
-	var viewport_top_left     = bounds.position
-	var viewport_top_right    = bounds.position + Vector2.RIGHT * bounds.size.x
-	var viewport_bottom_left  = bounds.position + Vector2.DOWN  * bounds.size.y
-	var viewport_bottom_right = bounds.position + Vector2.DOWN  * bounds.size.y + Vector2.RIGHT * bounds.size.x
-	
-	var intersects = PackedVector2Array()
-	# for each edge (top, bottom, left, right) work out where this line would intersect it
-	var top = Geometry2D.line_intersects_line(viewport_top_left, Vector2.RIGHT * bounds.size.x, start, direction)
-	if top:
-		intersects.append(top)
-	
-	var right = Geometry2D.line_intersects_line(viewport_top_right, Vector2.DOWN * bounds.size.y, start, direction)
-	if right:
-		intersects.append(right)
-	
-	var bottom = Geometry2D.line_intersects_line(viewport_bottom_left, Vector2.RIGHT * bounds.size.x, start, direction)
-	if bottom:
-		intersects.append(bottom)
-	
-	var left = Geometry2D.line_intersects_line(viewport_top_left, Vector2.DOWN * bounds.size.y, start, direction)
-	if left:
-		intersects.append(left)
-	
-	if len(intersects) == 0:
-		# if the line does not intersect the bounds
-		# TODO: has_point rejects points on the bottom or right edges so consider writing an alternative that includes those points.
-		if bounds.has_point(start) and bounds.has_point(stop):
-			# if the line is inside then return it
-			return PackedVector2Array([start, stop])
-		else:
-			# otherwise return nothing
-			return PackedVector2Array()
-	if len(intersects) == 2:
-		# if the line intersects twice then it must start and end outside
-		# in this case just return the two intersects
-		return intersects
-	if len(intersects) == 1:
-		# if there is 1 intersect then find and use the inside point and the intersect
-		if bounds.has_point(start):
-			return PackedVector2Array([start, intersects[0]])
-		elif bounds.has_point(stop):
-			return PackedVector2Array([stop, intersects[0]])
-		else:
-			printerr("what??? gfsdjgflsdg")
-	print("what?? GIUOLHK this should not ever happen")
-	print(intersects)
-	for i in range(len(intersects)):
-		get_node("dot"+str(i)).position = intersects[i]
 
 func get_portal_line(line:PackedVector2Array, bounds:Rect2):
 	"""
@@ -86,7 +30,7 @@ func get_portal_line(line:PackedVector2Array, bounds:Rect2):
 	# clip all the lines
 	var clipped_lines = []
 	for l in lines:
-		var clipped_line = clip_line(l[0], l[1], bounds)
+		var clipped_line = Core.tools.clip_line(l[0], l[1], bounds)
 		if len(clipped_line) > 0:
 			# only add the line if it contains points.
 			# if it is empty then the clip must have been
