@@ -8,22 +8,10 @@ script = ExtResource("1_pu3ti")
 [node name="marker_2d" type="Marker2D" parent="."]
 position = Vector2(-64, 0)
 
-[node name="view" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
-uv = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
-
 [node name="line" type="Line2D" parent="."]
-points = PackedVector2Array(848, 240, 848, 376)
+points = PackedVector2Array(688, 256, 568, 576)
 width = 5.0
 default_color = Color(0.400635, 0, 0.140478, 1)
-
-[node name="line2" type="Line2D" parent="."]
-visible = false
-points = PackedVector2Array(400, 384, 1096, 192)
-width = 6.0
-default_color = Color(0.108715, 0.511936, 1, 1)
-
-[node name="lines" type="Node2D" parent="."]
 
 [node name="sub_viewport" type="SubViewport" parent="."]
 disable_3d = true
@@ -32,4 +20,6 @@ transparent_bg = true
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
 
 [node name="camera_2d" type="Camera2D" parent="."]
-position = Vector2(576, 324)
+position = Vector2(224, 128)
+
+[node name="view" type="Node2D" parent="."]
