@@ -19,8 +19,6 @@ func is_between(angle:float, a:float, b:float):
 	
 	# this is the acute direction from small to big
 	var direction = diff < TAU # true is clockwise and false is anticlockwise
-	# this is the absolute angle between a and b
-	var abs_diff = diff if direction else TAU - diff
 	
 	if direction:
 		# clockwise is just a standard check
@@ -169,7 +167,9 @@ func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:f
 	If the line segment does not lie within the limits return an empty PackedVector2Array
 	"""
 	# order the start and stop points vertically to ensure that start is above
+	var flipped = false
 	if start.y > stop.y:
+		flipped = true
 		var temp = start
 		start = stop
 		stop = temp
@@ -194,18 +194,18 @@ func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:f
 	
 	var dist
 	if start.y < upper_limit:
-		dist = (upper_limit - start.y)*(start.x - stop.x)/(stop.y - start.y)
+		dist = (upper_limit - start.y)*(start.x - stop.x)/(start.y - stop.y)
 		
 		# replace the start point with the newly calculated one.
 		start = Vector2(start.x + dist, upper_limit)
 	
 	if stop.y > lower_limit:
-		dist = (stop.y - lower_limit)*(stop.x - start.x)/(stop.y - start.y)
+		dist = (stop.y - lower_limit)*(stop.x - start.x)/(start.y - stop.y)
 		
 		# replace the stop point with the newly calculated one.
 		stop = Vector2(stop.x + dist, lower_limit)
 	
-	return PackedVector2Array([start, stop])
+	return PackedVector2Array([stop, start] if flipped else [start, stop])
 
 func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float):
 	"""
@@ -214,7 +214,9 @@ func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:fl
 	If the line segment does not lie within the limits return an empty PackedVector2Array
 	"""
 	# order the start and stop points horizontally so that start is to the left
+	var flipped = false
 	if start.x > stop.x:
+		flipped = true
 		var temp = start
 		start = stop
 		stop = temp
@@ -225,29 +227,29 @@ func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:fl
 	
 	var dist
 	if start.x < left_limit:
-		dist = (left_limit - start.x)*(start.y - stop.y)/(stop.x - start.x)
+		dist = (left_limit - start.x)*(start.y - stop.y)/(start.x - stop.x)
 		
 		# replace the start point with the newly calculated one.
 		start = Vector2(left_limit, start.y + dist)
 	
 	if stop.x > right_limit:
-		dist = (stop.x - right_limit)*(stop.y - start.y)/(stop.x - start.x)
+		dist = (stop.x - right_limit)*(stop.y - start.y)/(start.x - stop.x)
 		
 		# replace the stop point with the newly calculated one.
 		stop = Vector2(right_limit, stop.y + dist)
 	
-	return PackedVector2Array([start, stop])
+	return PackedVector2Array([stop, start] if flipped else [start, stop])
 
-func clip_line(start:Vector2, stop:Vector2, bounds:Rect2):
+func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2):
 	"""
 	Returns the section of the given straight line that lies inside the given bounds.
 	Returns an empty PackedVector2Array if the line is entirly outside the bounds.
 	"""
+	# TODO BUG: a line through the top left and bottom right of the bounds is slightly to far right for some reason (could be a single pixel)
 	var clip
 	
 	# clip the line vertically
 	clip = clip_line_vrt(start, stop, bounds.position.y, bounds.position.y + bounds.size.y)
-	
 	if len(clip)==0:
 		print("vrt clip failed")
 		return clip
@@ -266,3 +268,60 @@ func clip_line(start:Vector2, stop:Vector2, bounds:Rect2):
 	stop = clip[1]
 	
 	return PackedVector2Array([start, stop])
+
+func clip_line(line:PackedVector2Array, bounds:Rect2):
+	"""
+	Returns the portion of the portal line that is inside the given bounds.
+	This is an implimentation of the Cohen–Sutherland algorithm (https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm)
+	modified for multi-point lines. Note that this function returns an array of lines as the portal clip could be composed
+	of more than one line.
+	"""
+	# break the line into straight sections (two point lines) and store them in `lines`
+	var lines:Array = Array()
+	for i in range(len(line)-1):
+		lines.append(PackedVector2Array([line[i], line[i+1]]))
+	
+	# clip all the lines
+	var clipped_lines = []
+	for l in lines:
+		var clipped_line = Core.tools.clip_line_segment(l[0], l[1], bounds)
+		if len(clipped_line) > 0:
+			# only add the line if it contains points.
+			# if it is empty then the clip must have been
+			# a trivial reject.
+			clipped_lines.append(clipped_line)
+	
+	# reconstruct the line from it's parts. The new_lines array starts with the first
+	# point of the first line in clipped_lines (which is the first point of the total line)
+	var new_lines:Array[PackedVector2Array] = [PackedVector2Array([clipped_lines[0][0]])]
+	
+	for i in range(len(clipped_lines)):
+		if clipped_lines[i][0] != new_lines[-1][-1]:
+			# if the first point of the new line is different to the last point of the
+			# old line then the lines are seperate so initialise a new line.
+			new_lines.append(PackedVector2Array([clipped_lines[i][0]]))
+		
+		# add the new point.
+		new_lines[-1].append(clipped_lines[i][1])
+	
+	# TODO: this step can be removed if it becomes clear that it never happens.
+	# remove any duplicate points from the lines
+	for _line in new_lines:
+		var existing_points = []
+		for _point in line:
+			if _point in existing_points:
+				printerr("portal.gd get_portal_line: duplicate point removal is required")
+			existing_points.append(_point)
+	
+	return new_lines
+
+
+func transform_array(array:PackedVector2Array, transform:Vector2):
+	"""
+	Returns an array with `transform` added to each element of `array`
+	"""
+	var new = []
+	for i in array:
+		new.append(i + transform)
+	
+	return new

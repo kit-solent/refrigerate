@@ -14,18 +14,18 @@ visible = false
 polygon = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 uv = PackedVector2Array(0, 32, 0, -32, 256, -160, 256, 160)
 
-[node name="lines" type="Node2D" parent="."]
-
 [node name="line" type="Line2D" parent="."]
-position = Vector2(760, 320)
-points = PackedVector2Array(-408, -400, 720, -168)
+points = PackedVector2Array(248, 232, 576, -224, 648, 408, 896, 432, 1064, 136, 1456, 152, 1288, 656, 960, 536, 760, 816, 424, 416, 336, 864, 232, 480, 184, 752, 112, 504, 56, 736, 8, 512, -32, 480, 128, 328, -48, 56, 80, -112, 208, 144, 184, 280, 272, 352, 392, 232, 600, 488, 1176, 488, 1328, 256, 1064, 264, 904, 456, 600, 432, 376, 160, 240, 280, 216, 232, 288, -96, 184, 24)
 width = 5.0
 default_color = Color(0.400635, 0, 0.140478, 1)
 
 [node name="line2" type="Line2D" parent="."]
-points = PackedVector2Array(424, -64, -280, 40)
-width = 34.335
-default_color = Color(0.400635, 0, 0.140478, 1)
+visible = false
+points = PackedVector2Array(400, 384, 1096, 192)
+width = 6.0
+default_color = Color(0.108715, 0.511936, 1, 1)
+
+[node name="lines" type="Node2D" parent="."]
 
 [node name="sub_viewport" type="SubViewport" parent="."]
 disable_3d = true
@@ -34,6 +34,7 @@ transparent_bg = true
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
 
 [node name="dot0" type="ColorRect" parent="."]
+visible = false
 offset_left = -64.0
 offset_top = -64.0
 offset_right = 64.0
@@ -41,6 +42,7 @@ offset_bottom = 64.0
 color = Color(0, 0.47451, 0.101961, 0.4)
 
 [node name="dot1" type="ColorRect" parent="."]
+visible = false
 offset_left = -64.0
 offset_top = -64.0
 offset_right = 64.0
@@ -48,6 +50,7 @@ offset_bottom = 64.0
 color = Color(0.701756, 5.77569e-07, 0.410319, 0.4)
 
 [node name="dot2" type="ColorRect" parent="."]
+visible = false
 offset_left = -64.0
 offset_top = -64.0
 offset_right = 64.0
@@ -55,8 +58,12 @@ offset_bottom = 64.0
 color = Color(0.514051, 0.355673, 2.88785e-07, 0.4)
 
 [node name="dot3" type="ColorRect" parent="."]
+visible = false
 offset_left = -64.0
 offset_top = -64.0
 offset_right = 64.0
 offset_bottom = 64.0
 color = Color(0.136284, 0.230823, 1, 0.4)
+
+[node name="camera_2d" type="Camera2D" parent="."]
+position = Vector2(576, 324)
