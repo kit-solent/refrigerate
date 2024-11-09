@@ -3,14 +3,18 @@ class_name Portal extends Node2D
 @export var pair:Portal
 
 func _ready():
-	for i in Core.tools.clip_line($line.points, get_local_bounds()):
-		var new = $line2.duplicate()
-		new.points = i
-		new.show()
-		$lines.add_child(new)
+	pass
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("debug key"):
+		$marker_2d.global_position = get_global_mouse_position()
+		$view.polygon = Core.tools.cast_polygon($marker_2d.position, $line.points, get_local_bounds())
 
 func get_local_bounds():
 	return get_viewport_rect() * get_viewport_transform()
+
+func portal_segments():
+	return Core.tools.clip_line($line.points, get_local_bounds())
 
 func set_view(target:Node):
 	var bounds = get_local_bounds()

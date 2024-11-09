@@ -9,6 +9,38 @@ func fix_angle(angle:float):
 	
 	return float(angle)
 
+func are_colinear(points:PackedVector2Array):
+	"""
+	Returns `true` if the given points are colinear
+	"""
+	# lines with 0, 1, or 2 points are always colinear
+	if len(points) < 3:
+		return true
+	
+	var grad = (points[1].y - points[0].y)/(points[1].x - points[0].x)
+	for i in range(len(points)-1):
+		var new_grad = (points[i+1].y - points[i].y)/(points[i+1].x - points[i].x)
+		if new_grad != grad:
+			return false
+	
+	return true
+
+func fix_line(line:PackedVector2Array):
+	"""
+	Removes any points that are colinear with their neibours from the line as they are redundant
+	and have no effect on the shape of the line.
+	"""
+	var new = PackedVector2Array([line[0]])
+	
+	for i in range(1, len(line) - 1): # loop from the 2nd point to the 2nd to last point
+		if not are_colinear(PackedVector2Array([line[i-1], line[i], line[i+1]])):
+			new.append(line[i])
+	
+	# add the final point
+	new.append(line[-1])
+	
+	return new
+
 func is_between(angle:float, a:float, b:float):
 	"""
 	Returns true if `angle` is between the angles `a` and `b`.
@@ -27,7 +59,140 @@ func is_between(angle:float, a:float, b:float):
 		# anticlockwise only happens when the positive x axis is inside the angle
 		return angle < small_angle or angle > big_angle
 
-func get_cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
+func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float):
+	"""
+	Vertically clippes the line segment from start to stop against the upper and lower limits.
+	Regardless of the input points the line segment will be returned from the top down.
+	If the line segment does not lie within the limits return an empty PackedVector2Array
+	"""
+	# order the start and stop points vertically to ensure that start is above
+	var flipped = false
+	if start.y > stop.y:
+		flipped = true
+		var temp = start
+		start = stop
+		stop = temp
+	
+	if stop.y < upper_limit or start.y > lower_limit:
+		return PackedVector2Array()
+	
+	var dist
+	if start.y < upper_limit:
+		dist = (upper_limit - start.y)*(start.x - stop.x)/(start.y - stop.y)
+		
+		# replace the start point with the newly calculated one.
+		start = Vector2(start.x + dist, upper_limit)
+	
+	if stop.y > lower_limit:
+		dist = (stop.y - lower_limit)*(stop.x - start.x)/(start.y - stop.y)
+		
+		# replace the stop point with the newly calculated one.
+		stop = Vector2(stop.x + dist, lower_limit)
+	
+	return PackedVector2Array([stop, start] if flipped else [start, stop])
+
+func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float):
+	"""
+	Vertically clippes the line segment from start to stop against the upper and lower limits.
+	Regardless of the input points the line segment will be returned from the top down.
+	If the line segment does not lie within the limits return an empty PackedVector2Array
+	"""
+	# order the start and stop points horizontally so that start is to the left
+	var flipped = false
+	if start.x > stop.x:
+		flipped = true
+		var temp = start
+		start = stop
+		stop = temp
+	
+	if stop.x < left_limit or start.x > right_limit:
+		# if the line is entirly to the left or right of the limit
+		return PackedVector2Array()
+	
+	var dist
+	if start.x < left_limit:
+		dist = (left_limit - start.x)*(start.y - stop.y)/(start.x - stop.x)
+		
+		# replace the start point with the newly calculated one.
+		start = Vector2(left_limit, start.y + dist)
+	
+	if stop.x > right_limit:
+		dist = (stop.x - right_limit)*(stop.y - start.y)/(start.x - stop.x)
+		
+		# replace the stop point with the newly calculated one.
+		stop = Vector2(right_limit, stop.y + dist)
+	
+	return PackedVector2Array([stop, start] if flipped else [start, stop])
+
+func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2):
+	"""
+	Returns the section of the given straight line that lies inside the given bounds.
+	Returns an empty PackedVector2Array if the line is entirly outside the bounds.
+	"""
+	var clip
+	
+	# clip the line vertically
+	clip = clip_line_vrt(start, stop, bounds.position.y, bounds.position.y + bounds.size.y)
+	if len(clip)==0:
+		return clip
+	
+	start = clip[0]
+	stop = clip[1]
+	
+	# clip the line horizontally
+	clip = clip_line_hor(start, stop, bounds.position.x, bounds.position.x + bounds.size.x)
+	
+	if len(clip)==0:
+		return clip
+	
+	start = clip[0]
+	stop = clip[1]
+	
+	return PackedVector2Array([start, stop])
+
+func clip_line(line:PackedVector2Array, bounds:Rect2):
+	"""
+	Returns the portion of the portal line that is inside the given bounds.
+	This is an implimentation of the Cohen–Sutherland algorithm (https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm)
+	modified for multi-point lines. Note that this function returns an array of lines as the portal clip could be composed
+	of more than one line.
+	"""
+	# break the line into straight sections (two point lines) and store them in `lines`
+	var lines:Array = Array()
+	for i in range(len(line)-1):
+		lines.append(PackedVector2Array([line[i], line[i+1]]))
+	
+	# clip all the lines
+	var clipped_lines = []
+	for l in lines:
+		var clipped_line = Core.tools.clip_line_segment(l[0], l[1], bounds)
+		if len(clipped_line) > 0:
+			# only add the line if it contains points.
+			# if it is empty then the clip must have been
+			# a trivial reject.
+			clipped_lines.append(clipped_line)
+	
+	# reconstruct the line from it's parts. The new_lines array starts with the first
+	# point of the first line in clipped_lines (which is the first point of the total line)
+	var new_lines:Array[PackedVector2Array] = [PackedVector2Array([clipped_lines[0][0]])]
+	
+	for i in range(len(clipped_lines)):
+		if clipped_lines[i][0] != new_lines[-1][-1]:
+			# if the first point of the new line is different to the last point of the
+			# old line then the lines are seperate so initialise a new line.
+			new_lines.append(PackedVector2Array([clipped_lines[i][0]]))
+		
+		# add the new point.
+		new_lines[-1].append(clipped_lines[i][1])
+	
+	# apply fix_line to each line
+	var fixed_lines = []
+	for i in new_lines:
+		fixed_lines.append(fix_line(i))
+	
+	return fixed_lines
+
+func cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
 	"""
 	Casts a line from target in the direction of cast_point and returns the point where it intersects with bounds.
 	target must be within bounds.
@@ -160,161 +325,99 @@ func get_cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
 	
 	return [intersect, edge]
 
-func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float):
+func cast_polygon(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	"""
-	Vertically clippes the line segment from start to stop against the upper and lower limits.
-	Regardless of the input points the line segment will be returned from the top down.
-	If the line segment does not lie within the limits return an empty PackedVector2Array
+	Casts `line` against `bounds` from the perspective of `target` and returns the resulting polygon.
+	The `target` point and all points in `line` must be inside the bounds.
 	"""
-	# order the start and stop points vertically to ensure that start is above
-	var flipped = false
-	if start.y > stop.y:
-		flipped = true
-		var temp = start
-		start = stop
-		stop = temp
+	# ensure that target and all points of line are within the bounds
+	if not bounds.has_point(target):
+		printerr("Invalid `target` in cast_polygon. `target` must be within the bounds")
+		return ERR_INVALID_PARAMETER
 	
-	if stop.y < upper_limit or start.y > lower_limit:
-		# if the line is entirly above or below the limit
-		print("failing as entirly above or below limits")
-		print(start)
-		print(stop)
-		print(upper_limit)
-		print(lower_limit)
-		print("END BLOCK")
-		#
-		#failing as entirly above or below limits
-		#(-408, -400)
-		#(720, -168)
-		#0
-		#648
-		#END BLOCK
-		#
-		return PackedVector2Array()
+	for i in line:
+		if not bounds.has_point(i):
+			printerr("Invalid `line` in cast_polygon. All points in `line` must be within the bounds.")
+			return ERR_INVALID_PARAMETER
 	
-	var dist
-	if start.y < upper_limit:
-		dist = (upper_limit - start.y)*(start.x - stop.x)/(start.y - stop.y)
+	# initialise the polygon with the line
+	var polygon = fix_line(line)
+	
+	# find all the cast points and their edges
+	var cast_points = []
+	for i in line:
+		cast_points.append(cast_point(target, i, bounds))
+	
+	# reverse the cast points so that the cast point for the last point in line will get
+	# connected to that last point. This ensures that the polygon runs in a consistant direction
+	cast_points.reverse()
+	
+	# add the cast_points to the polygon and insert the corner points if required
+	var prev_point = cast_points[0][0]
+	var edge = cast_points[0][1] # initialise with the first edge to eusure that the first edge check return true
+	for i in cast_points:
+		if i[1] != edge:
+			print("  whaky hihifhdihfsad")
+			print(i[1])
+			print(edge)
+			polygon += find_corner(edge, i[1], prev_point, i[0], bounds)
 		
-		# replace the start point with the newly calculated one.
-		start = Vector2(start.x + dist, upper_limit)
-	
-	if stop.y > lower_limit:
-		dist = (stop.y - lower_limit)*(stop.x - start.x)/(start.y - stop.y)
+		polygon.append(i[0])
 		
-		# replace the stop point with the newly calculated one.
-		stop = Vector2(stop.x + dist, lower_limit)
+		# update the point
+		prev_point = i[0]
 	
-	return PackedVector2Array([stop, start] if flipped else [start, stop])
+	return polygon
 
-func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float):
-	"""
-	Vertically clippes the line segment from start to stop against the upper and lower limits.
-	Regardless of the input points the line segment will be returned from the top down.
-	If the line segment does not lie within the limits return an empty PackedVector2Array
-	"""
-	# order the start and stop points horizontally so that start is to the left
-	var flipped = false
-	if start.x > stop.x:
-		flipped = true
-		var temp = start
-		start = stop
-		stop = temp
+func find_corner(edge1:Vector2, edge2:Vector2, prev_point:Vector2, curr_point:Vector2, bounds:Rect2):
+	# left up right down
+	var corners = {
+		Vector2.UP + Vector2.LEFT: PackedVector2Array([bounds.position]),
+		Vector2.UP + Vector2.RIGHT: PackedVector2Array([bounds.position + Vector2.RIGHT * bounds.size.x]),
+		Vector2.DOWN + Vector2.RIGHT: PackedVector2Array([bounds.end]),
+		Vector2.DOWN + Vector2.LEFT: PackedVector2Array([bounds.position + Vector2.DOWN * bounds.size.y])
+	}
+	print(corners)
+	var left_limit   = bounds.position.x
+	var right_limit  = bounds.position.x + bounds.size.x
+	var top_limit    = bounds.position.y
+	var bottom_limit = bounds.position.y + bounds.size.y
 	
-	if stop.x < left_limit or start.x > right_limit:
-		# if the line is entirly to the left or right of the limit
-		return PackedVector2Array()
+	var sorted = [edge1, edge2]
+	sorted.sort()
 	
-	var dist
-	if start.x < left_limit:
-		dist = (left_limit - start.x)*(start.y - stop.y)/(start.x - stop.x)
-		
-		# replace the start point with the newly calculated one.
-		start = Vector2(left_limit, start.y + dist)
+	if edge1 + edge2 in corners:
+		return corners[edge1 + edge2]
+	elif sorted == [Vector2.UP, Vector2.DOWN]:
+		# work out the distances arround the edge in both directions and use the smaller
+		var dist_right = bounds.size.y + (right_limit - prev_point.x) + (right_limit - curr_point.x)
+		var dist_left = bounds.size.y + (prev_point.x - left_limit) + (curr_point.x - left_limit)
+		print("dist right and left below")
+		print(dist_right)
+		print(dist_left)
+		if dist_left < dist_right:
+			# if the distance arround the left edge is smaller then return the two left corners
+			return corners[Vector2.UP + Vector2.LEFT] + corners[Vector2.DOWN + Vector2.LEFT]
+		else:
+			print("here")
+			print(corners[Vector2.UP + Vector2.RIGHT] + corners[Vector2.DOWN + Vector2.RIGHT])
+			return corners[Vector2.DOWN + Vector2.RIGHT] + corners[Vector2.UP + Vector2.RIGHT]
 	
-	if stop.x > right_limit:
-		dist = (stop.x - right_limit)*(stop.y - start.y)/(start.x - stop.x)
-		
-		# replace the stop point with the newly calculated one.
-		stop = Vector2(right_limit, stop.y + dist)
+	elif sorted == [Vector2.LEFT, Vector2.RIGHT]:
+		# work out the distances arround the edge in both directions and use the smaller
+		var dist_up = bounds.size.x + (prev_point.y - top_limit) + (curr_point.y - top_limit)
+		var dist_down = bounds.size.x + (left_limit - prev_point.y) + (left_limit - curr_point.y)
+		print(dist_up)
+		print(dist_down)
+		if dist_down < dist_up:
+			# if the distance arround the lower edge is smaller then return the bottom left corners
+			return corners[Vector2.LEFT + Vector2.DOWN] + corners[Vector2.RIGHT + Vector2.DOWN]
+		else:
+			return corners[Vector2.LEFT + Vector2.UP] + corners[Vector2.RIGHT + Vector2.UP]
 	
-	return PackedVector2Array([stop, start] if flipped else [start, stop])
-
-func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2):
-	"""
-	Returns the section of the given straight line that lies inside the given bounds.
-	Returns an empty PackedVector2Array if the line is entirly outside the bounds.
-	"""
-	# TODO BUG: a line through the top left and bottom right of the bounds is slightly to far right for some reason (could be a single pixel)
-	var clip
-	
-	# clip the line vertically
-	clip = clip_line_vrt(start, stop, bounds.position.y, bounds.position.y + bounds.size.y)
-	if len(clip)==0:
-		print("vrt clip failed")
-		return clip
-	
-	start = clip[0]
-	stop = clip[1]
-	
-	# clip the line horizontally
-	clip = clip_line_hor(start, stop, bounds.position.x, bounds.position.x + bounds.size.x)
-	
-	if len(clip)==0:
-		print("hor clip failed")
-		return clip
-	
-	start = clip[0]
-	stop = clip[1]
-	
-	return PackedVector2Array([start, stop])
-
-func clip_line(line:PackedVector2Array, bounds:Rect2):
-	"""
-	Returns the portion of the portal line that is inside the given bounds.
-	This is an implimentation of the Cohen–Sutherland algorithm (https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm)
-	modified for multi-point lines. Note that this function returns an array of lines as the portal clip could be composed
-	of more than one line.
-	"""
-	# break the line into straight sections (two point lines) and store them in `lines`
-	var lines:Array = Array()
-	for i in range(len(line)-1):
-		lines.append(PackedVector2Array([line[i], line[i+1]]))
-	
-	# clip all the lines
-	var clipped_lines = []
-	for l in lines:
-		var clipped_line = Core.tools.clip_line_segment(l[0], l[1], bounds)
-		if len(clipped_line) > 0:
-			# only add the line if it contains points.
-			# if it is empty then the clip must have been
-			# a trivial reject.
-			clipped_lines.append(clipped_line)
-	
-	# reconstruct the line from it's parts. The new_lines array starts with the first
-	# point of the first line in clipped_lines (which is the first point of the total line)
-	var new_lines:Array[PackedVector2Array] = [PackedVector2Array([clipped_lines[0][0]])]
-	
-	for i in range(len(clipped_lines)):
-		if clipped_lines[i][0] != new_lines[-1][-1]:
-			# if the first point of the new line is different to the last point of the
-			# old line then the lines are seperate so initialise a new line.
-			new_lines.append(PackedVector2Array([clipped_lines[i][0]]))
-		
-		# add the new point.
-		new_lines[-1].append(clipped_lines[i][1])
-	
-	# TODO: this step can be removed if it becomes clear that it never happens.
-	# remove any duplicate points from the lines
-	for _line in new_lines:
-		var existing_points = []
-		for _point in line:
-			if _point in existing_points:
-				printerr("portal.gd get_portal_line: duplicate point removal is required")
-			existing_points.append(_point)
-	
-	return new_lines
-
+	else:
+		printerr("Failed to find a corner for the given edges.")
+		return ERR_INVALID_PARAMETER
 
 func transform_array(array:PackedVector2Array, transform:Vector2):
 	"""
