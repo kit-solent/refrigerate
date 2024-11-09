@@ -1,8 +1,12 @@
 extends Node
 
-@export_category("Mode Overide Colors")
+@export_category("Core")
+
+@export_group("Mode Overide Colors")
 @export var topdown_color:Color
 @export var platformer_color:Color
+
+@onready var main:Node = null
 
 var tools = Tools.new()
 
@@ -16,7 +20,8 @@ var gravity = {
 }
 
 func _ready():
-	pass
+	if has_node("/root/ingame"):
+		main = get_node("/root/ingame")
 
 
 ## User Authentication
