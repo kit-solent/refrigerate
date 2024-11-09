@@ -8,6 +8,9 @@ func _process(delta: float):
 		set_view(target)
 
 func set_view(target:Node):
+	print(get_local_bounds())
+	print(to_local(target.global_position))
+	
 	# clear the existing polygons
 	clear_view()
 	

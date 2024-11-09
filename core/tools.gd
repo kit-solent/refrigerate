@@ -339,6 +339,8 @@ func cast_polygon(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	"""
 	# ensure that target and all points of line are within the bounds
 	if not has_point(bounds, target):
+		print(target)
+		print(bounds)
 		printerr("Invalid `target` in cast_polygon. `target` must be within the bounds")
 		return ERR_INVALID_PARAMETER
 	
