@@ -22,4 +22,11 @@ transparent_bg = true
 position = Vector2(-1.66893e-06, -1.90735e-06)
 scale = Vector2(3.2, 6.4)
 
+[node name="DEBUG" type="Node2D" parent="."]
+
+[node name="camera_2d" type="Camera2D" parent="DEBUG"]
+position = Vector2(100, 0)
+
+[node name="marker_2d" type="Marker2D" parent="DEBUG"]
+
 [connection signal="screen_exited" from="on_screen_notifier" to="." method="clear_view"]

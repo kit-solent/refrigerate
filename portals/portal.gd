@@ -1,19 +1,26 @@
 class_name Portal extends Node2D
 
 @export var pair:Portal
-@onready var target:Node = Core.main.get_player()
+#@onready var target:Node = Core.main.get_player()
+@onready var target:Node = $DEBUG/marker_2d
 
 func _process(delta: float):
-	if $on_screen_notifier.is_on_screen():
+	$DEBUG/marker_2d.global_position = get_global_mouse_position()
+	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
+	# the portal should also only be drawn if it's target is within a certain distance of the portal.
+	if $on_screen_notifier.is_on_screen() and Input.is_action_just_pressed("debug key"):
 		set_view(target)
 
 func set_view(target:Node):
-	print(get_local_bounds())
-	print(to_local(target.global_position))
-	
 	# clear the existing polygons
 	clear_view()
 	
+	#print(get_local_bounds())
+	#print(get_viewport_rect())
+	#print(to_local(target.global_position))
+	#print(target.global_position)
+	#print(global_position)
+	#
 	# add new polygons
 	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
 	for i in polygons:

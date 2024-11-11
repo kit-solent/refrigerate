@@ -183,6 +183,8 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	# point of the first line in clipped_lines (which is the first point of the total line)
 	var new_lines:Array[PackedVector2Array] = [PackedVector2Array([clipped_lines[0][0]])]
 	
+	# TODO: This fails for 0 length lines. Either put a condition to catch this in or change the algorithm so that the loop automatically skipps 0 length lines.
+	
 	for i in range(len(clipped_lines)):
 		if clipped_lines[i][0] != new_lines[-1][-1]:
 			# if the first point of the new line is different to the last point of the
@@ -339,8 +341,6 @@ func cast_polygon(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	"""
 	# ensure that target and all points of line are within the bounds
 	if not has_point(bounds, target):
-		print(target)
-		print(bounds)
 		printerr("Invalid `target` in cast_polygon. `target` must be within the bounds")
 		return ERR_INVALID_PARAMETER
 	

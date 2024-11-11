@@ -87,7 +87,7 @@ stretch = true
 [node name="view" type="SubViewport" parent="h_box_container/panel/view"]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(1152, 648)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="world" type="Node2D" parent="h_box_container/panel/view/view"]
