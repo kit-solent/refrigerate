@@ -37,6 +37,9 @@ func fix_line(line:PackedVector2Array):
 	Removes any points that are colinear with their neibours from the line as they are redundant
 	and have no effect on the shape of the line.
 	"""
+	if len(line)==0:
+		return PackedVector2Array()
+	
 	var new = PackedVector2Array([line[0]])
 	
 	for i in range(1, len(line) - 1): # loop from the 2nd point to the 2nd to last point
@@ -193,8 +196,6 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	if len(lines)==0:
 		return [PackedVector2Array()]
 	
-	
-	print(lines)
 	# reconstruct the line from it's parts. The new_lines array starts with the first
 	# point of the first line in clipped_lines (which is the first point of the total line)
 	temp = [PackedVector2Array([lines[0][0]])]
@@ -357,6 +358,10 @@ func cast_polygon(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	Casts `line` against `bounds` from the perspective of `target` and returns the resulting polygon.
 	The `target` point and all points in `line` must be inside the bounds.
 	"""
+	# if there is no line to cast against then return an empty polygon.
+	if len(line)==0:
+		return PackedVector2Array()
+	
 	# ensure that target and all points of line are within the bounds
 	if not has_point(bounds, target):
 		printerr("Invalid `target` in cast_polygon. `target` must be within the bounds")

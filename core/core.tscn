@@ -4,6 +4,7 @@
 
 [node name="core" type="Node"]
 script = ExtResource("1_ktj8o")
+debug = true
 topdown_color = Color(0, 0, 100, 0.2)
 platformer_color = Color(0, 100, 100, 0.2)
 

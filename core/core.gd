@@ -2,6 +2,10 @@ extends Node
 
 @export_category("Core")
 
+## If true runs the game in debug mode. This includes features such as turning of the canvas modulate
+## and enabling Godot's built in debugging features like visable collision shapes, paths, navigation, and avoidance.
+@export var debug = false
+
 @export_group("Mode Overide Colors")
 @export var topdown_color:Color
 @export var platformer_color:Color
@@ -20,9 +24,16 @@ var gravity = {
 }
 
 func _ready():
+	# if we are in the `ingame` scene then get a reference to the root `ingame` node.
 	if has_node("/root/ingame"):
 		main = get_node("/root/ingame")
-
+	
+	# if we are in debug mode then turn on Godot's default debugging features.
+	get_tree().debug_collisions_hint = debug
+	get_tree().debug_paths_hint = debug
+	get_tree().debug_navigation_hint = debug
+	
+	
 
 ## User Authentication
 #const host="https://refrigerate-580a7-default-rtdb.firebaseio.com/"

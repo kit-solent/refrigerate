@@ -95,6 +95,7 @@ render_target_update_mode = 4
 [node name="meta" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
 [node name="darkener" type="CanvasModulate" parent="h_box_container/panel/view/view/world/meta"]
+visible = false
 color = Color(0, 0, 0, 1)
 
 [node name="camera" type="Camera2D" parent="h_box_container/panel/view/view/world/meta"]
