@@ -165,41 +165,59 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	of more than one line.
 	"""
 	# break the line into straight sections (two point lines) and store them in `lines`
-	var lines:Array = Array()
-	for i in range(len(line)-1):
-		lines.append(PackedVector2Array([line[i], line[i+1]]))
+	var lines:Array[PackedVector2Array] = []
+	# temp is used to allow iterative editing of an array.
+	var temp:Array[PackedVector2Array] = []
+	
+	# split the given line into it's segments.
+	for i in range(len(line)-1): # NOTE: if len(line) is 0 range(-1) does the same as range(0) i.e. it doesn't loop.
+		temp.append(PackedVector2Array([line[i], line[i+1]]))
+	
+	lines = temp
+	temp = []
 	
 	# clip all the lines
-	var clipped_lines = []
 	for l in lines:
 		var clipped_line = Core.tools.clip_line_segment(l[0], l[1], bounds)
 		if len(clipped_line) > 0:
 			# only add the line if it contains points.
 			# if it is empty then the clip must have been
 			# a trivial reject.
-			clipped_lines.append(clipped_line)
+			temp.append(clipped_line)
 	
+	lines = temp
+	temp = []
+	
+	# line reconstruction requires lines to have a length greater than 0.
+	# check if `lines` is empty and if so return an empty array of lines.
+	if len(lines)==0:
+		return [PackedVector2Array()]
+	
+	
+	print(lines)
 	# reconstruct the line from it's parts. The new_lines array starts with the first
 	# point of the first line in clipped_lines (which is the first point of the total line)
-	var new_lines:Array[PackedVector2Array] = [PackedVector2Array([clipped_lines[0][0]])]
+	temp = [PackedVector2Array([lines[0][0]])]
 	
-	# TODO: This fails for 0 length lines. Either put a condition to catch this in or change the algorithm so that the loop automatically skipps 0 length lines.
-	
-	for i in range(len(clipped_lines)):
-		if clipped_lines[i][0] != new_lines[-1][-1]:
+	for i in range(len(lines)):
+		if lines[i][0] != temp[-1][-1]:
 			# if the first point of the new line is different to the last point of the
 			# old line then the lines are seperate so initialise a new line.
-			new_lines.append(PackedVector2Array([clipped_lines[i][0]]))
-		
+			temp.append(PackedVector2Array([lines[i][0]]))
 		# add the new point.
-		new_lines[-1].append(clipped_lines[i][1])
+		temp[-1].append(lines[i][1])
+	
+	lines = temp
+	temp = []
 	
 	# apply fix_line to each line
-	var fixed_lines = []
-	for i in new_lines:
-		fixed_lines.append(fix_line(i))
+	for l in lines:
+		temp.append(fix_line(l))
 	
-	return fixed_lines
+	lines = temp
+	temp = []
+	
+	return lines
 
 func cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
 	"""

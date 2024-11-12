@@ -7,6 +7,3 @@
 
 [node name="portal" parent="." index="0" instance=ExtResource("2_eug51")]
 position = Vector2(107, 352)
-
-[node name="portal2" parent="." index="1" instance=ExtResource("2_eug51")]
-position = Vector2(107, 480)
