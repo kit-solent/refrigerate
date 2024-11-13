@@ -1,5 +1,12 @@
 class_name Tools extends Node
 
+func to_local_rect(node:CanvasItem, rect:Rect2):
+	"""
+	An implimentation of the to_local method for Rect2's. `node` is the node who's
+	coordinate space will be used for the transformation. 
+	"""
+	return Rect2(node.to_local(rect.position), rect.size)
+
 func has_point(rect:Rect2, point:Vector2):
 	"""
 	Returns `true` if `point` is within or on the border of `rect`.
@@ -220,7 +227,7 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	
 	return lines
 
-func cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
+func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	"""
 	Casts a line from target in the direction of cast_point and returns the point where it intersects with bounds.
 	target must be within bounds.
@@ -242,13 +249,12 @@ func cast_point(target:Vector2, cast_point:Vector2, bounds:Rect2):
 	var angle_br = Core.tools.fix_angle(target.angle_to_point(viewport_bottom_right))
 	
 	# the angles pointing directly up, down, left, and right.
-	var angle_right = 0
 	var angle_down  = 1 * TAU/4
 	var angle_left  = 2 * TAU/4
 	var angle_up    = 3 * TAU/4
 	
 	# the angle from the target to the cast point.
-	var angle = Core.tools.fix_angle(target.angle_to_point(cast_point))
+	var angle = Core.tools.fix_angle(target.angle_to_point(point))
 	
 	# the edge which the line will intersect as a Vector2.
 	# Vector2.UP reperesents the top edge, Vector2.RIGHT reperesents the right edge etc.
@@ -414,11 +420,6 @@ func find_corner(edge1:Vector2, edge2:Vector2, point1: Vector2, point2: Vector2,
 		Vector2.DOWN + Vector2.RIGHT: PackedVector2Array([bounds.end]),
 		Vector2.DOWN + Vector2.LEFT: PackedVector2Array([bounds.position + Vector2.DOWN * bounds.size.y])
 	}
-	
-	var left_limit   = bounds.position.x
-	var right_limit  = bounds.position.x + bounds.size.x
-	var top_limit    = bounds.position.y
-	var bottom_limit = bounds.position.y + bounds.size.y
 	
 	var sorted = [edge1, edge2]
 	sorted.sort()

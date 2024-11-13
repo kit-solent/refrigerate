@@ -28,7 +28,7 @@ func _ready():
 	if has_node("/root/ingame"):
 		main = get_node("/root/ingame")
 	
-	# if we are in debug mode then turn on Godot's default debugging features.
+	# set Godot's default debugging hints to match the games debug state.
 	get_tree().debug_collisions_hint = debug
 	get_tree().debug_paths_hint = debug
 	get_tree().debug_navigation_hint = debug

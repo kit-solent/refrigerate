@@ -12,23 +12,12 @@ default_color = Color(0, 0.204489, 0.399983, 1)
 
 [node name="sub_viewport" type="SubViewport" parent="."]
 disable_3d = true
-transparent_bg = true
-
-[node name="camera_2d" type="Camera2D" parent="sub_viewport"]
 
 [node name="view" type="Node2D" parent="."]
 
 [node name="on_screen_notifier" type="VisibleOnScreenNotifier2D" parent="."]
-position = Vector2(-1.66893e-06, -1.90735e-06)
-scale = Vector2(3.2, 6.4)
+rect = Rect2(-32, -64, 64, 128)
 
-[node name="DEBUG" type="Node2D" parent="."]
-
-[node name="camera_2d" type="Camera2D" parent="DEBUG"]
-position = Vector2(500, 0)
-
-[node name="marker_2d" type="Marker2D" parent="DEBUG"]
-position = Vector2(-252, 160)
-gizmo_extents = 100.0
+[node name="camera" type="Camera2D" parent="."]
 
 [connection signal="screen_exited" from="on_screen_notifier" to="." method="clear_view"]
