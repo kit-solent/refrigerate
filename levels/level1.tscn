@@ -5,10 +5,10 @@
 
 [node name="level1" instance=ExtResource("1_japuw")]
 
-[node name="portal" parent="." index="0" node_paths=PackedStringArray("pair") instance=ExtResource("2_eug51")]
+[node name="portal" parent="." index="0" instance=ExtResource("2_eug51")]
 position = Vector2(107, 352)
-pair = NodePath("../portal2")
 
-[node name="portal2" parent="." index="1" node_paths=PackedStringArray("pair") instance=ExtResource("2_eug51")]
-position = Vector2(-176, 480)
-pair = NodePath("../portal")
+[node name="line" parent="portal" index="0"]
+points = PackedVector2Array(0, -32, 6, 64, -303, 53, -326, -145)
+
+[editable path="portal"]

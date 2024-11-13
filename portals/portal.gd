@@ -3,10 +3,13 @@ class_name Portal extends Node2D
 @export var pair:Portal
 
 @onready var target:Node = Core.main.get_player()
-@onready var texture:ViewportTexture = pair.get_node("sub_viewport").get_texture()
 
 func _ready():
-	pair.get_node("camera").custom_viewport = $sub_viewport
+	if pair:
+		pair.get_node("camera").custom_viewport = $sub_viewport
+	
+	# find the bounding rectangle of the line, expand it for error margin, and assign it to the on screen notifyer.
+	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
 
 func _process(_delta: float):
 	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
@@ -23,7 +26,6 @@ func set_view(target:Node):
 	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
 	for i in polygons:
 		var new = Polygon2D.new()
-		new.texture = texture
 		new.polygon = i
 		$view.add_child(new)
 

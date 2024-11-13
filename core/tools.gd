@@ -1,8 +1,26 @@
 class_name Tools extends Node
 
+func line_bounds(line:PackedVector2Array):
+	"""
+	Returns the smallest Rect2 that contains all points in `line`.
+	This is the bounding box of `line`. If line is empty then return
+	a zero size rect at the origin.
+	"""
+	if len(line)==0:
+		return Rect2(Vector2.ZERO, Vector2.ZERO)
+	
+	# create a Rect2 centered on the first point in line with zero size
+	var rect = Rect2(line[0], Vector2.ZERO)
+	
+	# expand the rect to include every point in the line.
+	for i in line.slice(1):
+		rect = rect.expand(i)
+	
+	return rect
+
 func to_local_rect(node:CanvasItem, rect:Rect2):
 	"""
-	An implimentation of the to_local method for Rect2's. `node` is the node who's
+	An implimentation of the to_local method for `Rect2`s. `node` is the node who's
 	coordinate space will be used for the transformation. 
 	"""
 	return Rect2(node.to_local(rect.position), rect.size)
@@ -232,6 +250,7 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	Casts a line from target in the direction of cast_point and returns the point where it intersects with bounds.
 	target must be within bounds.
 	"""
+	# TODO: Consider using similar triangles to write a better implimentation.
 	if not has_point(bounds, target):
 		printerr("Invalid arguments to get_cast_point, `target` must be inside the given bounds.")
 		return ERR_INVALID_PARAMETER
@@ -396,7 +415,7 @@ func cast_polygon(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	for i in cast_points:
 		if i[1] != edge:
 			# if the edges are not the same then add the corner points.
-			polygon += find_corner(edge, i[1], prev_point, i[0], target, bounds)
+			polygon += find_corners(prev_point, i[0], target, bounds)
 		
 		polygon.append(i[0])
 		
@@ -412,40 +431,42 @@ func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 		polygons.append(cast_polygon(target, i, bounds))
 	return polygons
 
-func find_corner(edge1:Vector2, edge2:Vector2, point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2):
-	# left up right down
-	var corners = {
-		Vector2.UP + Vector2.LEFT: PackedVector2Array([bounds.position]),
-		Vector2.UP + Vector2.RIGHT: PackedVector2Array([bounds.position + Vector2.RIGHT * bounds.size.x]),
-		Vector2.DOWN + Vector2.RIGHT: PackedVector2Array([bounds.end]),
-		Vector2.DOWN + Vector2.LEFT: PackedVector2Array([bounds.position + Vector2.DOWN * bounds.size.y])
-	}
+func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2):
+	"""
+	Find the appropriate corner coordinates based on the given edges, points, target, and bounds.
+	This uses the target point to work out which direction the polygon is being cast and from there
+	which corner points need to be included.
+	"""
+	var bounds_tl = bounds.position
+	var bounds_tr = bounds.position + Vector2.RIGHT * bounds.size.x
+	var bounds_bl = bounds.position + Vector2.DOWN  * bounds.size.y
+	var bounds_br = bounds.end
 	
-	var sorted = [edge1, edge2]
-	sorted.sort()
+	var angle_tl = target.angle_to_point(bounds_tl)
+	var angle_tr = target.angle_to_point(bounds_tr)
+	var angle_bl = target.angle_to_point(bounds_bl)
+	var angle_br = target.angle_to_point(bounds_br)
 	
-	if edge1 + edge2 in corners:
-		return corners[edge1 + edge2]
-	elif sorted == [Vector2.UP, Vector2.DOWN]:
-		# TODO BUG: This check means that some cases where the target is above a point of a portal that
-		# is above them without being through the portal. This happens when the portal is on an angle.
-		# a better method would work out which side of the line the target is on and use that.
-		if target.x < point1.x and target.x < point2.x:
-			# if the target is to the left of the points then return the right corners
-			return corners[Vector2.RIGHT + Vector2.DOWN] + corners[Vector2.RIGHT + Vector2.UP]
-		else:
-			# otherwise return the left corners
-			return corners[Vector2.LEFT + Vector2.DOWN] + corners[Vector2.LEFT + Vector2.UP]
-	elif sorted == [Vector2.LEFT, Vector2.RIGHT]:
-		if target.y > point1.y and target.y > point2.y:
-			# if the target is below the points then return the upper corners
-			return corners[Vector2.LEFT + Vector2.UP] + corners[Vector2.RIGHT + Vector2.UP]
-		else:
-			# otherwise return the lower
-			return corners[Vector2.LEFT + Vector2.DOWN] + corners[Vector2.RIGHT + Vector2.DOWN]
-	else:
-		printerr("Failed to find a corner for the given edges.")
-		return ERR_INVALID_PARAMETER
+	var angle_a = target.angle_to_point(point1)
+	var angle_b = target.angle_to_point(point2)
+	
+	var corners = PackedVector2Array()
+	if is_between(angle_tl, angle_a, angle_b):
+		corners.append(bounds_tl)
+	
+	if is_between(angle_tr, angle_a, angle_b):
+		corners.append(bounds_tr)
+	
+	if is_between(angle_bl, angle_a, angle_b):
+		corners.append(bounds_bl)
+	
+	if is_between(angle_br, angle_a, angle_b):
+		corners.append(bounds_br)
+	
+	if Input.is_action_just_pressed("debug key"):
+		print(corners)
+	
+	return corners
 
 func transform_array(array:PackedVector2Array, transform:Vector2):
 	"""
@@ -456,3 +477,5 @@ func transform_array(array:PackedVector2Array, transform:Vector2):
 		new.append(i + transform)
 	
 	return new
+
+# 184
