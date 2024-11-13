@@ -1,5 +1,40 @@
 class_name Tools extends Node
 
+func merge_polygons(polygons:Array[PackedVector2Array]):
+	"""
+	Merges any adjacent or overlapping polygons into a single polygon.
+	Returns an array of polygons.
+	"""
+	if len(polygons)==0:
+		# if there are no polygons then return an empty array.
+		return []
+	
+	if len(polygons)==1:
+		# if there is only 1 polygon then return it.
+		return polygons
+	
+	var merge_pass = []
+	var merge
+	# keep looping untill no more merges are possible.
+	while true:
+		# get the first polygon
+		var p = polygons[0]
+		
+		# loop over all the other polygons and tey and merge them with p
+		for i in polygons.slice(1):
+			merge = Geometry2D.merge_polygons(p, i)
+			
+			# if the merge was a success
+			if len(merge)==1:
+				merge
+		
+		
+		# after the merge pass update the polygons array and clear the merge_pass array ready for the next pass
+		polygons = merge_pass
+		merge_pass = []
+	
+	Geometry2D.merge_polygons
+
 func line_bounds(line:PackedVector2Array):
 	"""
 	Returns the smallest Rect2 that contains all points in `line`.
