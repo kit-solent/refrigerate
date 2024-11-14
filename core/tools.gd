@@ -455,6 +455,7 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	Casts the line segment from `start` to `stop` against `bounds` from the perspective of `target` and returns the resulting polygon.
 	Both `start` and `stop` must be inside the bounds but `target` may be outside
 	"""
+	# TODO: modify so that the start and stop points can be out of bounds and the polygon cast still works
 	if not (has_point(bounds, start) and has_point(bounds, stop)):
 		printerr("Invalid `line` in cast_polygon. Both points in `line` must be within the bounds.")
 		return ERR_INVALID_PARAMETER
@@ -467,12 +468,8 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	var stop_cast  = cast_point(target, stop , bounds)[0]
 	
 	polygon.append(stop_cast)
-	var c=find_corners(start, stop, target, bounds)
-	c.reverse() #TODO: finish portal implimentations
-	polygon.append_array(c)
+	polygon.append_array(find_corners(stop, start, target, bounds))
 	polygon.append(start_cast)
-	
-	
 	
 	return polygon
 
@@ -486,7 +483,7 @@ func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	if Core.debug_frame:
 		print(polygons)
 	
-	#polygons = merge_polygons(polygons)
+	#TODO polygons = merge_polygons(polygons)
 	
 	return polygons
 
@@ -494,7 +491,7 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	"""
 	Find the appropriate corner coordinates based on the given edges, points, target, and bounds.
 	This uses the target point to work out which direction the polygon is being cast and from there
-	which corner points need to be included.
+	which corner points need to be included. Corners will be returned from point1 to point2.
 	"""
 	var bounds_tl = bounds.position
 	var bounds_tr = bounds.position + Vector2.RIGHT * bounds.size.x
@@ -540,10 +537,37 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 
 func transform_array(array:PackedVector2Array, transform:Vector2):
 	"""
-	Returns an array with `transform` added to each element of `array`
+	Returns a PackedVector2Array with `transform` added to each element of `array:PackedVector2Array`
 	"""
 	var new = []
 	for i in array:
 		new.append(i + transform)
 	
 	return new
+
+
+
+
+func print_desmos(obj, hint:String = ""):
+	"""
+	Prints a string reperesentation of certain objects that can be pasted into
+	desmos (https://www.desmos.com/calculator) for quick visualisation.
+	The `hint` parameter is used to differentiate between entities with the same
+	object reperesentation e.g. both lines and polygons are PackedVector2Arrays.
+	"""
+	var result = ""
+	if obj is Polygon2D:
+		obj = obj.polygon
+		hint = "polygon"
+	if obj is Line2D:
+		obj = obj.points
+		hint = "line"
+	
+	if obj is PackedVector2Array:
+		if hint == "polygon":
+			result += "polygon("
+			# TODO this could be worth finishing. Could also write a scene to display these sorts of things
+		if hint == "line":
+			pass
+		else:
+			printerr("unsupported hint: "+hint+" for object type PackedVector2Array.")
