@@ -14,6 +14,8 @@ extends Node
 
 var tools = Tools.new()
 
+var debug_frame:bool = false
+
 enum modes {TopDown, PlatformerDown, PlatformerUp, PlatformerLeft, PlatformerRight}
 var gravity = {
 	0:Vector2.ZERO, # TopDown mode has no gravity
@@ -33,7 +35,8 @@ func _ready():
 	get_tree().debug_paths_hint = debug
 	get_tree().debug_navigation_hint = debug
 	
-	
+func _process(_delta:float):
+	debug_frame = Input.is_action_just_pressed("debug key")
 
 ## User Authentication
 #const host="https://refrigerate-580a7-default-rtdb.firebaseio.com/"

@@ -1,14 +1,5 @@
-[gd_scene load_steps=3 format=3 uid="uid://s8hhu4jxydb"]
+[gd_scene load_steps=2 format=3 uid="uid://s8hhu4jxydb"]
 
 [ext_resource type="PackedScene" uid="uid://c6awmk0g3vary" path="res://core/map.tscn" id="1_japuw"]
-[ext_resource type="PackedScene" uid="uid://ctwsyo8iq6tg8" path="res://portals/portal.tscn" id="2_eug51"]
 
 [node name="level1" instance=ExtResource("1_japuw")]
-
-[node name="portal" parent="." index="0" instance=ExtResource("2_eug51")]
-position = Vector2(107, 352)
-
-[node name="line" parent="portal" index="0"]
-points = PackedVector2Array(0, -32, 6, 64, -303, 53, -326, -145)
-
-[editable path="portal"]

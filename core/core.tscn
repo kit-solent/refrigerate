@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://core/core.gd" id="1_ktj8o"]
 
 [node name="core" type="Node"]
+process_priority = -8
+process_physics_priority = -8
 script = ExtResource("1_ktj8o")
 debug = true
 topdown_color = Color(0, 0, 100, 0.2)

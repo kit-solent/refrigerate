@@ -1,39 +1,57 @@
 class_name Tools extends Node
 
+func angle_diff(angle_a:float, angle_b:float):
+	"""
+	Returns tha absolute difference between the two angles in radians.
+	"""
+	# ensure the angles are in the range 0 - TAU
+	angle_a = fix_angle(angle_a)
+	angle_b = fix_angle(angle_b)
+	
+	var max_angle = angle_a if angle_a > angle_b else angle_b
+	var min_angle = angle_b if angle_a > angle_b else angle_a
+	
+	return max_angle - min_angle
+
+func get_centre(points):
+	"""
+	Returns the centroid of the given points.
+	This is the average of the points or the point in the centre of
+	the points
+	"""
+	var centroid = Vector2.ZERO
+	for i in points:
+		centroid += i
+	centroid /= len(points)
+	
+	return centroid
+
 func merge_polygons(polygons:Array[PackedVector2Array]):
 	"""
 	Merges any adjacent or overlapping polygons into a single polygon.
 	Returns an array of polygons.
 	"""
-	if len(polygons)==0:
-		# if there are no polygons then return an empty array.
-		return []
+	var merged_polygons = polygons.duplicate()
+	var has_merged = true
 	
-	if len(polygons)==1:
-		# if there is only 1 polygon then return it.
-		return polygons
-	
-	var merge_pass = []
-	var merge
-	# keep looping untill no more merges are possible.
-	while true:
-		# get the first polygon
-		var p = polygons[0]
-		
-		# loop over all the other polygons and tey and merge them with p
-		for i in polygons.slice(1):
-			merge = Geometry2D.merge_polygons(p, i)
+	while has_merged:
+		has_merged=false
+		for i in range(len(merged_polygons)):
+			for j in range(i+1, len(merged_polygons)):
+				# try and merge the two polygons
+				var merge_attempt = Geometry2D.merge_polygons(merged_polygons[i], merged_polygons[j])
+				
+				# check if the merge was a success
+				if len(merge_attempt)==1:
+					merged_polygons[i] = merge_attempt[0]
+					merged_polygons.remove_at(j)
+					has_merged = true
+					break
 			
-			# if the merge was a success
-			if len(merge)==1:
-				merge
-		
-		
-		# after the merge pass update the polygons array and clear the merge_pass array ready for the next pass
-		polygons = merge_pass
-		merge_pass = []
+			if has_merged:
+				break
 	
-	Geometry2D.merge_polygons
+	return merged_polygons
 
 func line_bounds(line:PackedVector2Array):
 	"""
@@ -241,7 +259,7 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	
 	# clip all the lines
 	for l in lines:
-		var clipped_line = Core.tools.clip_line_segment(l[0], l[1], bounds)
+		var clipped_line = clip_line_segment(l[0], l[1], bounds)
 		if len(clipped_line) > 0:
 			# only add the line if it contains points.
 			# if it is empty then the clip must have been
@@ -280,15 +298,34 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	
 	return lines
 
+func segment_line(line:PackedVector2Array):
+	"""
+	Returns an array of the segments of `line`.
+	"""
+	var segments = []
+	
+	for i in range(len(line)-1):
+		segments.append(PackedVector2Array([line[i], line[i+1]]))
+	
+	return segments
+
+func segment_lines(lines):
+	"""
+	Calls segment_line on all lines in `lines` and returns the results in a single array.
+	"""
+	var segments = []
+	
+	for i in lines:
+		segments.append_array(segment_line(i))
+	
+	return segments
+
 func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	"""
 	Casts a line from target in the direction of cast_point and returns the point where it intersects with bounds.
 	target must be within bounds.
 	"""
 	# TODO: Consider using similar triangles to write a better implimentation.
-	if not has_point(bounds, target):
-		printerr("Invalid arguments to get_cast_point, `target` must be inside the given bounds.")
-		return ERR_INVALID_PARAMETER
 	
 	# the coordinates of the corners of the viewport rectangle relative to our origin.
 	var viewport_top_left     = bounds.position
@@ -297,10 +334,10 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	var viewport_bottom_right = bounds.position  + Vector2.DOWN  * bounds.size.y + Vector2.RIGHT * bounds.size.x
 	
 	# the angles from the cast_point to the corners of the screen.
-	var angle_tl = Core.tools.fix_angle(target.angle_to_point(viewport_top_left))
-	var angle_tr = Core.tools.fix_angle(target.angle_to_point(viewport_top_right))
-	var angle_bl = Core.tools.fix_angle(target.angle_to_point(viewport_bottom_left))
-	var angle_br = Core.tools.fix_angle(target.angle_to_point(viewport_bottom_right))
+	var angle_tl = fix_angle(target.angle_to_point(viewport_top_left))
+	var angle_tr = fix_angle(target.angle_to_point(viewport_top_right))
+	var angle_bl = fix_angle(target.angle_to_point(viewport_bottom_left))
+	var angle_br = fix_angle(target.angle_to_point(viewport_bottom_right))
 	
 	# the angles pointing directly up, down, left, and right.
 	var angle_down  = 1 * TAU/4
@@ -308,7 +345,7 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	var angle_up    = 3 * TAU/4
 	
 	# the angle from the target to the cast point.
-	var angle = Core.tools.fix_angle(target.angle_to_point(point))
+	var angle = fix_angle(target.angle_to_point(point))
 	
 	# the edge which the line will intersect as a Vector2.
 	# Vector2.UP reperesents the top edge, Vector2.RIGHT reperesents the right edge etc.
@@ -413,57 +450,44 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	
 	return [intersect, edge]
 
-func cast_polygon(target:Vector2, line:PackedVector2Array, bounds:Rect2):
+func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	"""
-	Casts `line` against `bounds` from the perspective of `target` and returns the resulting polygon.
-	The `target` point and all points in `line` must be inside the bounds.
+	Casts the line segment from `start` to `stop` against `bounds` from the perspective of `target` and returns the resulting polygon.
+	Both `start` and `stop` must be inside the bounds but `target` may be outside
 	"""
-	# if there is no line to cast against then return an empty polygon.
-	if len(line)==0:
-		return PackedVector2Array()
-	
-	# ensure that target and all points of line are within the bounds
-	if not has_point(bounds, target):
-		printerr("Invalid `target` in cast_polygon. `target` must be within the bounds")
+	if not (has_point(bounds, start) and has_point(bounds, stop)):
+		printerr("Invalid `line` in cast_polygon. Both points in `line` must be within the bounds.")
 		return ERR_INVALID_PARAMETER
 	
-	for i in line:
-		if not has_point(bounds, i):
-			printerr("Invalid `line` in cast_polygon. All points in `line` must be within the bounds.")
-			return ERR_INVALID_PARAMETER
-	
 	# initialise the polygon with the line
-	var polygon = fix_line(line)
+	var polygon = PackedVector2Array([start, stop])
 	
-	# find all the cast points and their edges
-	var cast_points = []
-	for i in line:
-		cast_points.append(cast_point(target, i, bounds))
+	# find the cast points and their edges
+	var start_cast = cast_point(target, start, bounds)[0]
+	var stop_cast  = cast_point(target, stop , bounds)[0]
 	
-	# reverse the cast points so that the cast point for the last point in line will get
-	# connected to that last point. This ensures that the polygon runs in a consistant direction
-	cast_points.reverse()
+	polygon.append(stop_cast)
+	var c=find_corners(start, stop, target, bounds)
+	c.reverse() #TODO: finish portal implimentations
+	polygon.append_array(c)
+	polygon.append(start_cast)
 	
-	# add the cast_points to the polygon and insert the corner points if required
-	var prev_point = cast_points[0][0]
-	var edge = cast_points[0][1] # initialise with the first edge to eusure that the first edge check return true
-	for i in cast_points:
-		if i[1] != edge:
-			# if the edges are not the same then add the corner points.
-			polygon += find_corners(prev_point, i[0], target, bounds)
-		
-		polygon.append(i[0])
-		
-		# update the point
-		prev_point = i[0]
+	
 	
 	return polygon
 
 func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
-	var lines = clip_line(line, bounds)
-	var polygons = []
-	for i in lines:
-		polygons.append(cast_polygon(target, i, bounds))
+	var segments = segment_lines(clip_line(line, bounds))
+	var polygons:Array[PackedVector2Array] = []
+	
+	for i in segments:
+		polygons.append(cast_polygon(target, i[0], i[1], bounds))
+	
+	if Core.debug_frame:
+		print(polygons)
+	
+	#polygons = merge_polygons(polygons)
+	
 	return polygons
 
 func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2):
@@ -482,6 +506,20 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	var angle_bl = target.angle_to_point(bounds_bl)
 	var angle_br = target.angle_to_point(bounds_br)
 	
+	var angles = [
+		angle_tl,
+		angle_tr,
+		angle_bl,
+		angle_br
+	]
+	
+	var angles_to_corners = {
+		angle_tl:bounds_tl,
+		angle_tr:bounds_tr,
+		angle_bl:bounds_bl,
+		angle_br:bounds_br
+	}
+	
 	var angle_a = target.angle_to_point(point1)
 	var angle_b = target.angle_to_point(point2)
 	
@@ -498,9 +536,6 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	if is_between(angle_br, angle_a, angle_b):
 		corners.append(bounds_br)
 	
-	if Input.is_action_just_pressed("debug key"):
-		print(corners)
-	
 	return corners
 
 func transform_array(array:PackedVector2Array, transform:Vector2):
@@ -512,5 +547,3 @@ func transform_array(array:PackedVector2Array, transform:Vector2):
 		new.append(i + transform)
 	
 	return new
-
-# 184
