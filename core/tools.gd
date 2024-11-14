@@ -491,7 +491,7 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	"""
 	Find the appropriate corner coordinates based on the given edges, points, target, and bounds.
 	This uses the target point to work out which direction the polygon is being cast and from there
-	which corner points need to be included. Corners will be returned from point1 to point2.
+	which corner points need to be included.
 	"""
 	var bounds_tl = bounds.position
 	var bounds_tr = bounds.position + Vector2.RIGHT * bounds.size.x
