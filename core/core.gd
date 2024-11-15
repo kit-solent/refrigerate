@@ -12,6 +12,8 @@ extends Node
 
 @onready var main:Node = null
 
+signal debug_action
+
 var tools = Tools.new()
 
 var debug_frame:bool = false
@@ -36,7 +38,12 @@ func _ready():
 	get_tree().debug_navigation_hint = debug
 	
 func _process(_delta:float):
-	debug_frame = Input.is_action_just_pressed("debug key")
+	# the frame is a debug frame if the debug key has been pressed and we are in debug mode.
+	debug_frame = Input.is_action_just_pressed("debug key") and debug
+	
+	# emit the debug_action when the debug key is pressed.
+	if Input.is_action_just_pressed("debug key"):
+		debug_action.emit()
 
 ## User Authentication
 #const host="https://refrigerate-580a7-default-rtdb.firebaseio.com/"

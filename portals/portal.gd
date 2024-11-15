@@ -5,10 +5,6 @@ class_name Portal extends Node2D
 @onready var target:Node = Core.main.get_player()
 
 func _ready():
-	print(Core.tools.segment_lines(
-		[PackedVector2Array()]
-	))
-	
 	if pair:
 		pair.get_node("camera").custom_viewport = $sub_viewport
 	
@@ -41,7 +37,7 @@ func clear_view():
 		$view.remove_child(i)
 		i.queue_free()
 
-func get_local_bounds(margin:float = 64):
+func get_local_bounds(margin:float = 0):
 	"""
 	Returns the viewport rect in local space and expands it a little for error margin.
 	"""

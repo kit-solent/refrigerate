@@ -1,5 +1,22 @@
 class_name Tools extends Node
 
+func wrap_slice(arr:Array, start:int, end:int):
+	"""
+	An Array slicing function that wraps arround and handles slicing backwards.
+	Is both ends exclusive.
+	"""
+	var sliced = []
+	var length = len(arr)
+	
+	while end < start:
+		end += length
+	
+	# add 1 to start to make both ends exclusive.
+	for i in range(start + 1, end):
+		sliced.append(arr[i % length])
+	
+	return sliced
+
 func angle_diff(angle_a:float, angle_b:float):
 	"""
 	Returns tha absolute difference between the two angles in radians.
@@ -468,6 +485,7 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	var stop_cast  = cast_point(target, stop , bounds)[0]
 	
 	polygon.append(stop_cast)
+#	find_corners(stop, start, target, bounds)
 	polygon.append_array(find_corners(stop, start, target, bounds))
 	polygon.append(start_cast)
 	
@@ -480,58 +498,84 @@ func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	for i in segments:
 		polygons.append(cast_polygon(target, i[0], i[1], bounds))
 	
-	if Core.debug_frame:
-		print(polygons)
-	
 	#TODO polygons = merge_polygons(polygons)
 	
 	return polygons
 
-func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2):
+func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2, direction:bool = false):
 	"""
 	Find the appropriate corner coordinates based on the given edges, points, target, and bounds.
 	This uses the target point to work out which direction the polygon is being cast and from there
-	which corner points need to be included.
+	which corner points need to be included. If `direction` is true then the corners will be added in
+	a clockwise order, otherwise an anticlockwise order will be used. 
 	"""
+	# the corners of the bounds.
 	var bounds_tl = bounds.position
 	var bounds_tr = bounds.position + Vector2.RIGHT * bounds.size.x
 	var bounds_bl = bounds.position + Vector2.DOWN  * bounds.size.y
 	var bounds_br = bounds.end
 	
-	var angle_tl = target.angle_to_point(bounds_tl)
-	var angle_tr = target.angle_to_point(bounds_tr)
-	var angle_bl = target.angle_to_point(bounds_bl)
-	var angle_br = target.angle_to_point(bounds_br)
+	# the angles from the target to the corners of the bounds.
+	var angle_tl = fix_angle(target.angle_to_point(bounds_tl))
+	var angle_tr = fix_angle(target.angle_to_point(bounds_tr))
+	var angle_bl = fix_angle(target.angle_to_point(bounds_bl))
+	var angle_br = fix_angle(target.angle_to_point(bounds_br))
+	
+	# the angles from the target to the points (same as the angles from the points to their intersects).
+	var angle_a = fix_angle(target.angle_to_point(point1))
+	var angle_b = fix_angle(target.angle_to_point(point2))
 	
 	var angles = [
+		angle_br,
+		angle_bl,
 		angle_tl,
 		angle_tr,
-		angle_bl,
-		angle_br
+		angle_a,
+		angle_b,
 	]
 	
-	var angles_to_corners = {
-		angle_tl:bounds_tl,
-		angle_tr:bounds_tr,
-		angle_bl:bounds_bl,
-		angle_br:bounds_br
-	}
+	# sort the angles from smallest to largest so that they travel in a clockwise order.
+	angles.sort()
 	
-	var angle_a = target.angle_to_point(point1)
-	var angle_b = target.angle_to_point(point2)
+	#if not direction:
+		## if we are going the other direction then reverse the angles to travel in an anticlockwise order.
+		#angles.reverse()
 	
-	var corners = PackedVector2Array()
-	if is_between(angle_tl, angle_a, angle_b):
-		corners.append(bounds_tl)
+	var chosen_angles = angles.slice(
+		angles.find(min(angle_a, angle_b)) + 1, # add 1 to make the slice both ends exclusive.
+		angles.find(max(angle_a, angle_b))
+	)
 	
-	if is_between(angle_tr, angle_a, angle_b):
-		corners.append(bounds_tr)
+	if Core.debug_frame:
+		var t={angle_br:"Bottom Right", angle_tr:"Top Right",angle_tl:"Top Left",angle_bl:"Bottom Left",angle_a:"Angle A",angle_b:"Angle B"}
+		var _angles = []
+		for i in angles:
+			_angles.append(t[i])
+		var _cho = []
+		for i in chosen_angles:
+			_cho.append(t[i])
+		print("\n\n\n")
+		print("All angles: ", _angles)
+		print("Chosen angles: ", _cho)
+		print()
+		print("Bottom Right: ", angle_br)
+		print("Bottom Left: ", angle_bl)
+		print("Top Left: ", angle_tl)
+		print("Top Right: ", angle_tr)
+		print()
+		print("Angle a: ", angle_a)
+		print("Angle b: ", angle_b)
 	
-	if is_between(angle_bl, angle_a, angle_b):
-		corners.append(bounds_bl)
 	
-	if is_between(angle_br, angle_a, angle_b):
-		corners.append(bounds_br)
+	# convert the chosen angles into corner positions
+	var corners = []
+	for i in chosen_angles:
+		corners.append({
+			angle_tl:bounds_tl,
+			angle_tr:bounds_tr,
+			angle_bl:bounds_bl,
+			angle_br:bounds_br
+		}[i])
 	
 	return corners
 
@@ -555,6 +599,7 @@ func print_desmos(obj, hint:String = ""):
 	The `hint` parameter is used to differentiate between entities with the same
 	object reperesentation e.g. both lines and polygons are PackedVector2Arrays.
 	"""
+	@warning_ignore("unused_variable")
 	var result = ""
 	if obj is Polygon2D:
 		obj = obj.polygon
