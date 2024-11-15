@@ -1,10 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=8 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
 [ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/resources/inventory_slot.tscn" id="3_yiyqq"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
+[ext_resource type="Shader" path="res://core/resources/shaders/screen_shake.gdshader" id="6_4dejo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hdian"]
+render_priority = 0
+shader = ExtResource("6_4dejo")
 
 [node name="ingame" type="Control"]
 layout_mode = 3
@@ -87,7 +92,7 @@ stretch = true
 [node name="view" type="SubViewport" parent="h_box_container/panel/view"]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(2, 2)
+size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
 [node name="world" type="Node2D" parent="h_box_container/panel/view/view"]
@@ -95,6 +100,7 @@ render_target_update_mode = 4
 [node name="meta" type="Node2D" parent="h_box_container/panel/view/view/world"]
 
 [node name="darkener" type="CanvasModulate" parent="h_box_container/panel/view/view/world/meta"]
+visible = false
 color = Color(0, 0, 0, 1)
 
 [node name="camera" type="Camera2D" parent="h_box_container/panel/view/view/world/meta"]
@@ -117,3 +123,8 @@ position_smoothing_enabled = true
 position = Vector2(100, 0)
 
 [node name="level1" parent="h_box_container/panel/view/view/world" instance=ExtResource("5_shstq")]
+
+[node name="color_rect" type="ColorRect" parent="h_box_container/panel"]
+material = SubResource("ShaderMaterial_hdian")
+layout_mode = 2
+color = Color(1, 1, 1, 0)

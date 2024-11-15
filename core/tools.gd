@@ -499,6 +499,9 @@ func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	
 	# TODO polygons = merge_polygons(polygons)
 	
+	if Core.debug_frame:
+		print(polygons)
+	
 	return polygons
 
 func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2, direction:bool = false):

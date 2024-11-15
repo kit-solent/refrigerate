@@ -33,9 +33,9 @@ func _ready():
 		main = get_node("/root/ingame")
 	
 	# set Godot's default debugging hints to match the games debug state.
-	get_tree().debug_collisions_hint = debug
-	get_tree().debug_paths_hint = debug
-	get_tree().debug_navigation_hint = debug
+	#get_tree().debug_collisions_hint = debug
+	#get_tree().debug_paths_hint = debug
+	#get_tree().debug_navigation_hint = debug
 	
 func _process(_delta:float):
 	# the frame is a debug frame if the debug key has been pressed and we are in debug mode.
