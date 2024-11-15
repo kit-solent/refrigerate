@@ -485,7 +485,6 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	var stop_cast  = cast_point(target, stop , bounds)[0]
 	
 	polygon.append(stop_cast)
-#	find_corners(stop, start, target, bounds)
 	polygon.append_array(find_corners(stop, start, target, bounds))
 	polygon.append(start_cast)
 	
@@ -498,7 +497,7 @@ func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	for i in segments:
 		polygons.append(cast_polygon(target, i[0], i[1], bounds))
 	
-	#TODO polygons = merge_polygons(polygons)
+	# TODO polygons = merge_polygons(polygons)
 	
 	return polygons
 
@@ -509,6 +508,10 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	which corner points need to be included. If `direction` is true then the corners will be added in
 	a clockwise order, otherwise an anticlockwise order will be used. 
 	"""
+	# determine the direction using cross products
+	var cross = (point1 - target).cross(point2 - target)
+	direction = cross > 0
+	
 	# the corners of the bounds.
 	var bounds_tl = bounds.position
 	var bounds_tr = bounds.position + Vector2.RIGHT * bounds.size.x
@@ -537,35 +540,18 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	# sort the angles from smallest to largest so that they travel in a clockwise order.
 	angles.sort()
 	
-	#if not direction:
-		## if we are going the other direction then reverse the angles to travel in an anticlockwise order.
-		#angles.reverse()
+	# move angle_a to the start of the array.
+	angles = angles.slice(angles.find(angle_a)) + angles.slice(0, angles.find(angle_a))
 	
-	var chosen_angles = angles.slice(
-		angles.find(min(angle_a, angle_b)) + 1, # add 1 to make the slice both ends exclusive.
-		angles.find(max(angle_a, angle_b))
-	)
-	
-	if Core.debug_frame:
-		var t={angle_br:"Bottom Right", angle_tr:"Top Right",angle_tl:"Top Left",angle_bl:"Bottom Left",angle_a:"Angle A",angle_b:"Angle B"}
-		var _angles = []
-		for i in angles:
-			_angles.append(t[i])
-		var _cho = []
-		for i in chosen_angles:
-			_cho.append(t[i])
-		print("\n\n\n")
-		print("All angles: ", _angles)
-		print("Chosen angles: ", _cho)
-		print()
-		print("Bottom Right: ", angle_br)
-		print("Bottom Left: ", angle_bl)
-		print("Top Left: ", angle_tl)
-		print("Top Right: ", angle_tr)
-		print()
-		print("Angle a: ", angle_a)
-		print("Angle b: ", angle_b)
-	
+	var chosen_angles
+	if direction:
+		# this is all the angles between a and b in a clockwise order.
+		chosen_angles = angles.slice(1, angles.find(angle_b))
+	else:
+		# this is all the angles between a and b in an anticlockwise order.
+		# take all the angles after b and then reverse their order
+		chosen_angles = angles.slice(angles.find(angle_b) + 1)
+		chosen_angles.reverse()
 	
 	# convert the chosen angles into corner positions
 	var corners = []

@@ -8,3 +8,8 @@ tile_map_data = PackedByteArray("AAACAPr/AAAAAAEAAAADAPr/AAABAAEAAAAEAPv/AAACAAE
 
 [node name="portal" parent="." index="0" instance=ExtResource("2_eug51")]
 position = Vector2(71.4334, 352.304)
+
+[node name="line" parent="portal" index="0"]
+points = PackedVector2Array(-273.433, 87.696, -351.433, -104.304)
+
+[editable path="portal"]
