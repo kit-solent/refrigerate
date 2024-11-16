@@ -125,6 +125,7 @@ position = Vector2(100, 0)
 [node name="level1" parent="h_box_container/panel/view/view/world" instance=ExtResource("5_shstq")]
 
 [node name="color_rect" type="ColorRect" parent="h_box_container/panel"]
+visible = false
 material = SubResource("ShaderMaterial_hdian")
 layout_mode = 2
 color = Color(1, 1, 1, 0)
