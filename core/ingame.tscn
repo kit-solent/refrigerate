@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=9 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
-[ext_resource type="Shader" path="res://core/resources/shaders/wobble.gdshader" id="3_ryc4x"]
 [ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/resources/inventory_slot.tscn" id="3_yiyqq"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
 
@@ -23,7 +22,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_sdiib")
 script = ExtResource("1_ul41f")
-main_shader = ExtResource("3_ryc4x")
 
 [node name="view" type="SubViewport" parent="."]
 transparent_bg = true

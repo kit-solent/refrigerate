@@ -16,6 +16,8 @@ func _integrate_forces(_state:PhysicsDirectBodyState2D):
 		linear_velocity += Core.gravity[mode]*gravity_strength*_state.step
 		var dir = Input.get_axis("player left","player right")
 		if dir:
+			linear_velocity = lerp(linear_velocity, Core.gravity[mode].rotated(-TAU/4) * dir * move_velocity, acceleration*_state.step)
+			
 			if mode == Core.modes.PlatformerDown:
 				linear_velocity.x = lerp(linear_velocity.x,dir*move_velocity,acceleration*_state.step)
 			elif mode == Core.modes.PlatformerUp:
@@ -29,15 +31,10 @@ func _integrate_forces(_state:PhysicsDirectBodyState2D):
 				linear_velocity.x = lerp(linear_velocity.x,0.0,deacceleration*_state.step) 
 			elif mode in [Core.modes.PlatformerLeft,Core.modes.PlatformerRight]: # If the gravity direction is left or right.
 				linear_velocity.y = lerp(linear_velocity.y,0.0,deacceleration*_state.step)
+		
 		if Input.is_action_just_pressed("player jump"):
-			if mode == Core.modes.PlatformerDown: # Gravity down
-				linear_velocity.y += -jump_velocity
-			elif mode == Core.modes.PlatformerUp: # Gravity up
-				linear_velocity.y += jump_velocity
-			elif mode == Core.modes.PlatformerLeft: # Gravity left
-				linear_velocity.x += jump_velocity
-			elif mode == Core.modes.PlatformerRight: # Gravity right
-				linear_velocity.x += -jump_velocity
+			linear_velocity -= Core.gravity[mode]*jump_velocity
+		
 		linear_velocity.y=clamp(linear_velocity.y,-terminal_velocity,terminal_velocity)
 		linear_velocity.x=clamp(linear_velocity.x,-terminal_velocity,terminal_velocity)
 

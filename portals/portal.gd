@@ -14,7 +14,11 @@ func _process(_delta:float):
 	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
 	# the portal should also only be drawn if it's target is within a certain distance of the portal.
 	if pair:
-		$sub_viewport/camera_2d.global_position = global_position + (target.global_position - pair.global_position)
+		# move the pairs camera to the right position. Global coordinates must be used because the
+		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
+		pair.get_node("sub_viewport/camera_2d").global_position = pair.global_position# + (target.global_position - global_position)
+		
+		# update the view
 		if $on_screen_notifier.is_on_screen():
 			set_view(target)
 		if Core.debug_frame:
@@ -23,6 +27,9 @@ func _process(_delta:float):
 var on = true
 @warning_ignore("shadowed_variable")
 func set_view(target:Node):
+	# TODO: There is actually flicker than you can quite easily see
+	# for complex shapes and certain target positions.
+	
 	if not on:return
 	# clear the existing polygons
 	clear_view()
@@ -49,11 +56,6 @@ func get_local_bounds(margin:float = 64):
 	"""
 	Returns the viewport rect in local space and expands it a little for error margin.
 	"""
-	# TODO TODO TODO TODO TODO TODO TODO: There is actually flicker than you can quite easily see
-	# for complex shapes.
-	# without the margin certain polygons flicker for certain target positions.
-	# the margin removes this but it could be worth fixing for a zero margin.
-	
 	# this is the viewport rect in global coordinates.
 	var global_rect = (get_viewport_rect() * get_viewport_transform()).grow(margin)
 	
