@@ -1,15 +1,17 @@
-[gd_scene load_steps=8 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=9 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
 [ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/resources/inventory_slot.tscn" id="3_yiyqq"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
-[ext_resource type="Shader" path="res://core/resources/shaders/screen_shake.gdshader" id="6_4dejo"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hdian"]
-render_priority = 0
-shader = ExtResource("6_4dejo")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_65x8q"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_64tty"]
+viewport_path = NodePath("view")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nf0n5"]
 
 [node name="ingame" type="Control"]
 layout_mode = 3
@@ -20,6 +22,41 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_sdiib")
 script = ExtResource("1_ul41f")
+
+[node name="view" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="world" type="Node2D" parent="view"]
+
+[node name="meta" type="Node2D" parent="view/world"]
+
+[node name="darkener" type="CanvasModulate" parent="view/world/meta"]
+visible = false
+color = Color(0, 0, 0, 1)
+
+[node name="camera" type="Camera2D" parent="view/world/meta"]
+ignore_rotation = false
+position_smoothing_enabled = true
+
+[node name="mode_overides" type="Node2D" parent="view/world/meta"]
+
+[node name="temp" type="Node2D" parent="view/world"]
+
+[node name="terrain" type="Node2D" parent="view/world"]
+
+[node name="collectables" type="Node2D" parent="view/world"]
+
+[node name="enemys" type="Node2D" parent="view/world"]
+
+[node name="players" type="Node2D" parent="view/world"]
+
+[node name="player" parent="view/world/players" instance=ExtResource("2_nqatk")]
+position = Vector2(100, 0)
+
+[node name="level1" parent="view/world" instance=ExtResource("5_shstq")]
 
 [node name="h_box_container" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -84,48 +121,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="view" type="SubViewportContainer" parent="h_box_container/panel"]
+[node name="view" type="TextureRect" parent="h_box_container/panel"]
+material = SubResource("ShaderMaterial_65x8q")
 layout_mode = 2
-size_flags_horizontal = 3
-stretch = true
+texture = SubResource("ViewportTexture_64tty")
 
-[node name="view" type="SubViewport" parent="h_box_container/panel/view"]
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(1152, 648)
-render_target_update_mode = 4
-
-[node name="world" type="Node2D" parent="h_box_container/panel/view/view"]
-
-[node name="meta" type="Node2D" parent="h_box_container/panel/view/view/world"]
-
-[node name="darkener" type="CanvasModulate" parent="h_box_container/panel/view/view/world/meta"]
-visible = false
-color = Color(0, 0, 0, 1)
-
-[node name="camera" type="Camera2D" parent="h_box_container/panel/view/view/world/meta"]
-ignore_rotation = false
-position_smoothing_enabled = true
-
-[node name="mode_overides" type="Node2D" parent="h_box_container/panel/view/view/world/meta"]
-
-[node name="temp" type="Node2D" parent="h_box_container/panel/view/view/world"]
-
-[node name="terrain" type="Node2D" parent="h_box_container/panel/view/view/world"]
-
-[node name="collectables" type="Node2D" parent="h_box_container/panel/view/view/world"]
-
-[node name="enemys" type="Node2D" parent="h_box_container/panel/view/view/world"]
-
-[node name="players" type="Node2D" parent="h_box_container/panel/view/view/world"]
-
-[node name="player" parent="h_box_container/panel/view/view/world/players" instance=ExtResource("2_nqatk")]
-position = Vector2(100, 0)
-
-[node name="level1" parent="h_box_container/panel/view/view/world" instance=ExtResource("5_shstq")]
-
-[node name="color_rect" type="ColorRect" parent="h_box_container/panel"]
-visible = false
-material = SubResource("ShaderMaterial_hdian")
+[node name="overlay" type="TextureRect" parent="h_box_container/panel"]
+material = SubResource("ShaderMaterial_nf0n5")
 layout_mode = 2
-color = Color(1, 1, 1, 0)
