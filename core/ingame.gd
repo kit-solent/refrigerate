@@ -1,8 +1,16 @@
 extends Control
+
+@export var main_shader:Shader
+@export var overlay_shader:Shader
+
+
 @onready var camera_target=$view/world/players/player
 
 func _ready():
 	$view/world/meta/darkener.visible = not Core.debug
+	$h_box_container/panel/view.material.shader = main_shader
+	$h_box_container/panel/overlay.material.shader = overlay_shader
+	
 	#Core.local_player=$h_box_container/panel/view/view/world/players/player
 
 func _process(_delta):
