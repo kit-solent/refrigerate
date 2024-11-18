@@ -18,13 +18,18 @@ var tools = Tools.new()
 
 var debug_frame:bool = false
 
-enum modes {TopDown, PlatformerDown, PlatformerUp, PlatformerLeft, PlatformerRight}
-var gravity = {
-	0:Vector2.ZERO, # TopDown mode has no gravity
-	1:Vector2.DOWN,
-	2:Vector2.UP,
-	3:Vector2.LEFT,
-	4:Vector2.RIGHT
+enum modes {TopDown, PlatformerDown, PlatformerLeft, PlatformerUp, PlatformerRight}
+
+## These are the Transform2Ds for the 5 modes.
+## They are used for gravity, jump, and movment 
+## calculations so the TopDown transform should
+## nullify any vectors to which it is applied.
+var mode_transforms = {
+	0: Transform2D(0, Vector2.ZERO, 0, Vector2.ZERO), # TopDown mode has no direction in this sense so apply a 0 scale.
+	1: Transform2D(0 * TAU/4, Vector2.ZERO),
+	2: Transform2D(1 * TAU/4, Vector2.ZERO),
+	3: Transform2D(2 * TAU/4, Vector2.ZERO),
+	4: Transform2D(3 * TAU/4, Vector2.ZERO),
 }
 
 func _ready():

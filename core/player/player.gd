@@ -4,20 +4,27 @@ class_name Player extends RigidBody2D
 @export var move_velocity:float=1000
 @export var jump_velocity:float=500
 var gravity_strength=ProjectSettings.get_setting("physics/2d/default_gravity")
-@export var acceleration:int = 10
-@export var deacceleration:int = 40
-@export var terminal_velocity:int = 1500
-#enum modes {TopDown, PlatformerDown, PlatformerUp, PlatformerLeft, PlatformerRight}
+@export var acceleration:float = 10
+@export var deacceleration:float = 40
+@export var terminal_velocity:float = 1500
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("debug key"):
+		print(mode)
+		set_mode((mode + 1)%5)
 
 func _integrate_forces(_state:PhysicsDirectBodyState2D):
 	if mode == Core.modes.TopDown: # TopDown mode.
 		pass
 	else: # one of the Platformer modes.
-		linear_velocity += Core.gravity[mode]*gravity_strength*_state.step
+		# apply the transformation for the current mode to the default gravity
+		var gravity = Core.mode_transforms[mode] * Vector2.DOWN
+		
+		# apply gravity.
+		linear_velocity += gravity*gravity_strength*_state.step
+		
 		var dir = Input.get_axis("player left","player right")
 		if dir:
-			linear_velocity = lerp(linear_velocity, Core.gravity[mode].rotated(-TAU/4) * dir * move_velocity, acceleration*_state.step)
-			
 			if mode == Core.modes.PlatformerDown:
 				linear_velocity.x = lerp(linear_velocity.x,dir*move_velocity,acceleration*_state.step)
 			elif mode == Core.modes.PlatformerUp:
@@ -32,19 +39,21 @@ func _integrate_forces(_state:PhysicsDirectBodyState2D):
 			elif mode in [Core.modes.PlatformerLeft,Core.modes.PlatformerRight]: # If the gravity direction is left or right.
 				linear_velocity.y = lerp(linear_velocity.y,0.0,deacceleration*_state.step)
 		
+		# apply jump forces.
 		if Input.is_action_just_pressed("player jump"):
-			linear_velocity -= Core.gravity[mode]*jump_velocity
+			linear_velocity += -gravity*jump_velocity
 		
-		linear_velocity.y=clamp(linear_velocity.y,-terminal_velocity,terminal_velocity)
-		linear_velocity.x=clamp(linear_velocity.x,-terminal_velocity,terminal_velocity)
+		# apply terminal velocity.
+		linear_velocity = linear_velocity.clamp(-Vector2.ONE * terminal_velocity, Vector2.ONE * terminal_velocity)
 
 func _on_body_entered(body):
-	if body.is_in_group("terrain"):pass
+	if body.is_in_group("terrain"):
+		pass
 
 func set_mode(_mode:int):
 	mode = _mode
-	rotation = Core.gravity[_mode].angle()-(TAU/4)
-	if _mode == Core.modes.TopDown:
+	rotation = Core.mode_transforms[mode].get_rotation()
+	if mode == Core.modes.TopDown:
 		$topdown_collision.set_deferred("disabled", false)
 		$platformer_collision.set_deferred("disabled", true)
 	else:
