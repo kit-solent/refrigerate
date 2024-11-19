@@ -20,6 +20,15 @@ var debug_frame:bool = false
 
 enum modes {TopDown, PlatformerDown, PlatformerLeft, PlatformerUp, PlatformerRight}
 
+var mode_names = ["TopDown", "PlatformerDown", "PlatformerLeft", "PlatformerUp", "PlatformerRight"]
+var mode_colours = [
+	Color("ff000037"),
+	Color("2428987b"),
+	Color("00ff0033"),
+	Color("ffff0069"),
+	Color("ff00ff5f")
+]
+
 ## These are the Transform2Ds for the 5 modes.
 ## They are used for gravity, jump, and movment 
 ## calculations so the TopDown transform should
@@ -47,7 +56,7 @@ func _process(_delta:float):
 	debug_frame = Input.is_action_just_pressed("debug key") and debug
 	
 	# emit the debug_action when the debug key is pressed.
-	if Input.is_action_just_pressed("debug key"):
+	if debug_frame:
 		debug_action.emit()
 
 ## User Authentication

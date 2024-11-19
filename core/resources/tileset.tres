@@ -151,7 +151,7 @@ polygon = PackedVector2Array(-32, -16, -32, 16, -16, 16, -16, 32, 16, 32, 16, -3
 polygon = PackedVector2Array(-16, -32, -16, -16, -32, -16, -32, 16, 16, 16, 16, -32)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jrbhc"]
-resource_name = "MossyTerrain"
+resource_name = "Mossy Terrain"
 texture = ExtResource("1_c4snc")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
@@ -614,7 +614,7 @@ resource_name = "PlatformerDown"
 texture = ExtResource("1_qe3mw")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/modulate = Color(0, 0, 100, 0.2)
+0:0/0/modulate = Color(0.141176, 0.156863, 0.596078, 0.482353)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3x4iy"]
 resource_name = "PlatformerUp"

@@ -31,6 +31,10 @@ folder_colors={
 "res://levels/": "blue"
 }
 
+[global_group]
+
+players=""
+
 [input]
 
 "debug key"={
