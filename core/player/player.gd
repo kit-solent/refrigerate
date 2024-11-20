@@ -8,9 +8,9 @@ var gravity_strength=ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var deacceleration:float = 40
 @export var terminal_velocity:float = 1500
 
-func _process(delta: float):
+func _process(_delta: float):
 	if Core.debug_frame:
-		set_mode((mode + 1)%5)
+		print(rotation_degrees)
 
 func _integrate_forces(_state:PhysicsDirectBodyState2D):
 	if mode == Core.modes.TopDown: # TopDown mode.
@@ -51,9 +51,8 @@ func _on_body_entered(body):
 
 func set_mode(_mode:int):
 	mode = _mode
-	rotation = Core.mode_transforms[mode].get_rotation()
-	print(mode)
-	print(rotation)
+	$sprite.set_rotation(Core.mode_transforms[mode].get_rotation())
+	print(rotation_degrees)
 	if mode == Core.modes.TopDown:
 		$topdown_collision.set_deferred("disabled", false)
 		$platformer_collision.set_deferred("disabled", true)
