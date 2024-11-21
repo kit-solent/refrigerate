@@ -44,14 +44,20 @@ func _integrate_forces(_state:PhysicsDirectBodyState2D):
 		
 		# apply terminal velocity.
 		linear_velocity = linear_velocity.clamp(-Vector2.ONE * terminal_velocity, Vector2.ONE * terminal_velocity)
+	
+	# TODO: This works but seems hacky.
+	rotation = Core.mode_transforms[mode].get_rotation()
 
 func _on_body_entered(body):
 	if body.is_in_group("terrain"):
 		pass
 
+
+var rot:float = 0
 func set_mode(_mode:int):
 	mode = _mode
-	$sprite.set_rotation(Core.mode_transforms[mode].get_rotation())
+	set_rotation(Core.mode_transforms[mode].get_rotation())
+	rot = Core.mode_transforms[mode].get_rotation()
 	print(rotation_degrees)
 	if mode == Core.modes.TopDown:
 		$topdown_collision.set_deferred("disabled", false)
