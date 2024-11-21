@@ -1,5 +1,16 @@
 class_name Tools extends Node
 
+func rect_to_polygon(rect:Rect2):
+	"""
+	Converts the given Rect2 to a polygon (PackedVector2Array)
+	"""
+	return PackedVector2Array([
+		rect.position,
+		rect.position + Vector2.RIGHT * rect.size.x,
+		rect.end,
+		rect.position + Vector2.DOWN * rect.size.y
+	])
+
 func wrap_slice(arr:Array, start:int, end:int):
 	"""
 	An Array slicing function that wraps arround and handles slicing backwards.

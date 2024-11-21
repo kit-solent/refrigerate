@@ -18,24 +18,27 @@ func _process(_delta:float):
 		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
 		pair.get_node("sub_viewport/camera_2d").global_position = pair.global_position# + (target.global_position - global_position)
 		
+		$markerthingy.global_position = pair.global_position
+		$markerthingy.show()
+		
 		# update the view
 		if $on_screen_notifier.is_on_screen():
 			set_view(target)
-		if Core.debug_frame:
-			on = not on
 
-var on = true
 @warning_ignore("shadowed_variable")
 func set_view(target:Node):
 	# TODO: There is actually flicker than you can quite easily see
 	# for complex shapes and certain target positions.
 	
-	if not on:return
 	# clear the existing polygons
 	clear_view()
 	
 	# add new polygons
 	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
+	
+	if Core.debug_state:
+		polygons = [Core.tools.rect_to_polygon(get_local_bounds())]
+	
 	for i in polygons:
 		var new = Polygon2D.new()
 		new.polygon = i

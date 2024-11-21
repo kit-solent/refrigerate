@@ -17,6 +17,7 @@ signal debug_action
 var tools = Tools.new()
 
 var debug_frame:bool = false
+var debug_state:bool = false
 
 enum modes {TopDown, PlatformerDown, PlatformerLeft, PlatformerUp, PlatformerRight}
 
@@ -54,6 +55,7 @@ func _ready():
 func _process(_delta:float):
 	# the frame is a debug frame if the debug key has been pressed and we are in debug mode.
 	debug_frame = Input.is_action_just_pressed("debug key") and debug
+	debug_state = Input.is_action_pressed("debug key") and debug
 	
 	# emit the debug_action when the debug key is pressed.
 	if debug_frame:

@@ -15,9 +15,7 @@ func _ready():
 
 func _process(_delta):
 	$view/world/meta/camera.global_transform=camera_target.global_transform
-	
-	if Core.debug_frame:
-		$view/world/meta/mode_overides.visible = not $view/world/meta/mode_overides.visible
+	#$view/world/meta/camera.global_position=camera_target.global_position
 
 func get_player():
 	return $view/world/players/player

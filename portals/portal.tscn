@@ -29,4 +29,10 @@ rect = Rect2(-32, -64, 64, 128)
 visible = false
 texture = SubResource("ViewportTexture_fyvk7")
 
+[node name="markerthingy" type="ColorRect" parent="."]
+visible = false
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(0.102615, 0.716865, 0.675161, 1)
+
 [connection signal="screen_exited" from="on_screen_notifier" to="." method="clear_view"]

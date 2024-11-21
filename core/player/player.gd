@@ -8,10 +8,6 @@ var gravity_strength=ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var deacceleration:float = 40
 @export var terminal_velocity:float = 1500
 
-func _process(_delta: float):
-	if Core.debug_frame:
-		print(rotation_degrees)
-
 func _integrate_forces(_state:PhysicsDirectBodyState2D):
 	if mode == Core.modes.TopDown: # TopDown mode.
 		pass
@@ -45,20 +41,21 @@ func _integrate_forces(_state:PhysicsDirectBodyState2D):
 		# apply terminal velocity.
 		linear_velocity = linear_velocity.clamp(-Vector2.ONE * terminal_velocity, Vector2.ONE * terminal_velocity)
 	
-	# TODO: This works but seems hacky.
-	rotation = Core.mode_transforms[mode].get_rotation()
+	# TODO: make it go the right way. Can get stuck on floor. Probably a rigidbody/smooth collisions problem.
+	if update:
+		create_tween().tween_property(self, "rotation", Core.mode_transforms[mode].get_rotation(), 1.0)
+		update = false
 
 func _on_body_entered(body):
 	if body.is_in_group("terrain"):
 		pass
 
 
-var rot:float = 0
+var update = false
 func set_mode(_mode:int):
 	mode = _mode
-	set_rotation(Core.mode_transforms[mode].get_rotation())
-	rot = Core.mode_transforms[mode].get_rotation()
-	print(rotation_degrees)
+	print(mode)
+	update = true
 	if mode == Core.modes.TopDown:
 		$topdown_collision.set_deferred("disabled", false)
 		$platformer_collision.set_deferred("disabled", true)
