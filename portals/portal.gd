@@ -7,7 +7,7 @@ class_name Portal extends Node2D
 func _ready():
 	$sub_viewport.world_2d = get_viewport().world_2d
 	
-	# find the bounding rectangle of the line, expand it for error margin, and assign it to the on screen notifyer.
+	# find the bounding rectangle of the line, expand it for error margin, and assign it to the on screen notifier.
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
 
 func _process(_delta:float):
