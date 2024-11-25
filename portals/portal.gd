@@ -4,6 +4,9 @@ class_name Portal extends Node2D
 
 @onready var target:Node = Core.main.get_player()
 
+func _draw():
+	draw_rect(get_local_bounds(), Color.RED, false)
+
 func _ready():
 	$sub_viewport.world_2d = get_viewport().world_2d
 	
@@ -11,6 +14,8 @@ func _ready():
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
 
 func _process(_delta:float):
+	if Core.debug_frame:
+		queue_redraw()
 	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
 	# the portal should also only be drawn if it's target is within a certain distance of the portal.
 	if pair:

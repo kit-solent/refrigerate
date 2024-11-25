@@ -3,11 +3,9 @@
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
+[ext_resource type="Environment" uid="uid://cuprafktv5kd0" path="res://core/resources/environment.tres" id="3_7fo0t"]
 [ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/resources/inventory_slot.tscn" id="3_yiyqq"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
-
-[sub_resource type="Environment" id="Environment_ovp43"]
-background_mode = 3
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_65x8q"]
 
@@ -48,7 +46,7 @@ position_smoothing_enabled = true
 visible = false
 
 [node name="world_environment" type="WorldEnvironment" parent="view/world/meta"]
-environment = SubResource("Environment_ovp43")
+environment = ExtResource("3_7fo0t")
 
 [node name="temp" type="Node2D" parent="view/world"]
 
