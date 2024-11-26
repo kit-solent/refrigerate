@@ -7,8 +7,18 @@ extends Node
 @export var debug = false
 
 @export_group("Mode Overide Colors")
+## The color ascociated with the top down gravity mode.
 @export var topdown_color:Color
+## The color ascociated with the platformer gravity mode
 @export var platformer_color:Color
+
+@export_group("Resources")
+@export var world:World2D
+@export var theme:Theme
+@export var tileset:TileSet
+@export var environment:Environment
+@export var font:FontFile
+
 
 @onready var main:Node = null
 
