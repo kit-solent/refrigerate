@@ -3,6 +3,7 @@ class_name ModeOveride extends Area2D
 
 func _on_body_entered(body):
 	return # TODO: temporary
+	@warning_ignore("unreachable_code")
 	if body.is_in_group("players"):
 		body.set_mode(mode)
 

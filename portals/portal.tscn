@@ -23,8 +23,6 @@ disable_3d = true
 [node name="on_screen_notifier" type="VisibleOnScreenNotifier2D" parent="."]
 rect = Rect2(-32, -64, 64, 128)
 
-[node name="camera" type="Camera2D" parent="."]
-
 [node name="texture_storage" type="Polygon2D" parent="."]
 visible = false
 texture = SubResource("ViewportTexture_fyvk7")

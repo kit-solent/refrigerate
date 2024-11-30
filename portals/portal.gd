@@ -21,9 +21,9 @@ func _process(_delta:float):
 	if pair:
 		# move the pairs camera to the right position. Global coordinates must be used because the
 		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
-		pair.get_node("sub_viewport/camera_2d").global_position = pair.global_position# + (target.global_position - global_position)
+		$sub_viewport/camera_2d.global_position = pair.global_position# + (target.global_position - global_position)
 		
-		$markerthingy.global_position = pair.global_position
+		$markerthingy.global_position = $sub_viewport/camera_2d.global_position * $sub_viewport/camera_2d.get_viewport_transform()
 		$markerthingy.show()
 		
 		# update the view
