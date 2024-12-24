@@ -1,6 +1,8 @@
 class_name ModeOveride extends Area2D
 @export_enum("TopDown","PlatformerDown","PlatformerLeft","PlatformerUp","PlaformerRight") var mode=1
 
+var gravity_shader = preload("res://core/resources/shaders/gravity.gdshader")
+
 func _on_body_entered(body):
 	return # TODO: temporary
 	@warning_ignore("unreachable_code")
@@ -17,4 +19,6 @@ func set_polygon(polygon:PackedVector2Array):
 func set_mode(_mode:int):
 	mode = _mode
 	add_to_group(Core.mode_names[mode])
-	$visuals.color = Core.mode_colours[mode]
+	$visuals.material.shader = gravity_shader
+	$visuals.material.shader
+	#$visuals.color = Core.mode_colours[mode]

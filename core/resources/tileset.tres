@@ -1,8 +1,7 @@
-[gd_resource type="TileSet" load_steps=13 format=3 uid="uid://b2s0nutp63jpv"]
+[gd_resource type="TileSet" load_steps=11 format=3 uid="uid://b2s0nutp63jpv"]
 
 [ext_resource type="Texture2D" uid="uid://cy17vuxs8proy" path="res://core/assets/mossy_tileset.png" id="1_ow7sq"]
 [ext_resource type="Texture2D" uid="uid://dg0a4lrrejvrb" path="res://core/assets/topdown.tres" id="2_nyunl"]
-[ext_resource type="Shader" path="res://core/resources/shaders/wobble.gdshader" id="3_e3xc7"]
 [ext_resource type="Texture2D" uid="uid://bhnppp1nwuqk" path="res://core/assets/platformer.tres" id="4_oq2lv"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_66sc8"]
@@ -117,45 +116,29 @@ texture = ExtResource("2_nyunl")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ewv60"]
-shader = ExtResource("3_e3xc7")
-shader_parameter/waveAmplitude = 0.25
-shader_parameter/correctVertex = true
-shader_parameter/waveFrequency = 10.0
-shader_parameter/verticalWave = true
-shader_parameter/keepTransparency = true
-shader_parameter/useTime = true
-shader_parameter/waveSpeed = 1.0
-shader_parameter/progress = 0.0
-shader_parameter/firstHalf = 0.5
-shader_parameter/secondHalf = 0.5
-shader_parameter/freezeFirstHalf = false
-shader_parameter/freezeSecondHalf = false
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fqxxm"]
 resource_name = "PlatformerDown"
 texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/material = SubResource("ShaderMaterial_ewv60")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qicur"]
 resource_name = "PlatformerLeft"
+texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/modulate = Color(1, 1, 0, 0.411765)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3x4iy"]
 resource_name = "PlatformerUp"
+texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/modulate = Color(0, 1, 0, 0.2)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_knsr6"]
 resource_name = "PlatformerRight"
+texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
-0:0/0/modulate = Color(1, 0, 1, 0.372549)
 
 [resource]
 tile_size = Vector2i(64, 64)
