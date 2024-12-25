@@ -29,7 +29,7 @@ polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [node name="sprite_2d" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_k501q")
-position = Vector2(57.0313, 47.8749)
+position = Vector2(58, 47)
 scale = Vector2(0.109922, 0.0928128)
 texture = ExtResource("3_sjarl")
 
