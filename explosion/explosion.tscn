@@ -2,4 +2,7 @@
 
 [node name="explosion" type="Node2D"]
 
-[node name="gpu_particles_2d" type="GPUParticles2D" parent="."]
+[node name="color_rect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(64, 64)
+offset_right = 64.0
+offset_bottom = 64.0

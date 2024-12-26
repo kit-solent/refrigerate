@@ -1,16 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://buv31evgnkci"]
+[gd_scene load_steps=4 format=3 uid="uid://buv31evgnkci"]
 
 [ext_resource type="Script" path="res://core/resources/ModeOveride.gd" id="1_b20d0"]
 [ext_resource type="Shader" path="res://core/resources/shaders/gravity.gdshader" id="2_166k7"]
-[ext_resource type="Texture2D" uid="uid://dl2lsrlppi8pr" path="res://core/assets/map.svg" id="3_sjarl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_24mp8"]
-shader = ExtResource("2_166k7")
-shader_parameter/direction = null
-shader_parameter/speed = null
-shader_parameter/density = null
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_k501q"]
 shader = ExtResource("2_166k7")
 shader_parameter/direction = null
 shader_parameter/speed = null
@@ -25,12 +18,5 @@ polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [node name="visuals" type="Polygon2D" parent="."]
 material = SubResource("ShaderMaterial_24mp8")
-polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-
-[node name="sprite_2d" type="Sprite2D" parent="."]
-material = SubResource("ShaderMaterial_k501q")
-position = Vector2(58, 47)
-scale = Vector2(0.109922, 0.0928128)
-texture = ExtResource("3_sjarl")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

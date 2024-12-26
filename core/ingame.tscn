@@ -43,6 +43,7 @@ ignore_rotation = false
 position_smoothing_enabled = true
 
 [node name="mode_overides" type="Node2D" parent="view/world/meta"]
+visible = false
 
 [node name="world_environment" type="WorldEnvironment" parent="view/world/meta"]
 environment = ExtResource("3_7fo0t")

@@ -20,5 +20,4 @@ func set_mode(_mode:int):
 	mode = _mode
 	add_to_group(Core.mode_names[mode])
 	$visuals.material.shader = gravity_shader
-	$visuals.material.shader
 	#$visuals.color = Core.mode_colours[mode]

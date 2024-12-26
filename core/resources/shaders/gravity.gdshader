@@ -9,7 +9,7 @@ float random (vec2 st) {
 } // TODO
 
 void fragment() {
-	if (random(UV) < 0.005) {
+	if (random(UV) < 0.05) {
 		COLOR = vec4(1.0, 0.0, 0.0, 1.0);
 	} else {
 		COLOR = vec4(0.0, 1.0, 0.0, 1.0);
