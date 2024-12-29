@@ -586,30 +586,7 @@ func transform_array(array:PackedVector2Array, transform:Vector2):
 	
 	return new
 
-
-
-
-func print_desmos(obj, hint:String = ""):
+func visual_node(node:Node):
 	"""
-	Prints a string reperesentation of certain objects that can be pasted into
-	desmos (https://www.desmos.com/calculator) for quick visualisation.
-	The `hint` parameter is used to differentiate between entities with the same
-	object reperesentation e.g. both lines and polygons are PackedVector2Arrays.
+	Returns a visual reperesentation of the given node.
 	"""
-	@warning_ignore("unused_variable")
-	var result = ""
-	if obj is Polygon2D:
-		obj = obj.polygon
-		hint = "polygon"
-	if obj is Line2D:
-		obj = obj.points
-		hint = "line"
-	
-	if obj is PackedVector2Array:
-		if hint == "polygon":
-			result += "polygon("
-			# TODO this could be worth finishing. Could also write a scene to display these sorts of things
-		if hint == "line":
-			pass
-		else:
-			printerr("unsupported hint: "+hint+" for object type PackedVector2Array.")
