@@ -4,27 +4,21 @@ class_name Portal extends Node2D
 
 @onready var target:Node = Core.main.get_player()
 
-func _draw():
-	draw_rect(get_local_bounds(), Color.RED, false)
-
 func _ready():
 	$sub_viewport.world_2d = get_viewport().world_2d
 	
 	# find the bounding rectangle of the line, expand it for error margin, and assign it to the on screen notifier.
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
+	
+	$sub_viewport/camera_2d/color_rect/label.text = name
 
 func _process(_delta:float):
-	if Core.debug_frame:
-		queue_redraw()
 	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
 	# the portal should also only be drawn if it's target is within a certain distance of the portal.
 	if pair:
 		# move the pairs camera to the right position. Global coordinates must be used because the
 		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
-		$sub_viewport/camera_2d.global_position = pair.global_position# + (target.global_position - global_position)
-		
-		$markerthingy.global_position = $sub_viewport/camera_2d.global_position * $sub_viewport/camera_2d.get_viewport_transform()
-		$markerthingy.show()
+		$sub_viewport/camera_2d.global_position = pair.global_position
 		
 		# update the view
 		if $on_screen_notifier.is_on_screen():
@@ -40,9 +34,6 @@ func set_view(target:Node):
 	
 	# add new polygons
 	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
-	
-	if Core.debug_state:
-		polygons = [Core.tools.rect_to_polygon(get_local_bounds())]
 	
 	for i in polygons:
 		var new = Polygon2D.new()

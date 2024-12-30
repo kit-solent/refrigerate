@@ -585,8 +585,3 @@ func transform_array(array:PackedVector2Array, transform:Vector2):
 		new.append(i + transform)
 	
 	return new
-
-func visual_node(node:Node):
-	"""
-	Returns a visual reperesentation of the given node.
-	"""
