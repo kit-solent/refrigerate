@@ -54,17 +54,18 @@ func draw_water_body():
 	
 	## construct the polygon using the polygon template and the surface points.
 	# deep copy the template
-	var water_polygon = []
+	var water_polygon = surface_points
 	
 	var counter = 0
 	for i in polygon:
 		if i[0]:
-			#if the point is a spring
-			water_polygon.append()
-	water_polygon_points.append(Vector2(water_polygon_points[-1].x, bottom))
-	water_polygon_points.append(Vector2(water_polygon_points[0].x, bottom))
+			pass
+			# if the point is a spring
+			#water_polygon.append()
+	water_polygon.append(Vector2(water_polygon[-1].x, water_polygon[-1].y + 1000))
+	water_polygon.append(Vector2(water_polygon[0].x, water_polygon[0].y + 1000))
 	
-	$polygon.polygon = water_polygon_points
+	$polygon.polygon = water_polygon
 
 func new_border():
 	var curve = Curve2D.new()

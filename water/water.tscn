@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dkrdhmdbjussb"]
+[gd_scene load_steps=6 format=3 uid="uid://dkrdhmdbjussb"]
 
 [ext_resource type="Script" path="res://water/water.gd" id="1_ip5ep"]
+[ext_resource type="PackedScene" uid="uid://clx58lsdco3a2" path="res://water/spring.tscn" id="2_lqdv7"]
 [ext_resource type="Script" path="res://water/smooth_path.gd" id="3_npexg"]
 
 [sub_resource type="Curve2D" id="Curve2D_7x5jc"]
@@ -9,12 +10,38 @@
 
 [node name="water" type="Node2D"]
 script = ExtResource("1_ip5ep")
-k = null
-d = null
-spread = null
-border_thickness = null
 
-[node name="spring_groups" type="Node2D" parent="."]
+[node name="springs" type="Node2D" parent="."]
+
+[node name="spring" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(60, 116)
+
+[node name="spring2" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(109, 117)
+
+[node name="spring3" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(146, 114)
+
+[node name="spring4" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(207, 117)
+
+[node name="spring5" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(243, 119)
+
+[node name="spring6" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(282, 119)
+
+[node name="spring7" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(329, 120)
+
+[node name="spring8" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(376, 119)
+
+[node name="spring9" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(418, 118)
+
+[node name="spring10" parent="springs" instance=ExtResource("2_lqdv7")]
+position = Vector2(457, 120)
 
 [node name="polygon" type="Polygon2D" parent="."]
 

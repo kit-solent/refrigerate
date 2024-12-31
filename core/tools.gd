@@ -81,7 +81,7 @@ func merge_polygons(polygons:Array[PackedVector2Array]):
 	
 	# remove redundant points i.e. points that when removed don't change the
 	# shape of the polygon
-	var new_polygons = []
+	var new_polygons:Array[PackedVector2Array] = []
 	for polygon in merged_polygons:
 		# decolinearise_line works just as well on polygons.
 		new_polygons.append(decolinearise_line(polygon))
