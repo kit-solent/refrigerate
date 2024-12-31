@@ -3,7 +3,6 @@ extends Control
 @export var main_shader:Shader
 @export var overlay_shader:Shader
 
-
 @onready var camera_target=$view/world/players/player
 
 func _ready():

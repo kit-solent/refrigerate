@@ -1,28 +1,26 @@
 extends Node2D
 
-@export var k = 0.015
-@export var d = 0.03
-@export var spread = 0.0002
+@export var k:float = 0.015
+@export var d:float = 0.03
+@export var spread:float = 0.0002
 @export var border_thickness:float = 1.1
 
-var spring = preload("res://water/spring.tscn")
-var springs = []
+var spring_scene = preload("res://water/spring.tscn")
 var passes = 8
-
-var depth = 1000
-var target_height = global_position.y
-var bottom = target_height + depth
+var distance_between_springs = 80
+var polygon = []
 
 func _ready():
-	$water_border.width = border_thickness
+	$border.width = border_thickness
 	
-	for i in $springs.get_children():
-		springs.append(i)
-		i.initialise()
-	
-	splash(2, 50)
+	for i in range(len($springs.get_children())):
+		var thingy = $springs.get_children()[i]
+		thingy.initialise(i)
+		thingy.set_collision_width(distance_between_springs)
+		thingy.splash.connect(splash)
 
 func _physics_process(_delta):
+	var springs = $springs.get_children()
 	for i in springs:
 		i.water_update(k, d)
 	
@@ -47,36 +45,43 @@ func _physics_process(_delta):
 	draw_water_body()
 
 func splash(index, speed):
-	if index >= 0 and index < springs.size():
-		springs[index].velocity += speed
+	if index >= 0 and index < $springs.get_children().size():
+		$springs.get_children()[index].velocity += speed
 
 func draw_water_body():
-	var surface_points = PackedVector2Array()
+	# extract all the surface points from the curve
+	var surface_points:PackedVector2Array = $border.curve.get_baked_points()
 	
-	for i in springs:
-		surface_points.append(i.position)
+	## construct the polygon using the polygon template and the surface points.
+	# deep copy the template
+	var water_polygon = []
 	
-	var first_index = 0
-	var last_index  = surface_points.size() - 1
+	var counter = 0
+	for i in polygon:
+		if i[0]:
+			#if the point is a spring
+			water_polygon.append()
+	water_polygon_points.append(Vector2(water_polygon_points[-1].x, bottom))
+	water_polygon_points.append(Vector2(water_polygon_points[0].x, bottom))
 	
-	var water_polygon_points = surface_points
-	
-	water_polygon_points.append(Vector2(surface_points[last_index].x, bottom))
-	water_polygon_points.append(Vector2(surface_points[first_index].x, bottom))
-	
-	$polygon_2d.polygon = water_polygon_points
+	$polygon.polygon = water_polygon_points
 
 func new_border():
-	var curve = Curve2D.new().duplicate()
+	var curve = Curve2D.new()
 	
-	var surface_points = []
-	for i in range(springs.size()):
-		surface_points.append(springs[i].position)
-		
-	for i in range(surface_points.size()):
-		curve.add_point(surface_points[i])
+	for spring in $springs.get_children():
+		curve.add_point(spring.position)
 	
-	$water_border.curve = curve
-	$water_border.smooth(true)
-	$water_border.queue_redraw()
-	
+	$border.curve = curve
+	$border.smooth(true)
+	$border.queue_redraw()
+
+func set_polygon(poly):
+	polygon = poly
+	for i in polygon:
+		# i = [is_spring:bool, position:Vector2]
+		if i[0]:
+			var new = spring_scene.instantiate()
+			new.position = i[1]
+			$springs.add_child(new)
+		$polygon.polygon.append(i[1])

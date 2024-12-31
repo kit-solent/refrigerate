@@ -2,14 +2,14 @@ extends TileMapLayer
 
 @onready var mode_overides = get_parent().get_node("meta/mode_overides")
 var mode_overide_scene = preload("res://core/resources/ModeOveride.tscn")
+var wader_scene = preload("res://water/water.tscn")
 
 func create_regions(id:int):
 	"""
 	Returns an array of polygons of the merged tiles of the given id.
 	"""
 	var shapes:Array[PackedVector2Array] = []
-	var cells = get_used_cells_by_id(id)
-	for cell in cells:
+	for cell in get_used_cells_by_id(id):
 		# Construct a polygon (square) clockwise from the four corners of the cell.
 		shapes.append(PackedVector2Array([
 			# map_to_local returns the cell centre.
@@ -22,11 +22,53 @@ func create_regions(id:int):
 		# remove the cell
 		set_cell(cell)
 	
-	
 	# merge the polygons
 	shapes = Core.tools.merge_polygons(shapes)
 	
 	return shapes
+
+func create_water_regions(id:int):
+	"""
+	Like create_regions but takes into account surface points
+	and returns: Array[Array[Array[Vector2]]]
+	regions[
+		region[
+			[sub surface points],
+			[surface points],
+			[sub surface points],
+			etc,
+		],
+		region2[
+			etc
+		]
+	]
+	This is the format expected by the water setup method.
+	"""
+	var old_regions = create_regions(id)
+	var new_regions = []
+	
+	for old_region in old_regions:
+		# add the old region
+		new_regions.append(old_region)
+		
+		# TODO
+		
+		# add the points to the new region from the old region.
+		for point in old_region:
+			if get_cell_atlas_coords(point) == Vector2i(0, 0):
+				# if the cell is a top cell
+				new_regions[-1].append([true, Vector2(point)])
+			else:
+				new_regions[-1].append([false, Vector2(point)])
+	
+	# we now have an array of points where surface poins are marked with a `true` prefix
+	old_regions = new_regions
+	new_regions = []
+	# we need to make sure there are no regions with two distinct sets of surface points.
+	#
+	
+	return new_regions
+
 
 func clear_regions():
 	for region in mode_overides.get_children():
@@ -44,6 +86,18 @@ func update_regions():
 			overide.set_polygon(region)
 			mode_overides.add_child(overide)
 	
+	# add the water.
+	var water = create_water_regions(6)
+	for region in water:
+		var new = wader_scene.instantiate()
+		new.set_polygon(region)
+		get_parent().get_node("terrain").add_child(new)
+	# TODO: Currently this code adds all new water regions at the origin
+	# and positions the polygon points accordingly. This correctly places
+	# the polygon but means the position of the water node is at the origin
+	# This should be changed so that the origin of the water body is the top
+	# left of the minimum containing rect of the water tiles. The polygon
+	# points should then be positioned accordingly.
 
 func _ready():
 	update_regions()

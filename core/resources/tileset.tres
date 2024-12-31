@@ -1,7 +1,8 @@
-[gd_resource type="TileSet" load_steps=32 format=3 uid="uid://b2s0nutp63jpv"]
+[gd_resource type="TileSet" load_steps=34 format=3 uid="uid://b2s0nutp63jpv"]
 
 [ext_resource type="Texture2D" uid="uid://cy17vuxs8proy" path="res://core/assets/mossy_tileset.png" id="1_ow7sq"]
 [ext_resource type="Texture2D" uid="uid://dg0a4lrrejvrb" path="res://core/assets/topdown.tres" id="2_nyunl"]
+[ext_resource type="Texture2D" uid="uid://cmbfarkqjd05n" path="res://core/water.png" id="4_lx020"]
 [ext_resource type="Texture2D" uid="uid://bhnppp1nwuqk" path="res://core/assets/platformer.tres" id="4_oq2lv"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_66sc8"]
@@ -224,6 +225,19 @@ texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qaavw"]
+texture = ExtResource("4_lx020")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrains_peering_bit/right_side = 0
+0:0/0/terrains_peering_bit/bottom_right_corner = 0
+0:0/0/terrains_peering_bit/bottom_side = 0
+0:0/0/terrains_peering_bit/bottom_left_corner = 0
+0:0/0/terrains_peering_bit/left_side = 0
+0:1/0 = 0
+0:1/0/terrain_set = 0
+
 [resource]
 tile_size = Vector2i(64, 64)
 occlusion_layer_0/light_mask = 1
@@ -238,4 +252,5 @@ sources/2 = SubResource("TileSetAtlasSource_fqxxm")
 sources/3 = SubResource("TileSetAtlasSource_qicur")
 sources/4 = SubResource("TileSetAtlasSource_3x4iy")
 sources/5 = SubResource("TileSetAtlasSource_knsr6")
+sources/6 = SubResource("TileSetAtlasSource_qaavw")
 pattern_0 = SubResource("TileMapPattern_66sc8")

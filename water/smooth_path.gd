@@ -1,6 +1,6 @@
 class_name SmoothPath extends Path2D
 
-@export var spline_length:int = 8
+@export var spline_length:int = 24
 @export var _smooth:bool:
 	get:
 		return _smooth
@@ -14,7 +14,7 @@ class_name SmoothPath extends Path2D
 		straighten(value)
 
 @export var color:Color = Color(1,1,1,1)
-var width = 8
+@export var width = 8
 
 func straighten(value):
 	if not value: return

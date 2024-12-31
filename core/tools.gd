@@ -57,7 +57,7 @@ func get_centre(points):
 func merge_polygons(polygons:Array[PackedVector2Array]):
 	"""
 	Merges any adjacent or overlapping polygons into a single polygon.
-	Returns an array of polygons.
+	Returns an array of polygons. Also removes redundant colinear points.
 	"""
 	var merged_polygons = polygons.duplicate()
 	var has_merged = true
@@ -79,7 +79,14 @@ func merge_polygons(polygons:Array[PackedVector2Array]):
 			if has_merged:
 				break
 	
-	return merged_polygons
+	# remove redundant points i.e. points that when removed don't change the
+	# shape of the polygon
+	var new_polygons = []
+	for polygon in merged_polygons:
+		# decolinearise_line works just as well on polygons.
+		new_polygons.append(decolinearise_line(polygon))
+	
+	return new_polygons
 
 func line_bounds(line:PackedVector2Array):
 	"""
@@ -110,14 +117,23 @@ func has_point(rect:Rect2, point:Vector2):
 	"""
 	Returns `true` if `point` is within or on the border of `rect`.
 	"""
-	# try a normal check and a check with the point moved in (up and left) one pixel.
-	return rect.has_point(point) or rect.has_point(point - Vector2.ONE)
+	# has_point returns false if the point is on the right or bottom edges
+	# so cannot be used. Manualy check all cases
+	if point.x < rect.position.x:
+		return false
+	if point.x > rect.position.x + rect.size.x:
+		return false
+	if point.y < rect.position.y:
+		return false
+	if point.y > rect.position.y + rect.size.y:
+		return false
+	return true
 
 func fix_angle(angle:float):
 	"""
 	Forces angle to be positive.
 	"""
-	if angle < 0:
+	while angle < 0:
 		angle += TAU
 	
 	return float(angle)
@@ -138,22 +154,30 @@ func are_colinear(points:PackedVector2Array):
 	
 	return true
 
-func fix_line(line:PackedVector2Array):
+func decolinearise_line(line:PackedVector2Array):
 	"""
 	Removes any points that are colinear with their neibours from the line as they are redundant
 	and have no effect on the shape of the line.
 	"""
-	if len(line)==0:
-		return PackedVector2Array()
+	if len(line) < 3:
+		return line
 	
+	# start with only the first point of the line.
 	var new = PackedVector2Array([line[0]])
 	
+	# add all the other points if they are not colinear with their neibours.
 	for i in range(1, len(line) - 1): # loop from the 2nd point to the 2nd to last point
 		if not are_colinear(PackedVector2Array([line[i-1], line[i], line[i+1]])):
 			new.append(line[i])
 	
 	# add the final point
 	new.append(line[-1])
+	
+	# check the first and last points
+	if are_colinear(PackedVector2Array([new[-1], new[0], new[1]])):
+		new.remove_at(0)
+	if are_colinear(PackedVector2Array([new[-2], new[-1], new[0]])):
+		new.remove_at(-1)
 	
 	return new
 
@@ -317,9 +341,9 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	lines = temp
 	temp = []
 	
-	# apply fix_line to each line
+	# apply decolinearise_line to each line
 	for l in lines:
-		temp.append(fix_line(l))
+		temp.append(decolinearise_line(l))
 	
 	lines = temp
 	temp = []
