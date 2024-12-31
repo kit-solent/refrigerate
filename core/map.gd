@@ -18,13 +18,13 @@ func create_regions(id:int):
 			map_to_local(cell)+Vector2(+tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom right ( ⌞ )
 			map_to_local(cell)+Vector2(-tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom left ( ⌟ )
 		]))
-		
+
 		# remove the cell
 		set_cell(cell)
-	
+
 	# merge the polygons
 	shapes = Core.tools.merge_polygons(shapes)
-	
+
 	return shapes
 
 func create_water_regions(id:int):
@@ -46,13 +46,13 @@ func create_water_regions(id:int):
 	"""
 	var old_regions = create_regions(id)
 	var new_regions = []
-	
+
 	for old_region in old_regions:
 		# add the old region
 		new_regions.append(old_region)
-		
+
 		# TODO
-		
+
 		# add the points to the new region from the old region.
 		for point in old_region:
 			if get_cell_atlas_coords(point) == Vector2i(0, 0):
@@ -60,13 +60,13 @@ func create_water_regions(id:int):
 				new_regions[-1].append([true, Vector2(point)])
 			else:
 				new_regions[-1].append([false, Vector2(point)])
-	
+
 	# we now have an array of points where surface poins are marked with a `true` prefix
 	old_regions = new_regions
 	new_regions = []
 	# we need to make sure there are no regions with two distinct sets of surface points.
 	#
-	
+
 	return new_regions
 
 
@@ -77,7 +77,7 @@ func clear_regions():
 
 func update_regions():
 	clear_regions()
-	
+
 	for id in [1, 2, 3, 4, 5]: # these are the gravity regions.
 		var regions = create_regions(id)
 		for region in regions:
@@ -85,7 +85,7 @@ func update_regions():
 			overide.set_mode(id - 1)
 			overide.set_polygon(region)
 			mode_overides.add_child(overide)
-	
+
 	# add the water.
 	var water = create_water_regions(6)
 	for region in water:
@@ -101,3 +101,36 @@ func update_regions():
 
 func _ready():
 	update_regions()
+
+	#TODO: This is a temporary test of water.tscn
+	var poly:Array[PackedVector2Array] = [
+		PackedVector2Array([
+			Vector2(9, -2) * 64,
+			Vector2(6, -2) * 64,
+			Vector2(6, -1) * 64,
+			Vector2(5, -1) * 64,
+			Vector2(5,  1) * 64,
+			Vector2(-5, 1) * 64,
+			Vector2(-5, 0) * 64,
+			Vector2(-6, 0) * 64,
+			Vector2(-6, -2) * 64,
+		]),
+		PackedVector2Array([
+			Vector2(-6, -3) * 64,
+			Vector2(-1, -3) * 64,
+		]),
+		PackedVector2Array([
+			Vector2(-1, -2) * 64,
+			Vector2(-3, -2) * 64,
+			Vector2(-3, -1) * 64,
+			Vector2(3, -1) * 64,
+			Vector2(3, -2) * 64,
+			Vector2(4, -2) * 64,
+			Vector2(4, -3) * 64,
+		]),
+		PackedVector2Array([
+			Vector2(5, -3) * 64,
+			Vector2(9, -3) * 64,
+		])
+	]
+	$water.set_polygon(poly)

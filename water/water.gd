@@ -15,47 +15,49 @@ var distance_between_springs = 80
 # as spring groups or, alternativly there should be no surface sections for
 # an entirely enclosed water body.
 var polygon_parts:Array[PackedVector2Array] = []
-var has_surface:bool
 
-func _ready():
-	$border.width = border_thickness
-	
-	for i in range($springs.get_child_count()):
-		var thingy = $springs.get_children()[i]
-		thingy.initialise(i)
-		thingy.set_collision_width(distance_between_springs)
-		thingy.splash.connect(splash)
+# the water body starts with nothing so doesn't have a surface.
+var has_surface:bool = false
 
 func _physics_process(_delta):
-	$character_body_2d.velocity=get_global_mouse_position()-$character_body_2d.global_position
-	$character_body_2d.move_and_slide()
-	
-	var springs = $springs.get_children()
-	for i in springs:
-		i.water_update(k, d)
-	
-	var left_deltas = []
-	var right_deltas = []
-	
-	for i in range(springs.size()):
-		left_deltas.append(0)
-		right_deltas.append(0)
-	
-	for p in range(passes):
+	for group in $spring_groups.get_children():
+		# exclude the first child as that is the path
+		var springs = group.get_children().slice(1)
+		for i in springs:
+			i.water_update(k, d)
+		
+		var left_deltas = []
+		var right_deltas = []
+		
 		for i in range(springs.size()):
-			if i > 0:
-				# calculate the distance from the ith spring to its left neibour.
-				left_deltas[i] = spread * (springs[i].height - springs[i-1].height)
-				springs[i-1].velocity += left_deltas[i]
-			if i < springs.size() - 1:
-				right_deltas[i] = spread * (springs[i].height - springs[i+1].height)
-				springs[i+1].velocity += right_deltas[i]
+			left_deltas.append(0)
+			right_deltas.append(0)
+		
+		for p in range(passes):
+			for i in range(springs.size()):
+				# if the spring has a left neibour
+				if i > 0:
+					# calculate the distance from the ith spring to its left neibour.
+					left_deltas[i] = spread * (springs[i].position.y - springs[i-1].position.y)
+					springs[i-1].velocity += left_deltas[i]
+				
+				# if the spring has a right neibour
+				if i < springs.size() - 1:
+					# calculate the distance from the ith spring to its right neibour.
+					right_deltas[i] = spread * (springs[i].position.y - springs[i+1].position.y)
+					springs[i+1].velocity += right_deltas[i]
 	
 	draw_water_body()
 
-func splash(index, speed):
-	if index >= 0 and index < $springs.get_child_count():
-		$springs.get_children()[index].velocity += speed
+func splash(speed, group, spring):
+	# first check the group exists.
+	if group >= 0 and group < $spring_groups.get_child_count():
+		var group_node = $spring_groups.get_child(group)
+		# then check the spring exists in that group. Offset by 1 to exclude the SmoothPath.
+		if spring+1 >= 0 and spring+1 < group_node.get_child_count():
+			var spring_node = group_node.get_child(spring + 1)
+			# then apply the speed to the given spring.
+			spring_node.velocity += speed
 
 func draw_water_body():
 	# the borders must be updated even if they are not shown as they are used
@@ -74,9 +76,9 @@ func draw_water_body():
 		# now add the surface section
 		if has_surface:
 			# get the spring group using the polygon_part index
-			var group = $spring_groups.get_children()[polygon_part]
+			var group = $spring_groups.get_child(polygon_part)
 			# the first child in any group is it's curve.
-			var curve = group.get_children()[0]
+			var curve = group.get_child(0)
 			var surface_points = curve.curve.get_baked_points()
 			
 			# add the points to the polygon
@@ -85,17 +87,16 @@ func draw_water_body():
 	$polygon.polygon = temp_polygon
 
 func update_borders():
-	for i in range($spring_groups.get_child_count()):
-		pass
-	
-	var curve = Curve2D.new()
-	
-	for spring in $springs.get_children():
-		curve.add_point(spring.position)
-	
-	$border.curve = curve
-	$border.smooth(true)
-	$border.queue_redraw()
+	for group in $spring_groups.get_children():
+		var border = group.get_child(0)
+		var curve = Curve2D.new()
+		
+		for spring in group.get_children().slice(1):
+			curve.add_point(spring.position)
+		
+		border.curve = curve
+		border.smooth(true)
+		border.queue_redraw()
 
 func set_polygon(polygon_sections:Array[PackedVector2Array]):
 	"""
@@ -106,6 +107,10 @@ func set_polygon(polygon_sections:Array[PackedVector2Array]):
 	"""
 	# if there is more than 1 section then there will be at least 1 surface section.
 	has_surface = len(polygon_sections) > 1
+	
+	# set the collision detection polygon
+	for section in polygon_sections:
+		$area/collision_polygon_2d.polygon.append_array(section)
 	
 	# clear the existing springs and polygon sections.
 	for i in $spring_groups.get_children():
@@ -124,7 +129,8 @@ func set_polygon(polygon_sections:Array[PackedVector2Array]):
 			
 			# add the border for the group
 			var border = SmoothPath.new()
-			#TODO: border.color = border_color and for width/spline length
+			#TODO: border.color = border_color and for spline length
+			border.width = border_thickness
 			border.name = "border"
 			new_group.add_child(border)
 			
@@ -132,8 +138,12 @@ func set_polygon(polygon_sections:Array[PackedVector2Array]):
 			for point in polygon_section:
 				var new_spring = spring_scene.instantiate()
 				# name the springs starting with spring0, spring1, spring2, etc
-				new_spring.name = "spring" + str(new_group.get_child_count())
+				# subtract 1 to account for the SmoothPath
+				new_spring.name = "spring" + str(new_group.get_child_count() -1)
 				new_spring.position = point
+				new_spring.initialise()
+				new_spring.set_collision_width(distance_between_springs)
+				new_spring.splash.connect(splash.bind($spring_groups.get_child_count(), new_group.get_child_count() -1))
 				new_group.add_child(new_spring)
 				
 			$spring_groups.add_child(new_group)
@@ -141,5 +151,5 @@ func set_polygon(polygon_sections:Array[PackedVector2Array]):
 			polygon_parts.append(polygon_section)
 		
 		surface = not surface
-		
-		# TODO: Could trigger a redraw here?
+	
+	# TODO: Could trigger a redraw here?

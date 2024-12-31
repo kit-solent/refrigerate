@@ -1,67 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkrdhmdbjussb"]
+[gd_scene load_steps=2 format=3 uid="uid://dkrdhmdbjussb"]
 
 [ext_resource type="Script" path="res://water/water.gd" id="1_ip5ep"]
-[ext_resource type="PackedScene" uid="uid://clx58lsdco3a2" path="res://water/spring.tscn" id="2_lqdv7"]
-[ext_resource type="Script" path="res://water/smooth_path.gd" id="3_npexg"]
-
-[sub_resource type="Curve2D" id="Curve2D_7x5jc"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_kg4jn"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_jcs60"]
 
 [node name="water" type="Node2D"]
 script = ExtResource("1_ip5ep")
 
 [node name="spring_groups" type="Node2D" parent="."]
 
-[node name="springs" type="Node2D" parent="."]
-
-[node name="spring" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(60, 116)
-
-[node name="spring2" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(109, 117)
-
-[node name="spring3" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(146, 114)
-
-[node name="spring4" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(207, 117)
-
-[node name="spring5" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(243, 119)
-
-[node name="spring6" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(282, 119)
-
-[node name="spring7" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(329, 120)
-
-[node name="spring8" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(376, 119)
-
-[node name="spring9" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(418, 118)
-
-[node name="spring10" parent="springs" instance=ExtResource("2_lqdv7")]
-position = Vector2(457, 120)
-
 [node name="polygon" type="Polygon2D" parent="."]
-
-[node name="border" type="Path2D" parent="."]
-curve = SubResource("Curve2D_7x5jc")
-script = ExtResource("3_npexg")
-color = Color(1, 0, 1, 1)
 
 [node name="area" type="Area2D" parent="."]
 
-[node name="collision" type="CollisionShape2D" parent="area"]
-shape = SubResource("RectangleShape2D_kg4jn")
-
-[node name="character_body_2d" type="CharacterBody2D" parent="."]
-visible = false
-
-[node name="collision_shape_2d" type="CollisionShape2D" parent="character_body_2d"]
-shape = SubResource("CircleShape2D_jcs60")
-disabled = true
+[node name="collision_polygon_2d" type="CollisionPolygon2D" parent="area"]
