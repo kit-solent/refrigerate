@@ -108,8 +108,5 @@ func _process(_delta:float):
 ## Name: Refrigerate Game
 ## Birthday: 1/1/2000
 ## Email: refrigerate.game@gmail.com
-## Password: REDACTED
 ## Firebase url: https://refrigerate-580a7-default-rtdb.firebaseio.com/
-## 
-## 
 ########################################

@@ -4,12 +4,17 @@ extends TileMapLayer
 var mode_overide_scene = preload("res://core/resources/ModeOveride.tscn")
 var wader_scene = preload("res://water/water.tscn")
 
-func create_regions(id:int):
+func create_regions(id:int, atlas:Array=[], remove:bool=true):
 	"""
 	Returns an array of polygons of the merged tiles of the given id.
+	If atlas has items then only use tiles with atlas positions in atlas.
+	If remove is true tiles will be removed from the tilemap. Otherwise... they won't.
 	"""
 	var shapes:Array[PackedVector2Array] = []
 	for cell in get_used_cells_by_id(id):
+		if len(atlas)>0 and (not get_cell_atlas_coords(cell) in atlas):
+			continue # skip the cell if it is not in the atlas.
+		
 		# Construct a polygon (square) clockwise from the four corners of the cell.
 		shapes.append(PackedVector2Array([
 			# map_to_local returns the cell centre.
@@ -18,13 +23,14 @@ func create_regions(id:int):
 			map_to_local(cell)+Vector2(+tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom right ( ⌞ )
 			map_to_local(cell)+Vector2(-tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom left ( ⌟ )
 		]))
-
+		
 		# remove the cell
-		set_cell(cell)
-
+		if remove:
+			set_cell(cell)
+	
 	# merge the polygons
 	shapes = Core.tools.merge_polygons(shapes)
-
+	
 	return shapes
 
 func create_water_regions(id:int):
@@ -44,31 +50,19 @@ func create_water_regions(id:int):
 	]
 	This is the format expected by the water setup method.
 	"""
-	var old_regions = create_regions(id)
-	var new_regions = []
-
-	for old_region in old_regions:
-		# add the old region
-		new_regions.append(old_region)
-
-		# TODO
-
-		# add the points to the new region from the old region.
-		for point in old_region:
-			if get_cell_atlas_coords(point) == Vector2i(0, 0):
-				# if the cell is a top cell
-				new_regions[-1].append([true, Vector2(point)])
-			else:
-				new_regions[-1].append([false, Vector2(point)])
-
-	# we now have an array of points where surface poins are marked with a `true` prefix
-	old_regions = new_regions
-	new_regions = []
-	# we need to make sure there are no regions with two distinct sets of surface points.
-	#
-
-	return new_regions
-
+	var old_regions = create_regions(id, [], false) # don't delete the regions yet.
+	var new_regions:Array[PackedVector2Array] = []
+	for region in old_regions:
+		new_regions.append(region)
+		
+		var stup = false
+		while true:
+			pass
+	
+	for cell in get_used_cells_by_id(id):
+		set_cell(cell) # now delete all the tiles.
+	
+	return []
 
 func clear_regions():
 	for region in mode_overides.get_children():
@@ -77,7 +71,7 @@ func clear_regions():
 
 func update_regions():
 	clear_regions()
-
+	
 	for id in [1, 2, 3, 4, 5]: # these are the gravity regions.
 		var regions = create_regions(id)
 		for region in regions:
@@ -85,7 +79,7 @@ func update_regions():
 			overide.set_mode(id - 1)
 			overide.set_polygon(region)
 			mode_overides.add_child(overide)
-
+	
 	# add the water.
 	var water = create_water_regions(6)
 	for region in water:
@@ -101,7 +95,7 @@ func update_regions():
 
 func _ready():
 	update_regions()
-
+	
 	#TODO: This is a temporary test of water.tscn
 	var poly:Array[PackedVector2Array] = [
 		PackedVector2Array([

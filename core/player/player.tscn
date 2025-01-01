@@ -36,6 +36,8 @@ shape = SubResource("CapsuleShape2D_6jli1")
 
 [node name="light" type="PointLight2D" parent="."]
 shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
 texture = SubResource("GradientTexture2D_xqc1v")
 texture_scale = 20.0
 
