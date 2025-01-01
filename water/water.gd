@@ -4,7 +4,7 @@ extends Node2D
 @export var d:float = 0.03
 @export var spread:float = 0.0002
 @export var border_thickness:float = 1.1
-@export var splash_clamp:float = 10.0
+@export var splash_clamp:float = 6.0
 
 var spring_scene = preload("res://water/spring.tscn")
 var passes = 8
@@ -51,9 +51,6 @@ func _physics_process(_delta):
 	draw_water_body()
 
 func splash(speed, group, spring):
-	# clamp the speed
-	speed = clamp(speed, -splash_clamp, splash_clamp)
-	
 	# first check the group exists.
 	if group >= 0 and group < $spring_groups.get_child_count():
 		var group_node = $spring_groups.get_child(group)
@@ -62,6 +59,8 @@ func splash(speed, group, spring):
 			var spring_node = group_node.get_child(spring + 1)
 			# then apply the speed to the given spring.
 			spring_node.velocity += speed
+			# clamp the velocity of the spring.
+			spring_node.velocity = clamp(spring_node.velocity, -splash_clamp, splash_clamp)
 
 func draw_water_body():
 	# the borders must be updated even if they are not shown as they are used

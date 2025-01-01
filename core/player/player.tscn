@@ -1,21 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0un0qo6u4dpf"]
+[gd_scene load_steps=6 format=3 uid="uid://d0un0qo6u4dpf"]
 
 [ext_resource type="Script" path="res://core/player/player.gd" id="1_ryxhe"]
+[ext_resource type="Texture2D" uid="uid://bclpm4fnyi21t" path="res://core/resources/point_light_gradiet_texture.tres" id="2_lbx8w"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6jli1"]
 radius = 16.0
 height = 64.0
-
-[sub_resource type="Gradient" id="Gradient_v15vg"]
-interpolation_mode = 2
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_xqc1v"]
-gradient = SubResource("Gradient_v15vg")
-use_hdr = true
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(0, 0)
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ijsmq"]
 size = Vector2(120, 1)
@@ -37,8 +27,8 @@ shape = SubResource("CapsuleShape2D_6jli1")
 [node name="light" type="PointLight2D" parent="."]
 shadow_enabled = true
 shadow_filter = 1
-shadow_filter_smooth = 1.5
-texture = SubResource("GradientTexture2D_xqc1v")
+shadow_filter_smooth = 2.0
+texture = ExtResource("2_lbx8w")
 texture_scale = 20.0
 
 [node name="sprite" type="Sprite2D" parent="."]

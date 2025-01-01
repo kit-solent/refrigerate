@@ -4,7 +4,6 @@ var velocity = 0
 var force = 0
 var target_height = 0
 var motion_factor = 0.02
-#var collided_with:Node = null
 
 signal splash(speed)
 
@@ -28,10 +27,6 @@ func set_collision_width(value):
 	$area_2d/collision_shape_2d.shape.size = new_extents
 
 func _on_area_2d_body_entered(body):
-	#if body == collided_with:
-	#	return
-	#collided_with = body
-	
 	var speed
 	if body is RigidBody2D:
 		speed = body.linear_velocity.y * motion_factor

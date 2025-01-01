@@ -111,6 +111,10 @@ func _ready():
 		]),
 		PackedVector2Array([
 			Vector2(-6, -3) * 64,
+			Vector2(-5, -3) * 64,
+			Vector2(-4, -3) * 64,
+			Vector2(-3, -3) * 64,
+			Vector2(-2, -3) * 64,
 			Vector2(-1, -3) * 64,
 		]),
 		PackedVector2Array([
@@ -124,6 +128,9 @@ func _ready():
 		]),
 		PackedVector2Array([
 			Vector2(5, -3) * 64,
+			Vector2(6, -3) * 64,
+			Vector2(7, -3) * 64,
+			Vector2(8, -3) * 64,
 			Vector2(9, -3) * 64,
 		])
 	]
