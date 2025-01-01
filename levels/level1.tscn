@@ -20,5 +20,5 @@ position = Vector2(1088, -1472)
 
 [node name="bricks" type="Sprite2D" parent="." index="3"]
 z_index = -3
-position = Vector2(1112, -1488)
+position = Vector2(1113, -1488)
 texture = ExtResource("4_itdtl")
