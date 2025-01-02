@@ -1,8 +1,0 @@
-[gd_scene format=3 uid="uid://wsmubmhcv0oc"]
-
-[node name="explosion" type="Node2D"]
-
-[node name="color_rect" type="ColorRect" parent="."]
-custom_minimum_size = Vector2(64, 64)
-offset_right = 64.0
-offset_bottom = 64.0
