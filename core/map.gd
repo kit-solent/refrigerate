@@ -4,6 +4,11 @@ extends TileMapLayer
 var mode_overide_scene = preload("res://core/resources/ModeOveride.tscn")
 var wader_scene = preload("res://water/water.tscn")
 
+func _process(delta):
+	if Input.is_action_just_pressed("debug key"):
+		print("hup")
+		$explosion.run()
+
 func create_regions(id:int, atlas:Array=[], remove:bool=true):
 	"""
 	Returns an array of polygons of the merged tiles of the given id.

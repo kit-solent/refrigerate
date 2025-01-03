@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://ciyllmbi1syq1"]
-
-[ext_resource type="SpriteFrames" uid="uid://b60hgo5hoq746" path="res://explosion/explosion_spriteframes.tres" id="1_mr8oi"]
-
-[node name="animated_explosion" type="Node2D"]
-
-[node name="animation" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("1_mr8oi")
-animation = &"explosion"

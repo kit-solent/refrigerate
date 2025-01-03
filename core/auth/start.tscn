@@ -60,11 +60,10 @@ grow_vertical = 2
 
 [node name="tab_container" type="TabContainer" parent="center_container"]
 layout_mode = 2
-current_tab = 1
+current_tab = 0
 tabs_visible = false
 
 [node name="init" type="PanelContainer" parent="center_container/tab_container"]
-visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_7rlu8")
 metadata/_tab_index = 0
@@ -103,6 +102,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
 text = "Play as a guest"
 
 [node name="sign_up" type="PanelContainer" parent="center_container/tab_container"]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_7rlu8")
 metadata/_tab_index = 1
