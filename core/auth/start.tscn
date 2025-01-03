@@ -1,7 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpj3jeb1mbj63"]
+[gd_scene load_steps=6 format=3 uid="uid://dpj3jeb1mbj63"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_1toyi"]
 [ext_resource type="Script" path="res://core/auth/start.gd" id="2_qvyxh"]
+[ext_resource type="VideoStream" path="res://core/movie_output/output.ogv" id="3_i1car"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rlu8"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0.454902, 0.278431, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l54dn"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="start" type="Control"]
 layout_mode = 3
@@ -12,3 +37,111 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_1toyi")
 script = ExtResource("2_qvyxh")
+
+[node name="gameplay_video" type="VideoStreamPlayer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stream = ExtResource("3_i1car")
+autoplay = true
+expand = true
+loop = true
+
+[node name="center_container" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="tab_container" type="TabContainer" parent="center_container"]
+layout_mode = 2
+current_tab = 1
+tabs_visible = false
+
+[node name="init" type="PanelContainer" parent="center_container/tab_container"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7rlu8")
+metadata/_tab_index = 0
+
+[node name="margin_container" type="MarginContainer" parent="center_container/tab_container/init"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="v_box_container" type="VBoxContainer" parent="center_container/tab_container/init/margin_container"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="h_box_container" type="HBoxContainer" parent="center_container/tab_container/init/margin_container/v_box_container"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="button" type="Button" parent="center_container/tab_container/init/margin_container/v_box_container/h_box_container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
+text = "Sign up"
+
+[node name="button2" type="Button" parent="center_container/tab_container/init/margin_container/v_box_container/h_box_container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
+text = "Sign in"
+
+[node name="button" type="Button" parent="center_container/tab_container/init/margin_container/v_box_container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
+text = "Play as a guest"
+
+[node name="sign_up" type="PanelContainer" parent="center_container/tab_container"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7rlu8")
+metadata/_tab_index = 1
+
+[node name="margin_container" type="MarginContainer" parent="center_container/tab_container/sign_up"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="v_box_container" type="VBoxContainer" parent="center_container/tab_container/sign_up/margin_container"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="label" type="Label" parent="center_container/tab_container/sign_up/margin_container/v_box_container"]
+layout_mode = 2
+text = "Please Choose a username"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="h_box_container" type="HBoxContainer" parent="center_container/tab_container/sign_up/margin_container/v_box_container"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="username" type="LineEdit" parent="center_container/tab_container/sign_up/margin_container/v_box_container/h_box_container"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
+placeholder_text = "username"
+alignment = 1
+max_length = 20
+expand_to_text_length = true
+
+[node name="button2" type="Button" parent="center_container/tab_container/sign_up/margin_container/v_box_container/h_box_container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
+text = "   Next   "
+
+[connection signal="finished" from="gameplay_video" to="." method="_on_gameplay_video_finished"]

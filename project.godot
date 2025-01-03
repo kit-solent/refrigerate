@@ -26,6 +26,7 @@ window/stretch/mode="viewport"
 
 [editor]
 
+movie_writer/movie_file="C:/Users/nelso/Desktop/projects/refrigerate/core/movie_output/main.png"
 naming/node_name_casing=2
 
 [file_customization]

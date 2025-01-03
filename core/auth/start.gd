@@ -5,3 +5,9 @@ func _ready():
 
 func _process(delta):
 	pass
+
+
+func _on_gameplay_video_finished():
+	# the video will automatically restart but
+	# here we could play something else or stop it.
+	pass
