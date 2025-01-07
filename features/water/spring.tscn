@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://clx58lsdco3a2"]
 
-[ext_resource type="Script" path="res://water/spring.gd" id="1_e6ydv"]
+[ext_resource type="Script" path="res://features/water/spring.gd" id="1_e6ydv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d2fql"]
 

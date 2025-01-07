@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dkrdhmdbjussb"]
 
-[ext_resource type="Script" path="res://water/water.gd" id="1_ip5ep"]
+[ext_resource type="Script" path="res://features/water/water.gd" id="1_ip5ep"]
 [ext_resource type="Shader" path="res://core/resources/shaders/water.gdshader" id="2_ro7q3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lusdf"]

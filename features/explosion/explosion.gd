@@ -4,7 +4,7 @@ class_name Explosion extends Node2D
 enum EXPLOSION_TYPE {ANIMATED, PARTICLE}
 @export var type:EXPLOSION_TYPE = EXPLOSION_TYPE.ANIMATED
 
-var explosion_spriteframes = preload("res://explosion/explosion_spriteframes.tres")
+var explosion_spriteframes = preload("res://features/explosion/explosion_spriteframes.tres")
 
 func run(explosion_type:EXPLOSION_TYPE = type):
 	"""

@@ -2,7 +2,7 @@ extends TileMapLayer
 
 @onready var mode_overides = get_parent().get_node("meta/mode_overides")
 var mode_overide_scene = preload("res://core/resources/ModeOveride.tscn")
-var wader_scene = preload("res://water/water.tscn")
+var wader_scene = preload("res://features/water/water.tscn")
 
 func _process(delta):
 	if Input.is_action_just_pressed("debug key"):

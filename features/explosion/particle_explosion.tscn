@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://wsmubmhcv0oc"]
 
-[ext_resource type="Material" uid="uid://c2fpnmng0p6mt" path="res://explosion/explosion_particle_process_material.tres" id="1_vobqh"]
+[ext_resource type="Material" uid="uid://c2fpnmng0p6mt" path="res://features/explosion/explosion_particle_process_material.tres" id="1_vobqh"]
 [ext_resource type="Texture2D" uid="uid://btjn0rpg8c73f" path="res://core/assets/particles/fire_01.png" id="2_352rp"]
 
 [node name="explosion" type="Node2D"]

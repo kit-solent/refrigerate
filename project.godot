@@ -33,7 +33,9 @@ naming/node_name_casing=2
 
 folder_colors={
 "res://core/": "yellow",
-"res://levels/": "blue"
+"res://features/": "green",
+"res://levels/": "blue",
+"res://staged/": "purple"
 }
 
 [global_group]

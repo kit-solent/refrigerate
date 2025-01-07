@@ -6,7 +6,7 @@ extends Node2D
 @export var border_thickness:float = 1.1
 @export var splash_clamp:float = 6.0
 
-var spring_scene = preload("res://water/spring.tscn")
+var spring_scene = preload("res://features/water/spring.tscn")
 var passes = 8
 var distance_between_springs = 80
 
