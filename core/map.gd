@@ -1,13 +1,8 @@
 extends TileMapLayer
 
 @onready var mode_overides = get_parent().get_node("meta/mode_overides")
-var mode_overide_scene = preload("res://core/resources/ModeOveride.tscn")
+var mode_overide_scene = preload("res://features/gravity_overide/ModeOveride.gd")
 var wader_scene = preload("res://features/water/water.tscn")
-
-func _process(delta):
-	if Input.is_action_just_pressed("debug key"):
-		print("hup")
-		$explosion.run()
 
 func create_regions(id:int, atlas:Array=[], remove:bool=true):
 	"""

@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://dpj3jeb1mbj63"]
+[gd_scene load_steps=8 format=3 uid="uid://dpj3jeb1mbj63"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_1toyi"]
 [ext_resource type="Script" path="res://core/auth/start.gd" id="2_qvyxh"]
 [ext_resource type="VideoStream" path="res://core/movie_output/output.ogv" id="3_i1car"]
+[ext_resource type="PackedScene" uid="uid://b4tjjtnpt4aed" path="res://staged/landing.tscn" id="4_w2tdi"]
+[ext_resource type="FontFile" uid="uid://8mk8f05ikmea" path="res://core/resources/QizzlefloofdemoRegular-m23Wj.otf" id="5_eawyg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rlu8"]
 bg_color = Color(0, 0, 0, 1)
@@ -38,17 +40,41 @@ grow_vertical = 2
 theme = ExtResource("1_1toyi")
 script = ExtResource("2_qvyxh")
 
-[node name="gameplay_video" type="VideoStreamPlayer" parent="."]
+[node name="background" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="tab_container" type="TabContainer" parent="background"]
+layout_mode = 2
+current_tab = 1
+tabs_visible = false
+
+[node name="gameplay_video" type="VideoStreamPlayer" parent="background/tab_container"]
+visible = false
+layout_mode = 2
 stream = ExtResource("3_i1car")
 autoplay = true
 expand = true
 loop = true
+metadata/_tab_index = 0
+
+[node name="still" type="SubViewportContainer" parent="background/tab_container"]
+layout_mode = 2
+stretch = true
+metadata/_tab_index = 1
+
+[node name="sub_viewport" type="SubViewport" parent="background/tab_container/still"]
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="landing" parent="background/tab_container/still/sub_viewport" instance=ExtResource("4_w2tdi")]
 
 [node name="center_container" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -59,6 +85,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="tab_container" type="TabContainer" parent="center_container"]
+visible = false
 layout_mode = 2
 current_tab = 0
 tabs_visible = false
@@ -144,4 +171,29 @@ theme_override_font_sizes/font_size = 17
 theme_override_styles/normal = SubResource("StyleBoxFlat_l54dn")
 text = "   Next   "
 
-[connection signal="finished" from="gameplay_video" to="." method="_on_gameplay_video_finished"]
+[node name="v_box_container" type="VBoxContainer" parent="center_container"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="label" type="Label" parent="center_container/v_box_container"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_eawyg")
+theme_override_font_sizes/font_size = 146
+text = "Refrigerate"
+
+[node name="h_box_container" type="HBoxContainer" parent="center_container/v_box_container"]
+layout_mode = 2
+theme_override_constants/separation = 22
+alignment = 1
+
+[node name="button" type="Button" parent="center_container/v_box_container/h_box_container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Log in"
+
+[node name="button2" type="Button" parent="center_container/v_box_container/h_box_container"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Sign up"
+
+[connection signal="finished" from="background/tab_container/gameplay_video" to="." method="_on_gameplay_video_finished"]
