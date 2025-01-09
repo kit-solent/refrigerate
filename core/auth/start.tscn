@@ -18,20 +18,38 @@ grow_vertical = 2
 theme = ExtResource("1_1toyi")
 script = ExtResource("2_qvyxh")
 
-[node name="background" type="PanelContainer" parent="."]
+[node name="scroll_container" type="ScrollContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
 
-[node name="tab_container" type="TabContainer" parent="background"]
+[node name="panel_container" type="PanelContainer" parent="scroll_container"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="v_box_container" type="VBoxContainer" parent="scroll_container/panel_container"]
+layout_mode = 2
+
+[node name="header" type="PanelContainer" parent="scroll_container/panel_container/v_box_container"]
+custom_minimum_size = Vector2(0, 648)
+layout_mode = 2
+
+[node name="background" type="PanelContainer" parent="scroll_container/panel_container/v_box_container/header"]
+layout_mode = 2
+
+[node name="options" type="TabContainer" parent="scroll_container/panel_container/v_box_container/header/background"]
 layout_mode = 2
 current_tab = 1
 tabs_visible = false
 
-[node name="gameplay_video" type="VideoStreamPlayer" parent="background/tab_container"]
+[node name="gameplay_video" type="VideoStreamPlayer" parent="scroll_container/panel_container/v_box_container/header/background/options"]
 visible = false
 layout_mode = 2
 stream = ExtResource("3_i1car")
@@ -40,58 +58,71 @@ expand = true
 loop = true
 metadata/_tab_index = 0
 
-[node name="still" type="SubViewportContainer" parent="background/tab_container"]
+[node name="still" type="SubViewportContainer" parent="scroll_container/panel_container/v_box_container/header/background/options"]
 layout_mode = 2
 stretch = true
 metadata/_tab_index = 1
 
-[node name="sub_viewport" type="SubViewport" parent="background/tab_container/still"]
+[node name="sub_viewport" type="SubViewport" parent="scroll_container/panel_container/v_box_container/header/background/options/still"]
 disable_3d = true
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="landing" parent="background/tab_container/still/sub_viewport" instance=ExtResource("4_w2tdi")]
+[node name="landing" parent="scroll_container/panel_container/v_box_container/header/background/options/still/sub_viewport" instance=ExtResource("4_w2tdi")]
 
-[node name="center_container" type="CenterContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="center_container" type="CenterContainer" parent="scroll_container/panel_container/v_box_container/header"]
+layout_mode = 2
 
-[node name="tab_container" type="TabContainer" parent="center_container"]
+[node name="tab_container" type="TabContainer" parent="scroll_container/panel_container/v_box_container/header/center_container"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kgo2p")
 current_tab = 0
 tabs_visible = false
 
-[node name="v_box_container" type="VBoxContainer" parent="center_container/tab_container"]
+[node name="v_box_container" type="VBoxContainer" parent="scroll_container/panel_container/v_box_container/header/center_container/tab_container"]
 layout_mode = 2
 theme_override_constants/separation = 10
 metadata/_tab_index = 0
 
-[node name="label" type="Label" parent="center_container/tab_container/v_box_container"]
+[node name="label" type="Label" parent="scroll_container/panel_container/v_box_container/header/center_container/tab_container/v_box_container"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_eawyg")
 theme_override_font_sizes/font_size = 146
 text = "Refrigerate"
 
-[node name="h_box_container" type="HBoxContainer" parent="center_container/tab_container/v_box_container"]
+[node name="h_box_container" type="HBoxContainer" parent="scroll_container/panel_container/v_box_container/header/center_container/tab_container/v_box_container"]
 layout_mode = 2
 theme_override_constants/separation = 22
 alignment = 1
 
-[node name="button" type="Button" parent="center_container/tab_container/v_box_container/h_box_container"]
+[node name="button" type="Button" parent="scroll_container/panel_container/v_box_container/header/center_container/tab_container/v_box_container/h_box_container"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Log in"
 
-[node name="button2" type="Button" parent="center_container/tab_container/v_box_container/h_box_container"]
+[node name="button2" type="Button" parent="scroll_container/panel_container/v_box_container/header/center_container/tab_container/v_box_container/h_box_container"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Sign up"
 
-[connection signal="finished" from="background/tab_container/gameplay_video" to="." method="_on_gameplay_video_finished"]
+[node name="panel_container" type="PanelContainer" parent="scroll_container/panel_container/v_box_container"]
+layout_mode = 2
+
+[node name="lorem_ipsum" type="Label" parent="scroll_container/panel_container/v_box_container"]
+layout_mode = 2
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dictum quam nec dui maximus facilisis. Sed rutrum dolor est, id maximus massa tincidunt aliquam. Duis ac arcu id libero vehicula porta eget eu enim. Mauris vel ex a dolor fringilla finibus ut id ligula. Nam pretium at ipsum a egestas. In elementum commodo lacus, eu gravida sapien finibus a. Nullam sodales placerat porta. Praesent consectetur felis egestas viverra luctus. In ut quam risus. Sed luctus eget erat dapibus iaculis. Praesent auctor egestas mollis.
+
+Fusce vulputate diam et nisl aliquet venenatis. Sed hendrerit vulputate sem vitae tempor. Aliquam porta ipsum ex, in eleifend orci varius et. Praesent tempor mollis dapibus. Sed accumsan, enim sed rutrum malesuada, eros ipsum molestie massa, consectetur dignissim tellus odio et purus. In gravida ultrices aliquam. Duis sagittis ac massa quis eleifend. Nunc semper ante vel ante lobortis volutpat. Proin leo nisl, hendrerit at magna a, pulvinar fermentum urna. Phasellus fermentum efficitur tempor.
+
+Nunc sed ligula metus. Pellentesque congue accumsan velit, in egestas urna facilisis quis. Donec egestas lectus vel diam tristique hendrerit. Aliquam a ullamcorper nibh. In finibus tristique nisi quis laoreet. Cras mollis tempus euismod. Phasellus ut neque mi. Fusce efficitur sed elit ac pretium. Vestibulum euismod, tortor non maximus placerat, urna justo sodales felis, quis dapibus tortor nisl in sem. Aliquam sit amet diam sit amet dolor aliquam consectetur id condimentum diam. Mauris tellus dui, venenatis mattis varius sit amet, gravida vel diam. Mauris dignissim metus ut elit facilisis pretium.
+
+Morbi at varius mi. Aliquam porta nunc ex, et faucibus elit euismod non. Fusce diam ligula, laoreet ut nulla ac, sodales consequat neque. Aenean faucibus erat sem, nec lobortis leo commodo sit amet. Vivamus pretium in urna vitae pellentesque. Donec at eros nec mi porttitor pulvinar. Sed cursus tellus vitae urna sollicitudin, quis feugiat odio molestie. Pellentesque pulvinar libero non quam eleifend elementum quis id turpis. Aliquam erat volutpat. Etiam condimentum placerat sem, id interdum leo elementum vitae. Nulla nec purus ex. Ut quis iaculis risus. Integer ligula elit, ornare sit amet velit vitae, efficitur rutrum lorem.
+
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean sit amet enim sit amet metus dapibus gravida. Nulla varius libero laoreet magna luctus sodales. Morbi varius nisl et gravida efficitur. Morbi consectetur tincidunt tortor non eleifend. Cras in suscipit elit. Proin elementum, tellus eu elementum malesuada, dolor quam malesuada libero, in gravida nibh ante in diam. Ut non interdum orci. Ut vulputate purus diam, a ornare neque imperdiet eget. Nulla sed sagittis felis. Mauris a lacinia ligula, eget aliquet quam. Pellentesque nec ornare tortor. Vestibulum iaculis maximus cursus. In ut lorem facilisis, efficitur nisi in, pulvinar purus.
+
+"
+autowrap_mode = 3
+
+[connection signal="finished" from="scroll_container/panel_container/v_box_container/header/background/options/gameplay_video" to="." method="_on_gameplay_video_finished"]
