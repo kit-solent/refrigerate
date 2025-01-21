@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dpj3jeb1mbj63"]
+[gd_scene load_steps=8 format=3 uid="uid://dpj3jeb1mbj63"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_1toyi"]
 [ext_resource type="Script" path="res://core/auth/start.gd" id="2_qvyxh"]
@@ -7,6 +7,9 @@
 [ext_resource type="FontFile" uid="uid://8mk8f05ikmea" path="res://core/resources/QizzlefloofdemoRegular-m23Wj.otf" id="5_eawyg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kgo2p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11iet"]
+bg_color = Color(1.54018e-06, 0.329762, 0.138793, 1)
 
 [node name="start" type="Control"]
 layout_mode = 3
@@ -23,6 +26,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 927.0
 grow_horizontal = 2
 grow_vertical = 2
 follow_focus = true
@@ -107,8 +111,10 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Sign up"
 
-[node name="panel_container" type="PanelContainer" parent="scroll_container/panel_container/v_box_container"]
+[node name="panel_container" type="Panel" parent="scroll_container/panel_container/v_box_container"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_11iet")
 
 [node name="lorem_ipsum" type="Label" parent="scroll_container/panel_container/v_box_container"]
 layout_mode = 2
