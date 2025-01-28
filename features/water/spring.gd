@@ -5,7 +5,7 @@ var force = 0
 var target_height = 0
 var motion_factor = 0.02
 
-signal splash(speed)
+signal splash(speed, global_pos)
 
 func water_update(k:float, d:float):
 	var x = position.y - target_height
@@ -34,4 +34,4 @@ func _on_area_2d_body_entered(body):
 		speed = body.velocity.y * motion_factor
 	
 	if speed:
-		splash.emit(speed)
+		splash.emit(speed, body.global_position)

@@ -16,6 +16,8 @@ script = ExtResource("1_ip5ep")
 
 [node name="spring_groups" type="Node2D" parent="."]
 
+[node name="splash_particles" type="Node2D" parent="."]
+
 [node name="polygon" type="Polygon2D" parent="."]
 material = SubResource("ShaderMaterial_lusdf")
 
