@@ -65,8 +65,8 @@ func splash(speed, global_pos, group, spring):
 			
 			# play the splash particle effect at the splash position.
 			var new_splash_particles = splash_particles.instantiate()
-			new_splash_particles.global_posision = global_pos
 			add_child(new_splash_particles)
+			new_splash_particles.global_position = global_pos
 			
 
 func draw_water_body():
