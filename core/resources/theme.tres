@@ -1,6 +1,8 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://eqk6sg10ucwa"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://eqk6sg10ucwa"]
 
 [ext_resource type="FontFile" uid="uid://4dgbqqukt8q1" path="res://core/resources/arial.ttf" id="1_06v0t"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iijxl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dwhqs"]
 bg_color = Color(0, 0, 0, 1)
@@ -15,6 +17,7 @@ anti_aliasing = false
 [resource]
 default_font = ExtResource("1_06v0t")
 BoxContainer/constants/separation = 0
+Button/styles/normal = SubResource("StyleBoxEmpty_iijxl")
 GridContainer/constants/h_separation = 0
 GridContainer/constants/v_separation = 2
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_dwhqs")
