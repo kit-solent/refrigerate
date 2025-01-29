@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpj3jeb1mbj63"]
+[gd_scene load_steps=10 format=3 uid="uid://dpj3jeb1mbj63"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_1toyi"]
 [ext_resource type="Script" path="res://core/auth/start.gd" id="2_qvyxh"]
@@ -26,8 +26,6 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kgo2p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_an2y6"]
 content_margin_left = 16.0
@@ -166,8 +164,7 @@ layout_mode = 2
 
 [node name="tab_container" type="TabContainer" parent="main/main/center_container"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_kgo2p")
-current_tab = 4
+current_tab = 3
 tabs_visible = false
 
 [node name="name" type="Label" parent="main/main/center_container/tab_container"]
@@ -245,11 +242,43 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
+[node name="credits" type="PanelContainer" parent="main/main/center_container/tab_container"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_an2y6")
+metadata/_tab_index = 3
+
+[node name="vbox" type="VBoxContainer" parent="main/main/center_container/tab_container/credits"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="title" type="Label" parent="main/main/center_container/tab_container/credits/vbox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Credits"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="seperator" type="ColorRect" parent="main/main/center_container/tab_container/credits/vbox"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+color = Color(1.03481e-06, 0.329003, 0.38402, 1)
+
+[node name="body" type="Label" parent="main/main/center_container/tab_container/credits/vbox"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "
+TODO. For now see the readme.
+
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
 [node name="sign_in" type="PanelContainer" parent="main/main/center_container/tab_container"]
 visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_an2y6")
-metadata/_tab_index = 3
+metadata/_tab_index = 4
 
 [node name="vbox" type="VBoxContainer" parent="main/main/center_container/tab_container/sign_in"]
 layout_mode = 2
@@ -310,9 +339,10 @@ layout_mode = 2
 text = "Sign up"
 
 [node name="sign_up" type="PanelContainer" parent="main/main/center_container/tab_container"]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_an2y6")
-metadata/_tab_index = 4
+metadata/_tab_index = 5
 
 [node name="vbox" type="VBoxContainer" parent="main/main/center_container/tab_container/sign_up"]
 layout_mode = 2
@@ -384,6 +414,9 @@ alignment = 1
 layout_mode = 2
 text = "Sign in"
 
+[connection signal="button_down" from="main/topbar/margins/items/source" to="." method="_on_source_button_down"]
+[connection signal="button_down" from="main/topbar/margins/items/lore" to="." method="_on_lore_button_down"]
+[connection signal="button_down" from="main/topbar/margins/items/credits" to="." method="_on_credits_button_down"]
 [connection signal="button_down" from="main/topbar/margins/items/sign_in" to="." method="_on_sign_in_button_down"]
 [connection signal="button_down" from="main/topbar/margins/items/sign_up" to="." method="_on_sign_up_button_down"]
 [connection signal="finished" from="main/main/backgrounds/gameplay_video" to="." method="_on_gameplay_video_finished"]

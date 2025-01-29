@@ -10,9 +10,7 @@ border_color = Color(1, 1, 1, 1)
 corner_detail = 1
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbw4i"]
-bg_color = Color(0, 0, 0, 1)
-anti_aliasing = false
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg541"]
 
 [resource]
 default_font = ExtResource("1_06v0t")
@@ -21,4 +19,4 @@ Button/styles/normal = SubResource("StyleBoxEmpty_iijxl")
 GridContainer/constants/h_separation = 0
 GridContainer/constants/v_separation = 2
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_dwhqs")
-TabContainer/styles/panel = SubResource("StyleBoxFlat_tbw4i")
+TabContainer/styles/panel = SubResource("StyleBoxEmpty_yg541")
