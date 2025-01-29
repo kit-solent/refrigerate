@@ -139,14 +139,23 @@ layout_mode = 2
 [node name="tab_container" type="TabContainer" parent="main/main/center_container"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kgo2p")
-current_tab = 0
+current_tab = 1
 tabs_visible = false
 
-[node name="label" type="Label" parent="main/main/center_container/tab_container"]
+[node name="name" type="Label" parent="main/main/center_container/tab_container"]
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_eawyg")
 theme_override_font_sizes/font_size = 146
 text = "Refrigerate"
 metadata/_tab_index = 0
+
+[node name="source" type="PanelContainer" parent="main/main/center_container/tab_container"]
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="label" type="Label" parent="main/main/center_container/tab_container/source"]
+layout_mode = 2
+text = "Refrigerate is open source bla bla bla bla bla lorem ipsum"
 
 [connection signal="finished" from="main/main/backgrounds/gameplay_video" to="." method="_on_gameplay_video_finished"]
