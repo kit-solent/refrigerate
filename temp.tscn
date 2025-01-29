@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2458ewy2bbe"]
+
+[ext_resource type="Script" path="res://features/effects/effect.gd" id="1_23jfk"]
+[ext_resource type="Script" path="res://features/explosion/explosion.gd" id="2_ai2fx"]
+
+[node name="effect" type="Node2D"]
+script = ExtResource("1_23jfk")
+
+[node name="explosion" type="Node2D" parent="."]
+script = ExtResource("2_ai2fx")

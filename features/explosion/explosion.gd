@@ -1,9 +1,8 @@
-@icon("res://core/assets/explosion_icon.png")
-class_name Explosion extends Node2D
+@icon("res://core/assets/icons/explosion.png")
+class_name Explosion extends Effect
 
 enum EXPLOSION_TYPE {ANIMATED, PARTICLE}
 @export var type:EXPLOSION_TYPE = EXPLOSION_TYPE.ANIMATED
-@export var autorun:bool = true
 
 var explosion_spriteframes = preload("res://features/explosion/explosion_spriteframes.tres")
 
