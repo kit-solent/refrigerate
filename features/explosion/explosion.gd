@@ -1,4 +1,4 @@
-@icon("res://core/assets/icons/explosion.png")
+@icon("res://assets/icons/explosion.png")
 class_name Explosion extends Effect
 
 enum EXPLOSION_TYPE {ANIMATED, PARTICLE}

@@ -14,7 +14,7 @@ config/name="Refrigerate"
 run/main_scene="res://core/ingame.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
-config/icon="res://core/assets/icon.svg"
+config/icon="res://assets/icon.svg"
 
 [autoload]
 
@@ -32,6 +32,7 @@ naming/node_name_casing=2
 [file_customization]
 
 folder_colors={
+"res://assets/": "red",
 "res://core/": "yellow",
 "res://features/": "green",
 "res://levels/": "blue",

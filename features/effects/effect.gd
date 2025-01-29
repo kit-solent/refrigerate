@@ -12,3 +12,4 @@ func run():
 	"""
 	Runs the effect. This could mean playing visual, audio, lighting or other effects.
 	"""
+	pass

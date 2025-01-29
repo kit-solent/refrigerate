@@ -15,8 +15,8 @@ Tracks Needed:
 	Variations with different themes e.g. spooky, happy, etc.
 
 SFX Needed:
-	Explosion
-	Splash
-	Background water sloshing noises
-	Firing noise for missile
-	Shot for players gun
+	Explosion,
+	Splash,
+	Background water sloshing noises,
+	Firing noise for missile,
+	Shot for players gun,

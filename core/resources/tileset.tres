@@ -1,8 +1,8 @@
 [gd_resource type="TileSet" load_steps=60 format=3 uid="uid://b2s0nutp63jpv"]
 
-[ext_resource type="Texture2D" uid="uid://cy17vuxs8proy" path="res://core/assets/mossy_tileset.png" id="1_ow7sq"]
-[ext_resource type="Texture2D" uid="uid://dg0a4lrrejvrb" path="res://core/assets/topdown.tres" id="2_nyunl"]
-[ext_resource type="Texture2D" uid="uid://bhnppp1nwuqk" path="res://core/assets/platformer.tres" id="4_oq2lv"]
+[ext_resource type="Texture2D" uid="uid://cy17vuxs8proy" path="res://assets/mossy_tileset.png" id="1_ow7sq"]
+[ext_resource type="Texture2D" uid="uid://dg0a4lrrejvrb" path="res://assets/topdown.tres" id="2_nyunl"]
+[ext_resource type="Texture2D" uid="uid://bhnppp1nwuqk" path="res://assets/platformer.tres" id="4_oq2lv"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_66sc8"]
 tile_data = PackedInt32Array(0, 196608, 3, 131072, 196608, 3, 262144, 196608, 3, 393216, 196608, 3, 524288, 196608, 3, 655360, 196608, 3, 786432, 196608, 3, 917504, 196608, 3)
