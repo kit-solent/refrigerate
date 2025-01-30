@@ -1,4 +1,8 @@
+@icon("res://assets/icons/tools.svg")
 class_name Tools extends Node
+## A collection of utility functions used by other parts
+## of the Refrigerate game.
+
 
 func rect_to_polygon(rect:Rect2):
 	"""
@@ -469,9 +473,9 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 			theta = TAU - angle
 			dsign = true
 		
-		## NOTE: interesting point, some of the other theta calculations are just
-		## the negative of their pair. This is actually the case here but TAU - angle
-		## is equivalent and prevents negative results.
+		# NOTE: interesting point, some of the other theta calculations are just
+		# the negative of their pair. This is actually the case here but TAU - angle
+		# is equivalent and prevents negative results.
 		
 		distance = abs(dist)/tan(theta)
 		
@@ -483,7 +487,7 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 		# calculate the horrisontal distance from the target to the right edge.
 		dist = viewport_top_right.x - target.x
 		
-		## NOTE: This angle calculation is slightly different due to the 0 angle being in the middle of the range.
+		# NOTE: This angle calculation is slightly different due to the 0 angle being in the middle of the range.
 		if angle < angle_left:
 			# the angle is below or is straight right.
 			theta = angle

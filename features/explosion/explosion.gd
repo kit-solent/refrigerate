@@ -1,27 +1,38 @@
-@icon("res://assets/icons/explosion.png")
-class_name Explosion extends Effect
+extends Effect
 
-enum EXPLOSION_TYPE {ANIMATED, PARTICLE}
-@export var type:EXPLOSION_TYPE = EXPLOSION_TYPE.ANIMATED
+# TODO: Particle explosions have not been implemented yet.
+@export_enum("Animated", "Particle") var explosion_type:String = "Animated"
 
-var explosion_spriteframes = preload("res://features/explosion/explosion_spriteframes.tres")
+func run():
+	if explosion_type == "Particle":
+		push_error("Particle explosions have not been implemented yet")
+	
+	print("playing audio")
+	$audio.play()
+	
+	var duration
+	
+	if explosion_type == "Animated":
+		var speed = $animation.sprite_frames.get_animation_speed(&"explosion")
+		var frames = $animation.sprite_frames.get_frame_count(&"explosion")
+		duration = frames / speed # frames / (frames / second) = (frames * second) / frames = second
+		$animation.show()
+		$animation.play()
+	elif explosion_type == "Particle":
+		$particles.show()
+		$particles.emitting = true
+		
+		# explination of the formula for the duration of a one_shot particle system.
+		# https://github.com/godotengine/godot-proposals/issues/649#issuecomment-995761510
+		duration = $particles.lifetime * (2 - $particles.explosiveness)
+	
+	$light.enabled = true
+	# fade the light out over the duration of the animation
+	get_tree().create_tween().\
+	tween_property($light, ^"energy", 0, duration).\
+	set_ease(Tween.EASE_IN)
+	
 
-func _ready():
-	if autorun:
-		run()
 
-func run(explosion_type:EXPLOSION_TYPE = type):
-	"""
-	Runs the explosion using the given `explosion_type`.
-	The Explosion node then deletes itself.
-	"""
-	if explosion_type == EXPLOSION_TYPE.ANIMATED:
-		var animation = AnimatedSprite2D.new()
-		animation.sprite_frames = explosion_spriteframes
-		add_child(animation)
-		animation.animation_finished.connect(queue_free)
-		#NOTE: the &"name" literal is a StringName type.
-		animation.play(&"explosion")
-	elif explosion_type == EXPLOSION_TYPE.PARTICLE:
-		printerr("Particle explosions have not been implimented yet.")
-		queue_free()
+func _on_audio_finished() -> void:
+	print("audio finished")

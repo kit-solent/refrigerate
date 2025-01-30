@@ -1,6 +1,6 @@
-class_name Portal extends Node2D
+extends Node2D
 
-@export var pair:Portal
+@export var pair:Node2D
 
 @onready var target:Node = Core.main.get_player()
 

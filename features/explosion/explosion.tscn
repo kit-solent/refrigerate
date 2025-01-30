@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://lw1chmysmdys"]
+
+[ext_resource type="Script" path="res://features/explosion/explosion.gd" id="1_vccf8"]
+[ext_resource type="AudioStream" uid="uid://37f4asp7b28b" path="res://assets/audio/explosion.mp3" id="2_acfqm"]
+[ext_resource type="SpriteFrames" uid="uid://b60hgo5hoq746" path="res://features/explosion/explosion_spriteframes.tres" id="2_btxxr"]
+[ext_resource type="Texture2D" uid="uid://bclpm4fnyi21t" path="res://core/resources/point_light_gradiet_texture.tres" id="2_ybmuy"]
+[ext_resource type="Material" uid="uid://c2fpnmng0p6mt" path="res://features/explosion/explosion_particle_process_material.tres" id="3_pjibt"]
+
+[node name="explosion" type="Node2D"]
+script = ExtResource("1_vccf8")
+effect_count = 2
+
+[node name="audio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_acfqm")
+autoplay = true
+
+[node name="light" type="PointLight2D" parent="."]
+enabled = false
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 2.0
+texture = ExtResource("2_ybmuy")
+texture_scale = 24.0
+
+[node name="animation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("2_btxxr")
+animation = &"explosion"
+
+[node name="particles" type="GPUParticles2D" parent="."]
+visible = false
+emitting = false
+process_material = ExtResource("3_pjibt")
+one_shot = true
+
+[connection signal="finished" from="audio" to="." method="_on_audio_finished"]
+[connection signal="finished" from="audio" to="." method="effect_finished"]
+[connection signal="animation_finished" from="animation" to="." method="effect_finished"]
+[connection signal="finished" from="particles" to="." method="effect_finished"]

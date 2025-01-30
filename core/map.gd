@@ -1,4 +1,5 @@
-extends TileMapLayer
+@icon("res://assets/icons/map.svg")
+class_name Map extends TileMapLayer
 
 @onready var mode_overides = get_parent().get_node("meta/mode_overides")
 var mode_overide_scene = preload("res://features/gravity_overide/ModeOveride.gd")
