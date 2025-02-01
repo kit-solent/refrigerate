@@ -33,7 +33,6 @@ func effect_finished():
 	Called whenever a sub effect has finished. Frees the node
 	if the effect_count reaches 0.
 	"""
-	print("hello")
 	effect_count -= 1
 	
 	if effect_count <= 0:

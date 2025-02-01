@@ -12,9 +12,12 @@ effect_count = 2
 
 [node name="audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("2_acfqm")
+volume_db = -20.0
+pitch_scale = 1.5
 
 [node name="light" type="PointLight2D" parent="."]
 enabled = false
+color = Color(0.978593, 0.880298, 1.54018e-06, 1)
 shadow_enabled = true
 shadow_filter = 1
 shadow_filter_smooth = 2.0
@@ -32,7 +35,7 @@ emitting = false
 process_material = ExtResource("3_pjibt")
 one_shot = true
 
-[connection signal="finished" from="audio" to="." method="_on_audio_finished"]
 [connection signal="finished" from="audio" to="." method="effect_finished"]
+[connection signal="finished" from="audio" to="." method="_on_audio_finished"]
 [connection signal="animation_finished" from="animation" to="." method="effect_finished"]
 [connection signal="finished" from="particles" to="." method="effect_finished"]

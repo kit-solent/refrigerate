@@ -31,8 +31,6 @@ func run():
 	get_tree().create_tween().\
 	tween_property($light, ^"energy", 0, duration).\
 	set_ease(Tween.EASE_IN)
-	
-
 
 func _on_audio_finished() -> void:
 	print("audio finished")
