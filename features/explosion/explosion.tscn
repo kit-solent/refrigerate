@@ -36,6 +36,5 @@ process_material = ExtResource("3_pjibt")
 one_shot = true
 
 [connection signal="finished" from="audio" to="." method="effect_finished"]
-[connection signal="finished" from="audio" to="." method="_on_audio_finished"]
 [connection signal="animation_finished" from="animation" to="." method="effect_finished"]
 [connection signal="finished" from="particles" to="." method="effect_finished"]

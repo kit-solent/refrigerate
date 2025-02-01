@@ -7,9 +7,7 @@ func run():
 	if explosion_type == "Particle":
 		push_error("Particle explosions have not been implemented yet")
 	
-	print("playing audio")
 	$audio.play()
-	
 	var duration
 	
 	if explosion_type == "Animated":
@@ -31,6 +29,3 @@ func run():
 	get_tree().create_tween().\
 	tween_property($light, ^"energy", 0, duration).\
 	set_ease(Tween.EASE_IN)
-
-func _on_audio_finished() -> void:
-	print("audio finished")
