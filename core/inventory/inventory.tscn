@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3 uid="uid://c6gjrc1scyqfu"]
+
+[ext_resource type="Script" path="res://core/inventory/inventory.gd" id="1_n5bd5"]
+[ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/inventory/inventory_slot.tscn" id="2_l0ila"]
+
+[node name="inventory" type="PanelContainer"]
+script = ExtResource("1_n5bd5")
+
+[node name="grid_container" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 4
+
+[node name="inventory_slot" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot2" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot3" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot4" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot5" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot6" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot7" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot8" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot9" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot10" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot11" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot12" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot13" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot14" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot15" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot16" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot17" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot18" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot19" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot20" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2
+
+[node name="inventory_slot21" parent="grid_container" instance=ExtResource("2_l0ila")]
+layout_mode = 2

@@ -1,18 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=6 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
 [ext_resource type="Environment" uid="uid://cuprafktv5kd0" path="res://core/resources/environment.tres" id="3_7fo0t"]
-[ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/resources/inventory_slot.tscn" id="3_yiyqq"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pbpyk"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_nf0n5"]
-
-[node name="ingame" type="Control"]
-layout_mode = 3
+[node name="ingame" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,113 +15,49 @@ grow_vertical = 2
 theme = ExtResource("1_sdiib")
 script = ExtResource("1_ul41f")
 
-[node name="h_box_container" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="inventory" type="PanelContainer" parent="h_box_container"]
-visible = false
-layout_mode = 2
-
-[node name="margin_container" type="MarginContainer" parent="h_box_container/inventory"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="grid_container" type="GridContainer" parent="h_box_container/inventory/margin_container"]
-layout_mode = 2
-columns = 4
-
-[node name="inventory_slot" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot2" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot3" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot4" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot5" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot6" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot7" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot8" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot9" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot10" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot11" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="inventory_slot12" parent="h_box_container/inventory/margin_container/grid_container" instance=ExtResource("3_yiyqq")]
-layout_mode = 2
-
-[node name="panel" type="PanelContainer" parent="h_box_container"]
+[node name="view" type="PanelContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="view" type="SubViewportContainer" parent="h_box_container/panel"]
-material = SubResource("ShaderMaterial_pbpyk")
+[node name="view" type="SubViewportContainer" parent="view"]
 layout_mode = 2
 stretch = true
 
-[node name="view" type="SubViewport" parent="h_box_container/panel/view"]
+[node name="view" type="SubViewport" parent="view/view"]
 transparent_bg = true
 handle_input_locally = false
 audio_listener_enable_2d = true
 size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="world" type="Node2D" parent="h_box_container/panel/view/view"]
+[node name="world" type="Node2D" parent="view/view/view"]
 
-[node name="meta" type="Node2D" parent="h_box_container/panel/view/view/world"]
+[node name="meta" type="Node2D" parent="view/view/view/world"]
 
-[node name="darkener" type="CanvasModulate" parent="h_box_container/panel/view/view/world/meta"]
+[node name="darkener" type="CanvasModulate" parent="view/view/view/world/meta"]
 color = Color(0, 0, 0, 1)
 
-[node name="camera" type="Camera2D" parent="h_box_container/panel/view/view/world/meta"]
+[node name="camera" type="Camera2D" parent="view/view/view/world/meta"]
 ignore_rotation = false
 position_smoothing_enabled = true
 
-[node name="mode_overides" type="Node2D" parent="h_box_container/panel/view/view/world/meta"]
+[node name="mode_overides" type="Node2D" parent="view/view/view/world/meta"]
 visible = false
 
-[node name="world_environment" type="WorldEnvironment" parent="h_box_container/panel/view/view/world/meta"]
+[node name="world_environment" type="WorldEnvironment" parent="view/view/view/world/meta"]
 environment = ExtResource("3_7fo0t")
 
-[node name="temp" type="Node2D" parent="h_box_container/panel/view/view/world"]
+[node name="temp" type="Node2D" parent="view/view/view/world"]
 
-[node name="terrain" type="Node2D" parent="h_box_container/panel/view/view/world"]
+[node name="terrain" type="Node2D" parent="view/view/view/world"]
 
-[node name="collectables" type="Node2D" parent="h_box_container/panel/view/view/world"]
+[node name="collectables" type="Node2D" parent="view/view/view/world"]
 
-[node name="enemys" type="Node2D" parent="h_box_container/panel/view/view/world"]
+[node name="enemys" type="Node2D" parent="view/view/view/world"]
 
-[node name="players" type="Node2D" parent="h_box_container/panel/view/view/world"]
+[node name="players" type="Node2D" parent="view/view/view/world"]
 
-[node name="player" parent="h_box_container/panel/view/view/world/players" instance=ExtResource("2_nqatk")]
+[node name="player" parent="view/view/view/world/players" instance=ExtResource("2_nqatk")]
 position = Vector2(100, 0)
 
-[node name="level1" parent="h_box_container/panel/view/view/world" instance=ExtResource("5_shstq")]
-
-[node name="overlay" type="TextureRect" parent="h_box_container/panel"]
-material = SubResource("ShaderMaterial_nf0n5")
-layout_mode = 2
+[node name="level1" parent="view/view/view/world" instance=ExtResource("5_shstq")]
