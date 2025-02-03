@@ -1,24 +1,9 @@
 class_name User extends Resource
 
+# auth
 @export var username:String
 @export var password:String
 
-## If false then the user is an empty placeholder. Call from_json to initialise it.
-var initialised = false
-
-func to_json():
-	"""
-	returns the json reperesentation of this user.
-	"""
-	return {
-		"username":username,
-		"password":password,
-	}
-
-func from_json(dict:Dictionary):
-	"""
-	Initialises this User object with the data from the given dictionary.
-	"""
-	initialised=true
-	username=dict["username"]
-	password=dict["password"]
+## Contains all the items/accessories/etc that the users
+## player owns.
+@export var inventory:Inventory
