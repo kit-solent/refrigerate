@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://d0un0qo6u4dpf"]
 
-[ext_resource type="Script" path="res://core/player/player.gd" id="1_ryxhe"]
+[ext_resource type="Script" uid="uid://bj32j37202ajv" path="res://core/player/player.gd" id="1_ryxhe"]
 [ext_resource type="Texture2D" uid="uid://bclpm4fnyi21t" path="res://core/resources/point_light_gradiet_texture.tres" id="2_lbx8w"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6jli1"]

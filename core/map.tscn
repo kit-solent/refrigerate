@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=4 uid="uid://c6awmk0g3vary"]
 
 [ext_resource type="TileSet" uid="uid://b2s0nutp63jpv" path="res://core/resources/tileset.tres" id="1_njlr4"]
-[ext_resource type="Script" path="res://core/map.gd" id="2_2e7yq"]
+[ext_resource type="Script" uid="uid://d0yomqv7ydbdq" path="res://core/map.gd" id="2_2e7yq"]
 
 [node name="main" type="TileMapLayer"]
 use_parent_material = true

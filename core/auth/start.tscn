@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://dpj3jeb1mbj63"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_1toyi"]
-[ext_resource type="Script" path="res://core/auth/start.gd" id="2_qvyxh"]
-[ext_resource type="VideoStream" path="res://core/movie_output/output.ogv" id="3_i1car"]
+[ext_resource type="Script" uid="uid://6rfwts5c4ggu" path="res://core/auth/start.gd" id="2_qvyxh"]
+[ext_resource type="VideoStream" uid="uid://faq1abm4baef" path="res://core/movie_output/output.ogv" id="3_i1car"]
 [ext_resource type="PackedScene" uid="uid://b4tjjtnpt4aed" path="res://staged/landing.tscn" id="4_w2tdi"]
 [ext_resource type="FontFile" uid="uid://8mk8f05ikmea" path="res://core/resources/QizzlefloofdemoRegular-m23Wj.otf" id="5_eawyg"]
 

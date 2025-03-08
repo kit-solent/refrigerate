@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
-[ext_resource type="Script" path="res://core/ingame.gd" id="1_ul41f"]
+[ext_resource type="Script" uid="uid://1dh717yp7125" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
 [ext_resource type="Environment" uid="uid://cuprafktv5kd0" path="res://core/resources/environment.tres" id="3_7fo0t"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
@@ -31,6 +31,7 @@ size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
 [node name="world" type="Node2D" parent="view/view/view"]
+unique_name_in_owner = true
 
 [node name="meta" type="Node2D" parent="view/view/view/world"]
 

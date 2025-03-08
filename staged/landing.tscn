@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=4 uid="uid://b4tjjtnpt4aed"]
 
 [ext_resource type="TileSet" uid="uid://b2s0nutp63jpv" path="res://core/resources/tileset.tres" id="1_hrc75"]
-[ext_resource type="Script" path="res://staged/landing.gd" id="1_whhkx"]
+[ext_resource type="Script" uid="uid://dsq67poc6k2ug" path="res://staged/landing.gd" id="1_whhkx"]
 [ext_resource type="SpriteFrames" uid="uid://b60hgo5hoq746" path="res://features/explosion/explosion_spriteframes.tres" id="2_er6dh"]
 
 [node name="landing" type="Node2D"]

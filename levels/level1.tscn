@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://c6awmk0g3vary" path="res://core/map.tscn" id="1_japuw"]
 [ext_resource type="PackedScene" uid="uid://ctwsyo8iq6tg8" path="res://features/portals/portal.tscn" id="2_iwwvk"]
-[ext_resource type="Script" path="res://levels/level_1.gd" id="2_qxjqb"]
+[ext_resource type="Script" uid="uid://b37kt74l127tb" path="res://levels/level_1.gd" id="2_qxjqb"]
 [ext_resource type="PackedScene" uid="uid://dkrdhmdbjussb" path="res://features/water/water.tscn" id="3_w0b2p"]
 
 [node name="level1" instance=ExtResource("1_japuw")]

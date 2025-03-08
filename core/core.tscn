@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://chs1uj1yhcdod"]
 
-[ext_resource type="Script" path="res://core/core.gd" id="1_ktj8o"]
+[ext_resource type="Script" uid="uid://behdr5pql8avk" path="res://core/core.gd" id="1_ktj8o"]
 [ext_resource type="World2D" uid="uid://du6b6aum2bav5" path="res://core/resources/world.tres" id="2_e4puy"]
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="3_a8jyo"]
 [ext_resource type="TileSet" uid="uid://b2s0nutp63jpv" path="res://core/resources/tileset.tres" id="4_fs2cf"]
