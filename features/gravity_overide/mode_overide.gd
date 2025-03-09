@@ -1,11 +1,9 @@
-class_name ModeOveride extends Area2D
+extends Area2D
 @export_enum("TopDown","PlatformerDown","PlatformerLeft","PlatformerUp","PlaformerRight") var mode=1
 
 var gravity_shader = preload("res://core/resources/shaders/gravity.gdshader")
 
 func _on_body_entered(body):
-	return # TODO: temporary
-	@warning_ignore("unreachable_code")
 	if body.is_in_group("players"):
 		body.set_mode(mode)
 

@@ -7,8 +7,7 @@
 radius = 16.0
 height = 64.0
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ijsmq"]
-size = Vector2(120, 1)
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_h46vi"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7aeql"]
 radius = 16.0
@@ -32,9 +31,9 @@ texture = ExtResource("2_lbx8w")
 texture_scale = 20.0
 
 [node name="sprite" type="Sprite2D" parent="."]
-position = Vector2(-1.19209e-07, 0.500002)
-scale = Vector2(0.216667, 49)
-texture = SubResource("PlaceholderTexture2D_ijsmq")
+position = Vector2(-9.53674e-07, 0.500002)
+scale = Vector2(26, 49)
+texture = SubResource("PlaceholderTexture2D_h46vi")
 
 [node name="topdown_collision" type="CollisionShape2D" parent="."]
 visible = false

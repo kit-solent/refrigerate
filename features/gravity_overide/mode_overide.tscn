@@ -1,13 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://buv31evgnkci"]
+[gd_scene load_steps=3 format=3 uid="uid://buv31evgnkci"]
 
-[ext_resource type="Script" uid="uid://wc1kyx5fu1h5" path="res://features/gravity_overide/ModeOveride.gd" id="1_b20d0"]
-[ext_resource type="Shader" uid="uid://dlao1egwsp77r" path="res://core/resources/shaders/gravity.gdshader" id="2_166k7"]
+[ext_resource type="Script" uid="uid://wc1kyx5fu1h5" path="res://features/gravity_overide/mode_overide.gd" id="1_b20d0"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_v1au0"]
-shader = ExtResource("2_166k7")
-shader_parameter/direction = Vector2(0, 0)
-shader_parameter/speed = 0.0
-shader_parameter/density = 0.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aq8mb"]
 
 [node name="mode_overide" type="Area2D"]
 gravity_space_override = 3
@@ -16,11 +11,10 @@ gravity_direction = Vector2(0, -1)
 script = ExtResource("1_b20d0")
 
 [node name="collision" type="CollisionPolygon2D" parent="."]
-visible = false
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [node name="visuals" type="Polygon2D" parent="."]
-material = SubResource("ShaderMaterial_v1au0")
+material = SubResource("ShaderMaterial_aq8mb")
 polygon = PackedVector2Array(0, 0, 1152, 0, 1152, 648, 0, 648)
 vertex_colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1)
 

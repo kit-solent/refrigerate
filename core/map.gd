@@ -2,7 +2,7 @@
 class_name Map extends TileMapLayer
 
 @onready var mode_overides = get_parent().get_node("meta/mode_overides")
-var mode_overide_scene = preload("res://features/gravity_overide/ModeOveride.gd")
+var mode_overide_scene = preload("res://features/gravity_overide/mode_overide.tscn")
 var wader_scene = preload("res://features/water/water.tscn")
 
 func create_regions(id:int, atlas:Array=[], remove:bool=true):
@@ -56,7 +56,7 @@ func create_water_regions(id:int):
 	for region in old_regions:
 		new_regions.append(region)
 		
-		var stup = false
+		var _stup = false
 		while true:
 			pass
 	

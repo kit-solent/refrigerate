@@ -10,7 +10,6 @@ extends RigidBody2D
 func _integrate_forces(state:PhysicsDirectBodyState2D):
 	get_gravity()
 	
-	
 	if mode == Core.modes.TopDown: # TopDown mode.
 		pass
 	else: # one of the Platformer modes.

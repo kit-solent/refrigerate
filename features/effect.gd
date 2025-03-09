@@ -36,6 +36,7 @@ func effect_finished():
 	effect_count -= 1
 	
 	if effect_count <= 0:
+		finished.emit()
 		get_parent().remove_child(self)
 		queue_free()
 
