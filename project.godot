@@ -100,4 +100,4 @@ locale/locale_filter_mode=0
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(1, 1, 1, 1)
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
