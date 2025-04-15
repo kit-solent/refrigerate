@@ -97,3 +97,7 @@ locale/locale_filter_mode=0
 2d_physics/layer_4="terrain"
 2d_physics/layer_5="temp"
 2d_physics/layer_6="meta"
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(1, 1, 1, 1)
