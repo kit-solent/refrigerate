@@ -37,7 +37,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 audio_listener_enable_2d = true
-size = Vector2i(1152, 648)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="world" type="Node2D" parent="view/view/view"]
