@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Refrigerate"
 run/main_scene="res://core/ingame.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 config/icon="res://assets/icon.svg"
 
@@ -100,4 +100,4 @@ locale/locale_filter_mode=0
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(1, 1, 1, 1)
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
