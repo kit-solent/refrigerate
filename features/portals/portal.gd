@@ -14,6 +14,13 @@ func _ready():
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
 
 func _process(_delta:float):
+	# every frame we delete all the polygons (if any).
+	# this prevents polygons from lingering after the portal
+	# has left the screen. These can be picked up by other
+	# portals which looks bad.
+	if polygons_in_view:
+		clear_view()
+		
 	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
 	# the portal should also only be drawn if it's target is within a certain distance of the portal.
 	if pair:
@@ -25,13 +32,13 @@ func _process(_delta:float):
 		if $on_screen_notifier.is_on_screen():
 			set_view(target)
 
+# keeps trask of if there are currently polygons displayed in the view
+var polygons_in_view:bool = false
+
 @warning_ignore("shadowed_variable")
 func set_view(target:Node):
 	# TODO: There is a flicker than you can quite easily see
 	# for complex shapes and certain target positions.
-	
-	# clear the existing polygons
-	clear_view()
 	
 	# add new polygons
 	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
@@ -41,8 +48,22 @@ func set_view(target:Node):
 		new.polygon = i
 		
 		# Copy the viewport texture over from the storage node to the new polygon.
-		new.texture = pair.get_node("texture_storage").texture
+		new.texture = $texture_storage.texture
+		
+		# add a border for debugging
+		var border = Line2D.new()
+		border.default_color = Color.RED
+		border.width = 4.0
+		border.points = new.polygon # use the polygon border to make the line
+		border.add_point(new.polygon.get(0)) # and connect it up with the last point again
+		new.add_child(border)
+		
 		$view.add_child(new)
+	
+	# record the fact that there are polygons in the view that need to
+	# be cleared if this portal leaves the screen.
+	polygons_in_view = true
+
 
 func clear_view():
 	"""
@@ -51,6 +72,8 @@ func clear_view():
 	for i in $view.get_children():
 		$view.remove_child(i)
 		i.queue_free()
+	
+	polygons_in_view = false
 
 func get_local_bounds(margin:float = 64):
 	"""

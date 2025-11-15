@@ -1,6 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctwsyo8iq6tg8"]
+[gd_scene load_steps=4 format=3 uid="uid://ctwsyo8iq6tg8"]
 
 [ext_resource type="Script" uid="uid://c1uavjrxdvvhi" path="res://features/portals/portal.gd" id="1_pu3ti"]
+
+[sub_resource type="Environment" id="Environment_lglwc"]
+background_mode = 1
+background_color = Color(1, 1, 1, 1)
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_fyvk7"]
 viewport_path = NodePath("sub_viewport")
@@ -16,7 +20,9 @@ default_color = Color(0, 0.204489, 0.399983, 1)
 [node name="sub_viewport" type="SubViewport" parent="."]
 editor_description = "This viewport is a surface onto which the recording of the destination is projected. Its texture can then be read to access the view onto the 'pair' portal."
 disable_3d = true
-transparent_bg = true
+
+[node name="world_environment" type="WorldEnvironment" parent="sub_viewport"]
+environment = SubResource("Environment_lglwc")
 
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
 
