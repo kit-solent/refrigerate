@@ -6,7 +6,8 @@ class_name Tools extends Node
 
 func rect_to_polygon(rect:Rect2):
 	"""
-	Converts the given Rect2 to a polygon (PackedVector2Array)
+	Converts the given Rect2 to a polygon (PackedVector2Array).
+	Starts at the top left and adds points clockwise.
 	"""
 	return PackedVector2Array([
 		rect.position,
@@ -378,7 +379,7 @@ func segment_lines(lines):
 
 func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
 	"""
-	Casts a line from target in the direction of cast_point and returns the point where it intersects with bounds.
+	Casts a line from target in the direction of point and returns the point where it intersects with bounds.
 	target must be within bounds.
 	"""
 	# TODO: Consider using similar triangles to write a better implimentation.

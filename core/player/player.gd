@@ -41,10 +41,10 @@ var mode_colours = [
 
 ## The mode of movment used by this player, often deffined by the region of the map they are in.
 ## The default mode with a value of 0 is top down with no gravity.
-@export var mode:modes = 0
+@export var mode:modes = modes.TopDown
 
 ## The movment options for when the player is in top down mode.
-@export var topdown_setup:topdown_options = 0
+@export var topdown_setup:topdown_options = topdown_options.EightDirectional
 
 @export var move_velocity:float = 1000
 @export var rotational_velocity:float = TAU/4 # 4 seconds to make a full turn.
@@ -59,19 +59,20 @@ func _integrate_forces(state:PhysicsDirectBodyState2D):
 	var rot
 	
 	if mode == modes.TopDown: # TopDown mode.
-		#if topdown_setup in [topdown_options.EightDirectional,topdown_options.Mouse]:
-		#	dir = Input.get_vector("player left", "player right", "player forward", "player backward")
-		#elif topdown_setup == topdown_options.TurnAndMove:
-		#	dir = Input.get_axis("player backward", "player forward")
-		#	rot = Input.get_axis("player left", "player right")
-		#	rotation += rot * rotational_velocity * state.step
+		if topdown_setup in [topdown_options.EightDirectional,topdown_options.Mouse]:
+			dir = Input.get_vector("player left", "player right", "player forward", "player backward")
+		elif topdown_setup == topdown_options.TurnAndMove:
+			dir = Input.get_axis("player backward", "player forward")
+			rot = Input.get_axis("player left", "player right")
+			rotation += rot * rotational_velocity * state.step
 		
 		if topdown_setup == topdown_options.Mouse:
 			rotation = TAU/4
 			# since look at assumes the node is facing right and we are facing up
 			#rotation += TAU/4
 		
-		#linear_velocity = lerp(linear_velocity, dir * move_velocity, acceleration*state.step)
+		# accelerate toward the calculated direction
+		linear_velocity = lerp(linear_velocity, dir * move_velocity, acceleration*state.step)
 		
 	else: # one of the Platformer modes.
 		# apply gravity.
@@ -96,7 +97,7 @@ func _integrate_forces(state:PhysicsDirectBodyState2D):
 		# apply jump forces.
 		if Input.is_action_just_pressed("player jump"):
 			linear_velocity += -get_gravity()*jump_velocity*state.step
-		
+	
 	# apply terminal velocity.
 	linear_velocity = linear_velocity.clamp(-Vector2.ONE * terminal_velocity, Vector2.ONE * terminal_velocity)
 
@@ -105,7 +106,7 @@ func _on_body_entered(body):
 		pass
 
 var update = false
-func set_mode(_mode:int):
+func set_mode(_mode:modes):
 	mode = _mode
 	print(mode)
 	update = true # let the _integrate_forces function know that we need to update our direciton.

@@ -1,5 +1,8 @@
 extends Node2D
 
+# A portal's pair is the portal that it 'displays'
+# and that (when I write functionality for this) is
+# the telleportation destination.
 @export var pair:Node2D
 
 @onready var target:Node = Core.main.get_player()
@@ -9,14 +12,12 @@ func _ready():
 	
 	# find the bounding rectangle of the line, expand it for error margin, and assign it to the on screen notifier.
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
-	
-	$sub_viewport/camera_2d/color_rect/label.text = name
 
 func _process(_delta:float):
 	# the portal is only drawn if on the local screen. This works with multiplayer, only showing the portal to those who can see it.
 	# the portal should also only be drawn if it's target is within a certain distance of the portal.
 	if pair:
-		# move the pairs camera to the right position. Global coordinates must be used because the
+		# Move our camera to the pair portal. Global coordinates must be used because the
 		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
 		$sub_viewport/camera_2d.global_position = pair.global_position
 		
@@ -26,7 +27,7 @@ func _process(_delta:float):
 
 @warning_ignore("shadowed_variable")
 func set_view(target:Node):
-	# TODO: There is actually flicker than you can quite easily see
+	# TODO: There is a flicker than you can quite easily see
 	# for complex shapes and certain target positions.
 	
 	# clear the existing polygons
@@ -39,7 +40,7 @@ func set_view(target:Node):
 		var new = Polygon2D.new()
 		new.polygon = i
 		
-		# a texture storage node is used because dealing with NodePaths and viewport textures from code is messy.
+		# Copy the viewport texture over from the storage node to the new polygon.
 		new.texture = pair.get_node("texture_storage").texture
 		$view.add_child(new)
 

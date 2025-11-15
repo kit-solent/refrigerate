@@ -2,7 +2,7 @@ extends Node
 
 @export_category("Core")
 
-## If true runs the game in debug mode. This includes features such as turning of the canvas modulate
+## If true runs the game in debug mode. This includes features such as turning off the canvas modulate
 ## and enabling Godot's built in debugging features like visable collision shapes, paths, navigation, and avoidance.
 @export var debug = false
 
