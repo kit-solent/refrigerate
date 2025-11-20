@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfdvbvweagilg"]
+
+[ext_resource type="Script" uid="uid://c4c0445q5rayk" path="res://testing/viewport_positioning_test.gd" id="1_avs40"]
+[ext_resource type="Texture2D" uid="uid://dl2lsrlppi8pr" path="res://assets/icons/map.svg" id="2_de6o3"]
+[ext_resource type="Texture2D" uid="uid://4v813y0jgo8" path="res://assets/icons/explosion.png" id="2_emrin"]
+
+[node name="root" type="Node2D"]
+script = ExtResource("1_avs40")
+
+[node name="vp_holder" type="Node2D" parent="."]
+
+[node name="sub_viewport" type="SubViewport" parent="vp_holder"]
+
+[node name="vp_mark" type="Sprite2D" parent="vp_holder/sub_viewport"]
+texture = ExtResource("2_de6o3")
+
+[node name="global_marker" type="Sprite2D" parent="."]
+position = Vector2(1000, 200)
+texture = ExtResource("2_emrin")

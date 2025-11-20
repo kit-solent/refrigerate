@@ -29,3 +29,9 @@ func run():
 	get_tree().create_tween().\
 	tween_property($light, ^"energy", 0, duration).\
 	set_ease(Tween.EASE_IN)
+
+func effect_finished():
+	# hide the node to prevent the last animation frame
+	# from lingering on screen before queue_free kicks in.
+	hide()
+	queue_free()

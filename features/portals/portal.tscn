@@ -36,4 +36,10 @@ editor_description = "Stores a link to this portal's viewport texture in its own
 visible = false
 texture = SubResource("ViewportTexture_fyvk7")
 
+[node name="central_dot" type="ColorRect" parent="."]
+visible = false
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(1, 0, 0, 1)
+
 [connection signal="screen_exited" from="on_screen_notifier" to="." method="clear_view"]

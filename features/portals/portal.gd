@@ -26,11 +26,27 @@ func _process(_delta:float):
 	if pair:
 		# Move our camera to the pair portal. Global coordinates must be used because the
 		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
-		$sub_viewport/camera_2d.global_position = pair.global_position
+		$sub_viewport/camera_2d.global_position = pair.global_position + Vector2(256.3478, 254.47421)
 		
 		# update the view
 		if $on_screen_notifier.is_on_screen():
 			set_view(target)
+	
+	# TODO: This hack gives the below positions.
+	# adding the difference to the camera position
+	# gives the right position but the "magic vector"
+	# is only as accurate as the visual mouse calibration.
+	
+	# DEBUG
+	#if Input.is_action_just_pressed("debug key"):
+	#	print("Portal: "+name)
+	#	print("  Global Position: "+str(global_position))
+	#	print("  Mouse  Position: "+str(get_global_mouse_position()))
+	
+	# portal                 Vector2(246.0, -625.0)
+	# mouse/target portal    Vector2(502.3478, -370.5258)
+	# mouse - portal = vector from us to target
+	# = Vector2(256.3478, 254.47421)
 
 # keeps trask of if there are currently polygons displayed in the view
 var polygons_in_view:bool = false

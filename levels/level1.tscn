@@ -10,6 +10,7 @@ tile_map_data = PackedByteArray("AAAGAPv/CQABAAMAAAD9/wUACQAEAAQAAAD8//3/CQAGAAY
 script = ExtResource("2_qxjqb")
 
 [node name="water" parent="." index="0" instance=ExtResource("3_w0b2p")]
+visible = false
 position = Vector2(1088, -1472)
 
 [node name="marker_2d" type="Marker2D" parent="." index="1"]
