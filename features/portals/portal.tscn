@@ -20,6 +20,7 @@ default_color = Color(0, 0.204489, 0.399983, 1)
 [node name="sub_viewport" type="SubViewport" parent="."]
 editor_description = "This viewport is a surface onto which the recording of the destination is projected. Its texture can then be read to access the view onto the 'pair' portal."
 disable_3d = true
+size = Vector2i(1024, 1024)
 
 [node name="world_environment" type="WorldEnvironment" parent="sub_viewport"]
 environment = SubResource("Environment_lglwc")
@@ -34,6 +35,7 @@ rect = Rect2(-32, -64, 64, 128)
 [node name="texture_storage" type="Polygon2D" parent="."]
 editor_description = "Stores a link to this portal's viewport texture in its own texture property for easy access. This prevents the need for dealing with node/property paths from script."
 visible = false
+texture_repeat = 2
 texture = SubResource("ViewportTexture_fyvk7")
 
 [node name="central_dot" type="ColorRect" parent="."]

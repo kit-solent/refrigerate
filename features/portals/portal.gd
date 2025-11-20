@@ -60,11 +60,12 @@ func set_view(target:Node):
 	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
 	
 	for i in polygons:
-		var new = Polygon2D.new()
+		var new = $texture_storage.duplicate() # Polygon2D.new()
 		new.polygon = i
+		new.show()
 		
 		# Copy the viewport texture over from the storage node to the new polygon.
-		new.texture = $texture_storage.texture
+		#new.texture = $texture_storage.texture
 		
 		# add a border for debugging
 		var border = Line2D.new()
