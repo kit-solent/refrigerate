@@ -20,7 +20,7 @@ default_color = Color(0, 0.204489, 0.399983, 1)
 [node name="sub_viewport" type="SubViewport" parent="."]
 editor_description = "This viewport is a surface onto which the recording of the destination is projected. Its texture can then be read to access the view onto the 'pair' portal."
 disable_3d = true
-size = Vector2i(1024, 1024)
+size = Vector2i(2048, 2048)
 
 [node name="world_environment" type="WorldEnvironment" parent="sub_viewport"]
 environment = SubResource("Environment_lglwc")

@@ -2,12 +2,15 @@
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_cbacf"]
 
-[node name="inventory_slot" type="PanelContainer"]
-custom_minimum_size = Vector2(64, 64)
+[node name="aspect_ratio_container" type="AspectRatioContainer"]
 offset_right = 64.0
 offset_bottom = 64.0
+
+[node name="inventory_slot" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
 theme = ExtResource("1_cbacf")
 
-[node name="icon" type="TextureRect" parent="."]
+[node name="icon" type="TextureRect" parent="inventory_slot"]
 layout_mode = 2
 expand_mode = 1

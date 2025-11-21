@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://cro7v0jnxb4g7"]
+
+[ext_resource type="Texture2D" uid="uid://csljnkn6yoton" path="res://assets/particles/bubbles/bubble_3.png" id="1_65534"]
+
+[node name="misc" type="Node2D"]
+
+[node name="texture_rect" type="TextureRect" parent="."]
+offset_left = 428.0
+offset_top = 131.0
+offset_right = 1608.0
+offset_bottom = 942.0
+texture = ExtResource("1_65534")
+
+[node name="polygon_2d" type="Polygon2D" parent="."]
+visible = false
+texture = ExtResource("1_65534")
+polygon = PackedVector2Array(637, 103, 910, 143, 908, 613, -79, 167, 242, -152)
+uv = PackedVector2Array(637, 103, 910, 143, 908, 613, -79, 167, 242, -152)
+
+[node name="sub_viewport_container" type="SubViewportContainer" parent="."]
+offset_left = 23.0
+offset_top = 30.0
+offset_right = 791.0
+offset_bottom = 773.0
+
+[node name="sub_viewport" type="SubViewport" parent="sub_viewport_container"]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="camera_2d" type="Camera2D" parent="sub_viewport_container/sub_viewport"]
+
+[node name="camera_2d" type="Camera2D" parent="."]
+position = Vector2(1407, 373)

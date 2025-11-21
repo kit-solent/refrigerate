@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://c1dv2h730m0gk"]
+[gd_scene load_steps=9 format=3 uid="uid://c1dv2h730m0gk"]
 
 [ext_resource type="Theme" uid="uid://eqk6sg10ucwa" path="res://core/resources/theme.tres" id="1_sdiib"]
 [ext_resource type="Script" uid="uid://1dh717yp7125" path="res://core/ingame.gd" id="1_ul41f"]
 [ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_nqatk"]
 [ext_resource type="Environment" uid="uid://cuprafktv5kd0" path="res://core/resources/environment.tres" id="3_7fo0t"]
 [ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="5_shstq"]
+[ext_resource type="PackedScene" uid="uid://dq30oh7fjtec2" path="res://core/inventory/quick_access_bar.tscn" id="6_kf3mv"]
 
 [sub_resource type="Gradient" id="Gradient_q24cl"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
@@ -73,3 +74,20 @@ environment = ExtResource("3_7fo0t")
 position = Vector2(100, 0)
 
 [node name="level1" parent="view/view/view/world" instance=ExtResource("5_shstq")]
+
+[node name="overlay" type="Control" parent="view"]
+visible = false
+layout_mode = 2
+
+[node name="v_box_container" type="VBoxContainer" parent="view/overlay"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="padding" type="Control" parent="view/overlay/v_box_container"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="quick_access_bar" parent="view/overlay/v_box_container" instance=ExtResource("6_kf3mv")]
+layout_mode = 2

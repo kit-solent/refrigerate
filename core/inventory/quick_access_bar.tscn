@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://dq30oh7fjtec2"]
+
+[ext_resource type="PackedScene" uid="uid://usl2ja3hvpxp" path="res://core/inventory/inventory_slot.tscn" id="1_nanqe"]
+
+[node name="quick_access_bar" type="MarginContainer"]
+offset_right = 1152.0
+offset_bottom = 80.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="quick_access_bar" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="inventory_slot1" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot2" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot3" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot4" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot5" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot6" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot7" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot8" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
+
+[node name="inventory_slot9" parent="quick_access_bar" instance=ExtResource("1_nanqe")]
+layout_mode = 2
