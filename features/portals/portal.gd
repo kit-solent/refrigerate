@@ -39,6 +39,9 @@ func _process(_delta:float):
 		# update the view
 		if $on_screen_notifier.is_on_screen():
 			set_view(target)
+		
+		# check if the player needs telleporting.
+		
 
 # keeps trask of if there are currently polygons displayed in the view
 var polygons_in_view:bool = false

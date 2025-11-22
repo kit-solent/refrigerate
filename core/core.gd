@@ -24,7 +24,7 @@ extends Node
 
 signal debug_action
 
-var tools = Tools.new()
+var tools:Tools = Tools.new()
 
 var debug_frame:bool = false
 var debug_state:bool = false

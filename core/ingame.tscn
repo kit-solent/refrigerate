@@ -71,6 +71,7 @@ environment = ExtResource("3_7fo0t")
 [node name="players" type="Node2D" parent="view/view/view/world"]
 
 [node name="player" parent="view/view/view/world/players" instance=ExtResource("2_nqatk")]
+z_index = 1
 position = Vector2(100, 0)
 
 [node name="level1" parent="view/view/view/world" instance=ExtResource("5_shstq")]

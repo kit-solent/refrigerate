@@ -531,13 +531,18 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	return polygon
 
 func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
+	"""
+	Casts `line` against `bounds` from the perspective of `target`. This is done
+	by calling `cast_polygon` on each segment of `line` and merging the polygons
+	afterwards.
+	"""
 	var segments = segment_lines(clip_line(line, bounds))
 	var polygons:Array[PackedVector2Array] = []
 	
 	for i in segments:
 		polygons.append(cast_polygon(target, i[0], i[1], bounds))
 	
-	# TODO polygons = merge_polygons(polygons)
+	polygons = merge_polygons(polygons)
 	
 	return polygons
 
