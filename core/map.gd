@@ -98,6 +98,7 @@ func _ready():
 	update_regions()
 	
 	#TODO: This is a temporary test of water.tscn
+	@warning_ignore("unused_variable")
 	var poly:Array[PackedVector2Array] = [
 		PackedVector2Array([
 			Vector2(9, -2) * 64,
@@ -135,4 +136,4 @@ func _ready():
 			Vector2(9, -3) * 64,
 		])
 	]
-	$water.set_polygon(poly)
+	#$water.set_polygon(poly)

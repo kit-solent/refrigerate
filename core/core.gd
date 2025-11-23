@@ -11,6 +11,9 @@ extends Node
 @export var topdown_color:Color
 ## The color ascociated with the platformer gravity mode
 @export var platformer_color:Color
+## The names ascociated with the various gravity modes.
+var mode_names = ["TopDown","PlatformerDown","PlatformerLeft","PlatformerUp","PlaformerRight"]
+
 
 @export_group("Resources")
 @export var world:World2D

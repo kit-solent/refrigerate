@@ -1,22 +1,40 @@
 extends Node2D
 
-# A portal's pair is the portal that it 'displays'
-# and that (when I write functionality for this) is
-# the telleportation destination.
+## A portal's pair is the portal that it 'displays'
+## and that is the telleportation destination.
 @export var pair:Node2D
 
 @onready var target:Node = Core.main.get_player()
 
+## Emitted when this portal telleports a node.
 signal telleported(node:Node)
 
-# if true then the portal will not telleport bodies until the next frame.
+## If true then the portal will not telleport bodies until the next frame.
 var skip_frame = false
+@onready var line:Line2D = $_line
 
 func _ready():
 	$sub_viewport.world_2d = get_viewport().world_2d
 	
 	# find the bounding rectangle of the line, expand it for error margin, and assign it to the on screen notifier.
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
+	
+	# check for a Line2D to use as the portal line or use the default.
+	var extra_lines = 0
+	for child in get_children():
+		if (child is Line2D) and (not child == $_line):
+			if line == $_line:
+				# if we are still using the default line the replace it.
+				line = child
+				$_line.hide()
+				$_line.queue_free()
+			else:
+				# otherwise we have found more than 1 non default line child.
+				# the first one is used and a warning given
+				extra_lines += 1
+	
+	if extra_lines > 0:
+		push_warning("Portal "+name+" has "+str(extra_lines + 1)+" Line2D children. Only the first of these ("+line.name+") will be used for the portal line.")
 
 var delay_a_frame = true
 
@@ -93,7 +111,7 @@ func set_view(target:Node):
 	# for complex shapes and certain target positions.
 	
 	# add new polygons
-	var polygons = Core.tools.cast_polygons(to_local(target.global_position), $line.points, get_local_bounds())
+	var polygons = Core.tools.cast_polygons(to_local(target.global_position), line.points, get_local_bounds())
 	
 	for i in polygons:
 		# duplicate the texture storage node with all

@@ -12,6 +12,7 @@ enum modes {TopDown, ## The player can move in any direction and there is no gra
 			PlatformerRight ## Gravity acts to the right.
 }
 
+## These are the different ways that the player can move in top down mode.
 enum topdown_options {
 	EightDirectional, ## The player always faces upwards and uses the 4 movment keys to move around.
 	TurnAndMove, ## The player uses the left and right movment keys to turn and the forward and backward keys to move.
