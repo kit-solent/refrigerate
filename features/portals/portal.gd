@@ -7,6 +7,11 @@ extends Node2D
 
 @onready var target:Node = Core.main.get_player()
 
+signal telleported(node:Node)
+
+# if true then the portal will not telleport bodies until the next frame.
+var skip_frame = false
+
 func _ready():
 	$sub_viewport.world_2d = get_viewport().world_2d
 	
@@ -14,6 +19,11 @@ func _ready():
 	$on_screen_notifier.rect = Core.tools.line_bounds($line.points).grow(64)
 
 var delay_a_frame = true
+
+# Stores the position of the target in local
+# coordinates as of the last frame. Used to
+# see where they have come from.
+@onready var prev_target_pos:Vector2 = to_local(target.global_position)
 
 func _process(_delta:float):
 	# putting this in ready doesn't work for some reason so do it on the
@@ -36,12 +46,43 @@ func _process(_delta:float):
 		# camera is inside a viewport and so doesn't have coordinates local to the pair (I think).
 		$sub_viewport/camera_2d.global_position = pair.global_position
 		
+		# check if the player needs telleporting.
+		var target_pos = to_local(target.global_position) # get the current target position
+		var intersections = Core.tools.lines_intersect(
+			PackedVector2Array([prev_target_pos, target_pos]), # construct a line from `prev_target_pos` to `target_pos`
+			$line.points # and count the times it cuts through the portal line.
+		)
+		
+		if len(intersections) > 0 and (not skip_frame):
+				# if the players movement in the last frame takes them through the portal
+				# line then teleport them to the new location with the same local offset.
+				target.global_position = pair.global_position + target_pos
+				
+				# telleport the camera without smoothing. As camera positioning is done in
+				# the ingame script we need to move it manually here.
+				Core.main.get_camera().global_position = target.global_position
+				Core.main.get_camera().reset_smoothing()
+				
+				# let the universe know that we just telleported the target.
+				telleported.emit(target)
+				
+				# tell our pair not to send the target straight back again.
+				pair.skip_telleportation_frame()
+		
 		# update the view
 		if $on_screen_notifier.is_on_screen():
 			set_view(target)
-		
-		# check if the player needs telleporting.
-		
+	
+	prev_target_pos = to_local(target.global_position)
+	skip_frame = false
+
+func skip_telleportation_frame():
+	"""
+	When called, tells this portal not to transport bodies this frame.
+	This is to prevent 'double telleports' where the motion of telleporting
+	causes the body to be taken straight back again.
+	"""
+	skip_frame = true
 
 # keeps trask of if there are currently polygons displayed in the view
 var polygons_in_view:bool = false
@@ -69,12 +110,13 @@ func set_view(target:Node):
 		new.texture_offset = -$texture_storage.texture.get_size()/2
 		
 		# add a border for debugging
-		var border = Line2D.new()
-		border.default_color = Color.RED
-		border.width = 4.0
-		border.points = new.polygon # use the polygon border to make the line
-		border.add_point(new.polygon.get(0)) # and connect it up with the last point again
-		new.add_child(border)
+		if false:
+			var border = Line2D.new()
+			border.default_color = Color.RED
+			border.width = 4.0
+			border.points = new.polygon # use the polygon border to make the line
+			border.add_point(new.polygon.get(0)) # and connect it up with the last point again
+			new.add_child(border)
 		
 		$view.add_child(new)
 	

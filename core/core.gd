@@ -20,7 +20,7 @@ extends Node
 @export var font:FontFile
 
 
-@onready var main:Node = null
+@onready var main:InGame = null
 
 signal debug_action
 

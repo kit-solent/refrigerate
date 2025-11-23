@@ -19,6 +19,7 @@ contact_monitor = true
 max_contacts_reported = 16
 linear_damp = 40.0
 script = ExtResource("1_ryxhe")
+move_velocity = 600.0
 
 [node name="platformer_collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_6jli1")

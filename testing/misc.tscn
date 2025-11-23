@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cro7v0jnxb4g7"]
+[gd_scene load_steps=3 format=3 uid="uid://cro7v0jnxb4g7"]
 
 [ext_resource type="Texture2D" uid="uid://csljnkn6yoton" path="res://assets/particles/bubbles/bubble_3.png" id="1_65534"]
+[ext_resource type="Script" uid="uid://d02qxnuk6ltgi" path="res://testing/misc.gd" id="1_yh37i"]
 
 [node name="misc" type="Node2D"]
+script = ExtResource("1_yh37i")
 
 [node name="texture_rect" type="TextureRect" parent="."]
 offset_left = 428.0

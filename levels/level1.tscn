@@ -16,10 +16,18 @@ position = Vector2(1088, -1472)
 [node name="marker_2d" type="Marker2D" parent="." index="1"]
 position = Vector2(600, -113)
 
-[node name="portal" parent="." index="2" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
+[node name="color_rect" type="ColorRect" parent="." index="2"]
+visible = false
+offset_left = -220.0
+offset_top = -943.0
+offset_right = 211.0
+offset_bottom = -289.0
+color = Color(1, 0, 0, 1)
+
+[node name="portal" parent="." index="3" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
 position = Vector2(246, -625)
 pair = NodePath("../portal2")
 
-[node name="portal2" parent="." index="3" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
+[node name="portal2" parent="." index="4" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
 position = Vector2(1546, -356)
 pair = NodePath("../portal")

@@ -28,6 +28,7 @@ environment = SubResource("Environment_lglwc")
 [node name="camera_2d" type="Camera2D" parent="sub_viewport"]
 
 [node name="view" type="Node2D" parent="."]
+modulate = Color(0, 0, 0, 1)
 
 [node name="on_screen_notifier" type="VisibleOnScreenNotifier2D" parent="."]
 rect = Rect2(-32, -64, 64, 128)

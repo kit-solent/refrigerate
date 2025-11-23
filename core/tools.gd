@@ -182,7 +182,8 @@ func decolinearise_line(line:PackedVector2Array):
 	if are_colinear(PackedVector2Array([new[-1], new[0], new[1]])):
 		new.remove_at(0)
 	if are_colinear(PackedVector2Array([new[-2], new[-1], new[0]])):
-		new.remove_at(-1)
+		# remove_at doesn't support negative indices.
+		new.remove_at(new.size() - 1)
 	
 	return new
 
@@ -619,3 +620,23 @@ func transform_array(array:PackedVector2Array, transform:Vector2):
 		new.append(i + transform)
 	
 	return new
+
+func lines_intersect(line1:PackedVector2Array, line2:PackedVector2Array):
+	"""
+	Returns a list of all intersections between `line1` and `line2`. If
+	the lines don't intersect then return an empty PackedVector2Array.
+	"""
+	var intersections = PackedVector2Array()
+	
+	for i1 in range(0, line1.size()-1): # loop from the first to the 2nd to last index.
+		var p11 = line1[i1]
+		var p12 = line1[i1 + 1]
+		for i2 in range(0, line2.size()-1):
+			var p21 = line2[i2]
+			var p22 = line2[i2 + 1]
+			
+			var intersect = Geometry2D.segment_intersects_segment(p11,p12,p21,p22)
+			if intersect:
+				intersections.append(intersect)
+	
+	return intersections
