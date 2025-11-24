@@ -1,10 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://buv31evgnkci"]
+[gd_scene load_steps=2 format=3 uid="uid://buv31evgnkci"]
 
 [ext_resource type="Script" uid="uid://wc1kyx5fu1h5" path="res://features/gravity_overide/mode_overide.gd" id="1_b20d0"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_aq8mb"]
-
-[node name="mode_overide" type="Area2D"]
+[node name="mode_overide" type="Area2D" groups=["mode overrides"]]
 gravity_space_override = 3
 gravity_point_center = Vector2(0, 0)
 gravity_direction = Vector2(0, 0)
@@ -14,7 +12,6 @@ script = ExtResource("1_b20d0")
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [node name="visuals" type="Polygon2D" parent="."]
-material = SubResource("ShaderMaterial_aq8mb")
 polygon = PackedVector2Array(0, 0, 1152, 0, 1152, 648, 0, 648)
 vertex_colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1)
 

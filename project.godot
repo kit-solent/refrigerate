@@ -46,6 +46,7 @@ folder_colors={
 [global_group]
 
 players=""
+"mode overrides"="Regions of space in which the direction (and presence) of gravity is changed."
 
 [input]
 

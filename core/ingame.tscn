@@ -47,7 +47,6 @@ unique_name_in_owner = true
 [node name="meta" type="Node2D" parent="view/view/view/world"]
 
 [node name="darkener" type="CanvasModulate" parent="view/view/view/world/meta"]
-visible = false
 color = Color(0, 0, 0, 1)
 
 [node name="camera" type="Camera2D" parent="view/view/view/world/meta"]
@@ -55,7 +54,6 @@ ignore_rotation = false
 position_smoothing_enabled = true
 
 [node name="mode_overides" type="Node2D" parent="view/view/view/world/meta"]
-visible = false
 
 [node name="world_environment" type="WorldEnvironment" parent="view/view/view/world/meta"]
 environment = ExtResource("3_7fo0t")

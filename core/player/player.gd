@@ -69,11 +69,10 @@ func _on_body_entered(body):
 		pass
 
 var update = false
-func set_gravity_mode(_top_down:bool, direction:Vector2):
-	top_down = _top_down
+func set_gravity_direction(direction:Vector2):
 	gravity_direction = direction
 	update = true # let the _integrate_forces function know that we need to update our direciton.
-	if top_down:
+	if direction == Vector2.ZERO:
 		$topdown_collision.set_deferred("disabled", false)
 		$platformer_collision.set_deferred("disabled", true)
 	else:

@@ -77,7 +77,17 @@ func update_regions():
 		var regions = create_regions(id)
 		for region in regions:
 			var overide = mode_overide_scene.instantiate()
-			overide.set_mode(id - 1)
+			
+			var gravity_dir
+			if id == 1:
+				# account for top down mode.
+				gravity_dir = Vector2.ZERO
+			else:
+				# generate the gravity direction by rotating the DOWN vector anticlockwise
+				# (id - 2) times. (Because index 2 is the down direction).
+				gravity_dir = Vector2.DOWN.rotated((TAU/4) * (id - 2))
+			
+			overide.change_gravity_direction(gravity_dir)
 			overide.set_polygon(region)
 			mode_overides.add_child(overide)
 	

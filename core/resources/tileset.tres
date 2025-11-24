@@ -612,8 +612,8 @@ texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qicur"]
-resource_name = "PlatformerLeft"
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_knsr6"]
+resource_name = "PlatformerRight"
 texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
@@ -624,8 +624,8 @@ texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_knsr6"]
-resource_name = "PlatformerRight"
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qicur"]
+resource_name = "PlatformerLeft"
 texture = ExtResource("4_oq2lv")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
@@ -1081,10 +1081,10 @@ navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_jrbhc")
 sources/1 = SubResource("TileSetAtlasSource_iq4nk")
 sources/2 = SubResource("TileSetAtlasSource_fqxxm")
-sources/3 = SubResource("TileSetAtlasSource_qicur")
 sources/4 = SubResource("TileSetAtlasSource_3x4iy")
-sources/5 = SubResource("TileSetAtlasSource_knsr6")
 sources/9 = SubResource("TileSetAtlasSource_obl3g")
+sources/3 = SubResource("TileSetAtlasSource_knsr6")
+sources/5 = SubResource("TileSetAtlasSource_qicur")
 pattern_0 = SubResource("TileMapPattern_66sc8")
 pattern_1 = SubResource("TileMapPattern_obl3g")
 pattern_2 = SubResource("TileMapPattern_eqr2p")

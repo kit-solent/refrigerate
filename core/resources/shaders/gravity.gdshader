@@ -14,10 +14,5 @@ float random_float(float seed) {
 }
 
 void fragment() {
-	//if (false) {
-		//COLOR = vec4(1.0, 0.0, 0.0, 1.0);
-	//} else {
-		//COLOR = vec4(0.0, 1.0, 0.0, 1.0);
-	//};
-	COLOR = vec4(random_vec2(FRAGCOORD.xy), random_vec2(FRAGCOORD.xy + vec2(1, 1)), random_vec2(FRAGCOORD.xy + vec2(2, 1)), 1.0);
+	COLOR = vec4(0.0,0.0,0.0,0.0);
 }

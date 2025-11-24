@@ -19,21 +19,11 @@ contact_monitor = true
 max_contacts_reported = 16
 linear_damp = 40.0
 script = ExtResource("1_ryxhe")
-top_down = null
-gravity_direction = null
-topdown_setup = null
-move_velocity = null
-rotational_velocity = null
-jump_velocity = null
-acceleration = null
-deacceleration = null
-terminal_velocity = null
 
 [node name="platformer_collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_6jli1")
 
 [node name="light" type="PointLight2D" parent="."]
-enabled = false
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
 shadow_filter = 1
