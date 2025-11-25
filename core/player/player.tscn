@@ -24,6 +24,7 @@ script = ExtResource("1_ryxhe")
 shape = SubResource("CapsuleShape2D_6jli1")
 
 [node name="light" type="PointLight2D" parent="."]
+visible = false
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
 shadow_filter = 1

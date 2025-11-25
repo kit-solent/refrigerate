@@ -9,10 +9,20 @@ gravity_direction = Vector2(0, 0)
 script = ExtResource("1_b20d0")
 
 [node name="collision" type="CollisionPolygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [node name="visuals" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(0, 0, 1152, 0, 1152, 648, 0, 648)
-vertex_colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1)
+texture_repeat = 2
+color = Color(0.6194887, 0.61948866, 0.6194887, 1)
+texture_scale = Vector2(10.365, 10.365)
+
+[node name="on_screen" type="VisibleOnScreenNotifier2D" parent="."]
+
+[node name="lines" type="Node2D" parent="."]
+
+[node name="line" type="Line2D" parent="."]
+points = PackedVector2Array(28, 25, 263, 38, 255, 284, 43, 258, 29, 46)
+default_color = Color(10.619, 0.341, 13.409, 1)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

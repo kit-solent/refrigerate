@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3 uid="uid://dbpoan4hjapsw"]
+
+[ext_resource type="Environment" uid="uid://cuprafktv5kd0" path="res://core/resources/environment.tres" id="1_ccd7m"]
+[ext_resource type="PackedScene" uid="uid://d0un0qo6u4dpf" path="res://core/player/player.tscn" id="2_e68cy"]
+[ext_resource type="PackedScene" uid="uid://s8hhu4jxydb" path="res://levels/level1.tscn" id="3_wd0q5"]
+
+[sub_resource type="Gradient" id="Gradient_kf3mv"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qotrq"]
+gradient = SubResource("Gradient_kf3mv")
+
+[node name="world" type="Node2D"]
+
+[node name="meta" type="Node2D" parent="."]
+
+[node name="darkener" type="CanvasModulate" parent="meta"]
+visible = false
+color = Color(0, 0, 0, 1)
+
+[node name="camera" type="Camera2D" parent="meta"]
+ignore_rotation = false
+position_smoothing_enabled = true
+
+[node name="sprite_2d" type="Sprite2D" parent="meta/camera"]
+position = Vector2(16.000061, -47.99997)
+scale = Vector2(6.2499995, 912)
+texture = SubResource("GradientTexture1D_qotrq")
+
+[node name="mode_overides" type="Node2D" parent="meta"]
+
+[node name="world_environment" type="WorldEnvironment" parent="meta"]
+environment = ExtResource("1_ccd7m")
+
+[node name="temp" type="Node2D" parent="."]
+
+[node name="terrain" type="Node2D" parent="."]
+
+[node name="collectables" type="Node2D" parent="."]
+
+[node name="enemies" type="Node2D" parent="."]
+
+[node name="players" type="Node2D" parent="."]
+
+[node name="player" parent="players" instance=ExtResource("2_e68cy")]
+z_index = 1
+position = Vector2(100, 0)
+
+[node name="level1" parent="." instance=ExtResource("3_wd0q5")]

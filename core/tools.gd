@@ -4,7 +4,7 @@ class_name Tools extends Node
 ## of the Refrigerate game.
 
 
-func rect_to_polygon(rect:Rect2):
+func rect_to_polygon(rect:Rect2) -> PackedVector2Array:
 	"""
 	Converts the given Rect2 to a polygon (PackedVector2Array).
 	Starts at the top left and adds points clockwise.
@@ -16,7 +16,7 @@ func rect_to_polygon(rect:Rect2):
 		rect.position + Vector2.DOWN * rect.size.y
 	])
 
-func wrap_slice(arr:Array, start:int, end:int):
+func wrap_slice(arr:Array, start:int, end:int) -> Array:
 	"""
 	An Array slicing function that wraps arround and handles slicing backwards.
 	Is both ends exclusive.
@@ -33,7 +33,7 @@ func wrap_slice(arr:Array, start:int, end:int):
 	
 	return sliced
 
-func angle_diff(angle_a:float, angle_b:float):
+func angle_diff(angle_a:float, angle_b:float) -> float:
 	"""
 	Returns tha absolute difference between the two angles in radians.
 	"""
@@ -46,7 +46,7 @@ func angle_diff(angle_a:float, angle_b:float):
 	
 	return max_angle - min_angle
 
-func get_centre(points):
+func get_centre(points) -> Vector2:
 	"""
 	Returns the centroid of the given points.
 	This is the average of the points or the point in the centre of
@@ -59,7 +59,7 @@ func get_centre(points):
 	
 	return centroid
 
-func merge_polygons(polygons:Array[PackedVector2Array]):
+func merge_polygons(polygons:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	"""
 	Merges any adjacent or overlapping polygons into a single polygon.
 	Returns an array of polygons. Also removes redundant colinear points.
@@ -93,7 +93,7 @@ func merge_polygons(polygons:Array[PackedVector2Array]):
 	
 	return new_polygons
 
-func line_bounds(line:PackedVector2Array):
+func line_bounds(line:PackedVector2Array) -> Rect2:
 	"""
 	Returns the smallest Rect2 that contains all points in `line`.
 	This is the bounding box of `line`. If line is empty then return
@@ -111,14 +111,14 @@ func line_bounds(line:PackedVector2Array):
 	
 	return rect
 
-func to_local_rect(node:CanvasItem, rect:Rect2):
+func to_local_rect(node:CanvasItem, rect:Rect2) -> Rect2:
 	"""
 	An implimentation of the to_local method for `Rect2`s. `node` is the node who's
 	coordinate space will be used for the transformation. 
 	"""
 	return Rect2(node.to_local(rect.position), rect.size)
 
-func has_point(rect:Rect2, point:Vector2):
+func has_point(rect:Rect2, point:Vector2) -> bool:
 	"""
 	Returns `true` if `point` is within or on the border of `rect`.
 	"""
@@ -134,7 +134,7 @@ func has_point(rect:Rect2, point:Vector2):
 		return false
 	return true
 
-func fix_angle(angle:float):
+func fix_angle(angle:float) -> float:
 	"""
 	Forces angle to be positive.
 	"""
@@ -143,7 +143,7 @@ func fix_angle(angle:float):
 	
 	return float(angle)
 
-func are_colinear(points:PackedVector2Array):
+func are_colinear(points:PackedVector2Array) -> bool:
 	"""
 	Returns `true` if the given points are colinear
 	"""
@@ -159,7 +159,7 @@ func are_colinear(points:PackedVector2Array):
 	
 	return true
 
-func decolinearise_line(line:PackedVector2Array):
+func decolinearise_line(line:PackedVector2Array) -> PackedVector2Array:
 	"""
 	Removes any points that are colinear with their neibours from the line as they are redundant
 	and have no effect on the shape of the line.
@@ -187,7 +187,7 @@ func decolinearise_line(line:PackedVector2Array):
 	
 	return new
 
-func is_between(angle:float, a:float, b:float):
+func is_between(angle:float, a:float, b:float) -> bool:
 	"""
 	Returns true if `angle` is between the angles `a` and `b`.
 	"""
@@ -205,7 +205,7 @@ func is_between(angle:float, a:float, b:float):
 		# anticlockwise only happens when the positive x axis is inside the angle
 		return angle < small_angle or angle > big_angle
 
-func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float):
+func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float) -> PackedVector2Array:
 	"""
 	Vertically clippes the line segment from start to stop against the upper and lower limits.
 	Regardless of the input points the line segment will be returned from the top down.
@@ -237,7 +237,7 @@ func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:f
 	
 	return PackedVector2Array([stop, start] if flipped else [start, stop])
 
-func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float):
+func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float) -> PackedVector2Array:
 	"""
 	Vertically clippes the line segment from start to stop against the upper and lower limits.
 	Regardless of the input points the line segment will be returned from the top down.
@@ -270,7 +270,7 @@ func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:fl
 	
 	return PackedVector2Array([stop, start] if flipped else [start, stop])
 
-func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2):
+func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2) -> PackedVector2Array:
 	"""
 	Returns the section of the given straight line that lies inside the given bounds.
 	Returns an empty PackedVector2Array if the line is entirly outside the bounds.
@@ -296,7 +296,7 @@ func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2):
 	
 	return PackedVector2Array([start, stop])
 
-func clip_line(line:PackedVector2Array, bounds:Rect2):
+func clip_line(line:PackedVector2Array, bounds:Rect2) -> Array[PackedVector2Array]:
 	"""
 	Returns the portion of the portal line that is inside the given bounds.
 	This is an implimentation of the Cohen–Sutherland algorithm (https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm)
@@ -356,29 +356,29 @@ func clip_line(line:PackedVector2Array, bounds:Rect2):
 	
 	return lines
 
-func segment_line(line:PackedVector2Array):
+func segment_line(line:PackedVector2Array) -> Array[PackedVector2Array]:
 	"""
 	Returns an array of the segments of `line`.
 	"""
-	var segments = []
+	var segments:Array[PackedVector2Array] = []
 	
 	for i in range(len(line)-1):
 		segments.append(PackedVector2Array([line[i], line[i+1]]))
 	
 	return segments
 
-func segment_lines(lines):
+func segment_lines(lines) -> Array[PackedVector2Array]:
 	"""
 	Calls segment_line on all lines in `lines` and returns the results in a single array.
 	"""
-	var segments = []
+	var segments:Array[PackedVector2Array] = []
 	
 	for i in lines:
 		segments.append_array(segment_line(i))
 	
 	return segments
 
-func cast_point(target:Vector2, point:Vector2, bounds:Rect2):
+func cast_point(target:Vector2, point:Vector2, bounds:Rect2) -> Array[Vector2]:
 	"""
 	Casts a line from target in the direction of point and returns the point where it intersects with bounds.
 	target must be within bounds.
@@ -531,7 +531,7 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	
 	return polygon
 
-func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
+func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2) -> Array[PackedVector2Array]:
 	"""
 	Casts `line` against `bounds` from the perspective of `target`. This is done
 	by calling `cast_polygon` on each segment of `line` and merging the polygons
@@ -547,7 +547,7 @@ func cast_polygons(target:Vector2, line:PackedVector2Array, bounds:Rect2):
 	
 	return polygons
 
-func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2, direction:bool = false):
+func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2, direction:bool = false) -> PackedVector2Array:
 	"""
 	Find the appropriate corner coordinates based on the given edges, points, target, and bounds.
 	This uses the target point to work out which direction the polygon is being cast and from there
@@ -559,22 +559,22 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	direction = cross > 0
 	
 	# the corners of the bounds.
-	var bounds_tl = bounds.position
-	var bounds_tr = bounds.position + Vector2.RIGHT * bounds.size.x
-	var bounds_bl = bounds.position + Vector2.DOWN  * bounds.size.y
-	var bounds_br = bounds.end
+	var bounds_tl:Vector2 = bounds.position
+	var bounds_tr:Vector2 = bounds.position + Vector2.RIGHT * bounds.size.x
+	var bounds_bl:Vector2 = bounds.position + Vector2.DOWN  * bounds.size.y
+	var bounds_br:Vector2 = bounds.end
 	
 	# the angles from the target to the corners of the bounds.
-	var angle_tl = fix_angle(target.angle_to_point(bounds_tl))
-	var angle_tr = fix_angle(target.angle_to_point(bounds_tr))
-	var angle_bl = fix_angle(target.angle_to_point(bounds_bl))
-	var angle_br = fix_angle(target.angle_to_point(bounds_br))
+	var angle_tl:float = fix_angle(target.angle_to_point(bounds_tl))
+	var angle_tr:float = fix_angle(target.angle_to_point(bounds_tr))
+	var angle_bl:float = fix_angle(target.angle_to_point(bounds_bl))
+	var angle_br:float = fix_angle(target.angle_to_point(bounds_br))
 	
 	# the angles from the target to the points (same as the angles from the points to their intersects).
-	var angle_a = fix_angle(target.angle_to_point(point1))
-	var angle_b = fix_angle(target.angle_to_point(point2))
+	var angle_a:float = fix_angle(target.angle_to_point(point1))
+	var angle_b:float = fix_angle(target.angle_to_point(point2))
 	
-	var angles = [
+	var angles:Array[float] = [
 		angle_br,
 		angle_bl,
 		angle_tl,
@@ -600,7 +600,7 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 		chosen_angles.reverse()
 	
 	# convert the chosen angles into corner positions
-	var corners = []
+	var corners:PackedVector2Array = PackedVector2Array([])
 	for i in chosen_angles:
 		corners.append({
 			angle_tl:bounds_tl,
@@ -611,7 +611,7 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	
 	return corners
 
-func transform_array(array:PackedVector2Array, transform:Vector2):
+func transform_array(array:PackedVector2Array, transform:Vector2) -> PackedVector2Array:
 	"""
 	Returns a PackedVector2Array with `transform` added to each element of `array:PackedVector2Array`
 	"""
@@ -621,7 +621,7 @@ func transform_array(array:PackedVector2Array, transform:Vector2):
 	
 	return new
 
-func lines_intersect(line1:PackedVector2Array, line2:PackedVector2Array):
+func lines_intersect(line1:PackedVector2Array, line2:PackedVector2Array) -> PackedVector2Array:
 	"""
 	Returns a list of all intersections between `line1` and `line2`. If
 	the lines don't intersect then return an empty PackedVector2Array.
@@ -640,3 +640,13 @@ func lines_intersect(line1:PackedVector2Array, line2:PackedVector2Array):
 				intersections.append(intersect)
 	
 	return intersections
+
+func get_local_bounds(node:Node, margin:float = 64) -> Rect2:
+	"""
+	Returns the viewport rect in the local space of the given node and expands it by the given error margin.
+	"""
+	# this is the viewport rect in global coordinates.
+	var global_rect = (node.get_viewport_rect() * node.get_viewport_transform()).grow(margin)
+	
+	# convert to local coordinates before returning.
+	return to_local_rect(node, global_rect)

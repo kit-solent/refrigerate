@@ -101,4 +101,4 @@ locale/locale_filter_mode=0
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(1, 1, 1, 1)
+viewport/hdr_2d=true

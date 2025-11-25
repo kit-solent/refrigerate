@@ -47,7 +47,7 @@ func _process(_delta:float):
 	# putting this in ready doesn't work for some reason so do it on the
 	# first frame that _process runs.
 	if delay_a_frame:
-		$sub_viewport.size = get_local_bounds().size
+		$sub_viewport.size = Core.tools.get_local_bounds(self).size
 		delay_a_frame = false
 	
 	# every frame we delete all the polygons (if any).
@@ -111,7 +111,7 @@ func set_view(target:Node):
 	# for complex shapes and certain target positions.
 	
 	# add new polygons
-	var polygons = Core.tools.cast_polygons(to_local(target.global_position), line.points, get_local_bounds())
+	var polygons = Core.tools.cast_polygons(to_local(target.global_position), line.points, Core.tools.get_local_bounds(self))
 	
 	for i in polygons:
 		# duplicate the texture storage node with all
@@ -151,13 +151,3 @@ func clear_view():
 		i.queue_free()
 	
 	polygons_in_view = false
-
-func get_local_bounds(margin:float = 64):
-	"""
-	Returns the viewport rect in local space and expands it a little for error margin.
-	"""
-	# this is the viewport rect in global coordinates.
-	var global_rect = (get_viewport_rect() * get_viewport_transform()).grow(margin)
-	
-	# convert to local coordinates before returning.
-	return Core.tools.to_local_rect(self, global_rect)
