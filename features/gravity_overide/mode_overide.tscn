@@ -13,9 +13,7 @@ visible = false
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [node name="visuals" type="Polygon2D" parent="."]
-texture_repeat = 2
-color = Color(0.6194887, 0.61948866, 0.6194887, 1)
-texture_scale = Vector2(10.365, 10.365)
+visible = false
 
 [node name="on_screen" type="VisibleOnScreenNotifier2D" parent="."]
 
@@ -23,6 +21,7 @@ texture_scale = Vector2(10.365, 10.365)
 
 [node name="line" type="Line2D" parent="."]
 points = PackedVector2Array(28, 25, 263, 38, 255, 284, 43, 258, 29, 46)
-default_color = Color(10.619, 0.341, 13.409, 1)
+width = 15.0
+default_color = Color(0, 0.6463068, 0.4820726, 1)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

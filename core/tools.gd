@@ -641,7 +641,7 @@ func lines_intersect(line1:PackedVector2Array, line2:PackedVector2Array) -> Pack
 	
 	return intersections
 
-func get_local_bounds(node:Node, margin:float = 64) -> Rect2:
+func get_local_bounds(node:Node, margin:float = 64) -> Rect2: # TODO: Make this return a polygon that accounts for rotation.
 	"""
 	Returns the viewport rect in the local space of the given node and expands it by the given error margin.
 	"""

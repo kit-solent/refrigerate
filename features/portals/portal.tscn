@@ -10,6 +10,7 @@ background_color = Color(1, 1, 1, 1)
 viewport_path = NodePath("sub_viewport")
 
 [node name="portal" type="Node2D"]
+visibility_layer = 2
 script = ExtResource("1_pu3ti")
 
 [node name="_line" type="Line2D" parent="."]
@@ -20,12 +21,13 @@ default_color = Color(0, 0.204489, 0.399983, 1)
 [node name="sub_viewport" type="SubViewport" parent="."]
 editor_description = "This viewport is a surface onto which the recording of the destination is projected. Its texture can then be read to access the view onto the 'pair' portal."
 disable_3d = true
+canvas_cull_mask = 4294967293
 size = Vector2i(2048, 2048)
 
 [node name="world_environment" type="WorldEnvironment" parent="sub_viewport"]
 environment = SubResource("Environment_lglwc")
 
-[node name="camera_2d" type="Camera2D" parent="sub_viewport"]
+[node name="camera" type="Camera2D" parent="sub_viewport"]
 
 [node name="view" type="Node2D" parent="."]
 
@@ -37,11 +39,5 @@ editor_description = "Stores a link to this portal's viewport texture in its own
 visible = false
 texture_repeat = 2
 texture = SubResource("ViewportTexture_fyvk7")
-
-[node name="central_dot" type="ColorRect" parent="."]
-visible = false
-offset_right = 4.0
-offset_bottom = 4.0
-color = Color(1, 0, 0, 1)
 
 [connection signal="screen_exited" from="on_screen_notifier" to="." method="clear_view"]

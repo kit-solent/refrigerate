@@ -36,11 +36,14 @@ func _integrate_forces(state:PhysicsDirectBodyState2D):
 	
 	if gravity_direction == Vector2.ZERO:
 		if topdown_setup in [topdown_options.EightDirectional,topdown_options.Mouse]:
-			dir = Input.get_vector("player left", "player right", "player forward", "player backward")
+			dir = Input.get_vector("player left", "player right", "player forward", "player backward").normalized()
 		elif topdown_setup == topdown_options.TurnAndMove:
 			dir = Input.get_axis("player backward", "player forward")
 			rot = Input.get_axis("player left", "player right")
 			rotation += rot * rotational_velocity * state.step
+			
+			# the extra 𝜏/4 is to make up the 0 angle. 
+			dir = (Vector2.from_angle(rotation - TAU/4)*dir).normalized()
 		
 		if topdown_setup == topdown_options.Mouse:
 			rotation = TAU/4

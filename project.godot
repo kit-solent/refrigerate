@@ -92,6 +92,8 @@ locale/locale_filter_mode=0
 
 [layer_names]
 
+2d_render/layer_1="General"
+2d_render/layer_2="Portals"
 2d_physics/layer_1="players"
 2d_physics/layer_2="enemys"
 2d_physics/layer_3="collectables"

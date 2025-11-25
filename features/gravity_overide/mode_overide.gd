@@ -27,7 +27,7 @@ func change_gravity_direction(direction:Vector2):
 	else:
 		$visuals.color = Core.platformer_color
 
-func _process(_delta: float):
+func _process(_delta:float):
 	if $on_screen.is_on_screen():
 		# remove the preexisting lines
 		for line in $lines.get_children():
