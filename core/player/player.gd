@@ -23,7 +23,7 @@ enum topdown_options {
 @export var topdown_setup:topdown_options = topdown_options.EightDirectional
 
 @export var move_velocity:float = 1000
-@export var rotational_velocity:float = TAU/4 # 4 seconds to make a full turn.
+@export var rotational_velocity:float = TAU/1.5 # 1.5 seconds to make a full turn.
 @export var jump_velocity:float = 50
 @export var acceleration:float = 10
 @export var deacceleration:float = 40
@@ -46,7 +46,7 @@ func _integrate_forces(state:PhysicsDirectBodyState2D):
 			dir = (Vector2.from_angle(rotation - TAU/4)*dir).normalized()
 		
 		if topdown_setup == topdown_options.Mouse:
-			rotation = TAU/4
+			rotation = get_angle_to(get_local_mouse_position())
 			# since look at assumes the node is facing right and we are facing up
 			#rotation += TAU/4
 		

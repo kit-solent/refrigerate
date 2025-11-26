@@ -11,7 +11,8 @@ func _ready():
 	#Core.local_player=$h_box_container/panel/view/view/world/players/player
 
 func _process(_delta):
-	%world/meta/camera.global_transform=camera_target.global_transform
+	#%world/meta/camera.global_transform=camera_target.global_transform
+	%world/meta/camera.global_position=camera_target.global_position
 
 func get_player():
 	return %world/players/player
