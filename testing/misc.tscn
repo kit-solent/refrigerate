@@ -1,35 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://cro7v0jnxb4g7"]
+[gd_scene load_steps=2 format=3 uid="uid://cro7v0jnxb4g7"]
 
-[ext_resource type="Texture2D" uid="uid://csljnkn6yoton" path="res://assets/particles/bubbles/bubble_3.png" id="1_65534"]
 [ext_resource type="Script" uid="uid://d02qxnuk6ltgi" path="res://testing/misc.gd" id="1_yh37i"]
 
 [node name="misc" type="Node2D"]
 script = ExtResource("1_yh37i")
 
-[node name="texture_rect" type="TextureRect" parent="."]
-offset_left = 428.0
-offset_top = 131.0
-offset_right = 1608.0
-offset_bottom = 942.0
-texture = ExtResource("1_65534")
+[node name="polygons" type="Node2D" parent="."]
 
-[node name="polygon_2d" type="Polygon2D" parent="."]
-visible = false
-texture = ExtResource("1_65534")
-polygon = PackedVector2Array(637, 103, 910, 143, 908, 613, -79, 167, 242, -152)
-uv = PackedVector2Array(637, 103, 910, 143, 908, 613, -79, 167, 242, -152)
+[node name="polygon_2d" type="Polygon2D" parent="polygons"]
+polygon = PackedVector2Array(128, 58, 109, 305, 222, 308, 222, -27)
 
-[node name="sub_viewport_container" type="SubViewportContainer" parent="."]
-offset_left = 23.0
-offset_top = 30.0
-offset_right = 791.0
-offset_bottom = 773.0
+[node name="polygon_2d2" type="Polygon2D" parent="polygons"]
+polygon = PackedVector2Array(206, 491, 147, 339, 232, 217, 294, 458, 638, 469, 657, 227, 774, 550, 268, 558)
 
-[node name="sub_viewport" type="SubViewport" parent="sub_viewport_container"]
-handle_input_locally = false
-render_target_update_mode = 4
+[node name="polygon_2d3" type="Polygon2D" parent="polygons"]
+polygon = PackedVector2Array(788, 281, 337, 277, 94, -41, 755, -118)
 
-[node name="camera_2d" type="Camera2D" parent="sub_viewport_container/sub_viewport"]
+[node name="polygon_2d4" type="Polygon2D" parent="polygons"]
+polygon = PackedVector2Array(420, 341, 425, 614, 524, 520, 462, 515)
 
-[node name="camera_2d" type="Camera2D" parent="."]
-position = Vector2(1407, 373)
+[node name="m_poly" type="Node2D" parent="."]

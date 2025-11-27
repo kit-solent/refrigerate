@@ -74,7 +74,7 @@ func update_regions():
 	clear_regions()
 	
 	for id in [1, 2, 3, 4, 5]: # these are the gravity regions.
-		var regions = create_regions(id)
+		var regions = create_regions(id) # TODO: This is not creating the polygons right.
 		for region in regions:
 			var overide = mode_overide_scene.instantiate()
 			
