@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://buv31evgnkci"]
+[gd_scene load_steps=4 format=3 uid="uid://buv31evgnkci"]
 
 [ext_resource type="Script" uid="uid://wc1kyx5fu1h5" path="res://features/gravity_overide/mode_overide.gd" id="1_b20d0"]
+
+[sub_resource type="Gradient" id="Gradient_aq8mb"]
+offsets = PackedFloat32Array(0, 0.03787879, 1)
+colors = PackedColorArray(0, 1, 0, 1, 0.16161616, 1, 0.16161616, 0.83838385, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_m3ddh"]
+gradient = SubResource("Gradient_aq8mb")
+fill_to = Vector2(0, 1)
 
 [node name="mode_overide" type="Area2D" groups=["mode overrides"]]
 gravity_space_override = 3
@@ -22,6 +30,7 @@ visible = false
 [node name="line" type="Line2D" parent="."]
 points = PackedVector2Array(28, 25, 263, 38, 255, 284, 43, 258, 29, 46)
 width = 15.0
-default_color = Color(0, 0.6463068, 0.4820726, 1)
+texture = SubResource("GradientTexture2D_m3ddh")
+texture_mode = 2
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
