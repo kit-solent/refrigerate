@@ -8,15 +8,12 @@ script = ExtResource("1_yh37i")
 [node name="polygons" type="Node2D" parent="."]
 
 [node name="polygon_2d" type="Polygon2D" parent="polygons"]
+position = Vector2(58, 163)
 polygon = PackedVector2Array(128, 58, 109, 305, 222, 308, 222, -27)
 
-[node name="polygon_2d2" type="Polygon2D" parent="polygons"]
-polygon = PackedVector2Array(206, 491, 147, 339, 232, 217, 294, 458, 638, 469, 657, 227, 774, 550, 268, 558)
-
 [node name="polygon_2d3" type="Polygon2D" parent="polygons"]
+position = Vector2(23, 155)
 polygon = PackedVector2Array(788, 281, 337, 277, 94, -41, 755, -118)
 
-[node name="polygon_2d4" type="Polygon2D" parent="polygons"]
-polygon = PackedVector2Array(420, 341, 425, 614, 524, 520, 462, 515)
-
-[node name="m_poly" type="Node2D" parent="."]
+[node name="camera_2d" type="Camera2D" parent="."]
+zoom = Vector2(-0.055, -0.055)

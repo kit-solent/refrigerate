@@ -746,14 +746,14 @@ func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Arra
 	
 	# ensure all the 4 points are colinear
 	if not are_colinear(PackedVector2Array([segment1[0],segment1[1],segment2[0],segment2[1]])):
-		return false
+		return PackedVector2Array([])
 	
 	# We need to find the vector parametric form of the line containing both segments.
 	# This requires at least two distinct points to whos difference forms the direction
 	# vector. Given that both segments have to have a non-zero length for there to be
 	# any non-zero overlap we can first ensure that both segments have two distinct points.
 	if segment1[0] == segment1[1] or segment2[0] == segment2[1]:
-		return false
+		return PackedVector2Array([])
 	
 	var direction = segment1[0] - segment1[1]
 	
@@ -781,12 +781,12 @@ func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Arra
 	var t_stop = min(seg1_max, seg2_max)
 	
 	if t_start >= t_stop:
-		return false
+		return PackedVector2Array([])
 	
 	var point1 = direction * t_start + constant
 	var point2 = direction * t_stop  + constant
 	
-	return Vector2(point1, point2)
+	return PackedVector2Array([point1, point2])
 
 func find_connected_edges(polygons:Array[PackedVector2Array]):
 	"""
@@ -816,4 +816,7 @@ func find_connected_edges(polygons:Array[PackedVector2Array]):
 			other_segments.extend(get_segments(p))
 		
 		# for each segment in the target polygon check it against all the other segments from the other polygons
-		pass
+		for segment in segments:
+			for other_segment in other_segments:
+				var overlap = get_segment_overlap(segment,other_segment)
+				
