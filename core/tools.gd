@@ -3,6 +3,27 @@ class_name Tools extends Node
 ## A collection of utility functions used by other parts
 ## of the Refrigerate game.
 
+func any(booleans:Array):
+	"""
+	Performs an or check on all booleans in the array. This function returns
+	true if any value in the array is true and returs false only if all
+	values are false. If any value cannot be interpreted as a boolean then idk.
+	"""
+	for i in booleans:
+		if i:
+			return true
+	return false
+
+func all(booleans:Array):
+	"""
+	Performs an and check on all booleans in the array. This function returns
+	false if any value in the array is false and returs true only if all
+	values are true. If any value cannot be interpreted as a boolean then idk.
+	"""
+	for i in booleans:
+		if not i:
+			return false
+	return true
 
 func rect_to_polygon(rect:Rect2) -> PackedVector2Array:
 	"""
@@ -114,15 +135,15 @@ func line_bounds(line:PackedVector2Array) -> Rect2:
 func to_local_rect(node:CanvasItem, rect:Rect2) -> Rect2:
 	"""
 	An implimentation of the to_local method for `Rect2`s. `node` is the node who's
-	coordinate space will be used for the transformation. 
+	coordinate space will be used for the transformation.
 	"""
 	return Rect2(node.to_local(rect.position), rect.size)
 
-func has_point(rect:Rect2, point:Vector2) -> bool:
+func rect_has_point(rect:Rect2, point:Vector2) -> bool:
 	"""
 	Returns `true` if `point` is within or on the border of `rect`.
 	"""
-	# has_point returns false if the point is on the right or bottom edges
+	# rect_has_point returns false if the point is on the right or bottom edges
 	# so cannot be used. Manualy check all cases
 	if point.x < rect.position.x:
 		return false
@@ -143,18 +164,36 @@ func fix_angle(angle:float) -> float:
 	
 	return float(angle)
 
-func are_colinear(points:PackedVector2Array) -> bool:
+func make_line_unique(line:PackedVector2Array):
 	"""
-	Returns `true` if the given points are colinear
+	Remove double up points from the array so that there is only 1 of each.
 	"""
+	var new = PackedVector2Array([])
+	for point in line:
+		if point in new:
+			continue
+		else:
+			new.append(point)
+	
+	return new
+
+func are_colinear(points:PackedVector2Array, epsilon = 0.000001) -> bool:
+	"""
+	Returns `true` if the given points are colinear. This works for vertical lines btw.
+	epsilon is the difference in gradients allowed between the points (probs keep >0 for error margin)
+	"""
+	points = make_line_unique(points)
+	
 	# lines with 0, 1, or 2 points are always colinear
 	if len(points) < 3:
 		return true
 	
 	var grad = (points[1].y - points[0].y)/(points[1].x - points[0].x)
-	for i in range(len(points)-1):
+	for i in range(1,len(points)-1): # start from 1 to skip the trivial first segment (which is just grad)
 		var new_grad = (points[i+1].y - points[i].y)/(points[i+1].x - points[i].x)
-		if new_grad != grad:
+		
+		# for the points to be colinear either the gradients can be the same or both can be positive or negative infinity.
+		if not (abs(new_grad- grad) < epsilon or (abs(new_grad)==INF and abs(grad)==INF)):
 			return false
 	
 	return true
@@ -424,7 +463,7 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2) -> Array[Vector2]:
 	# calculate which edge the line points towards based on the angle.
 	# also calculate the point of intersection.
 	if angle_br < angle and angle <= angle_bl:
-		edge = Vector2.DOWN # including bottom left 
+		edge = Vector2.DOWN # including bottom left
 		
 		# calculate the vertical distance from the target to the bottom edge.
 		dist = viewport_bottom_left.y - target.y
@@ -514,7 +553,7 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	Both `start` and `stop` must be inside the bounds but `target` may be outside
 	"""
 	# TODO: modify so that the start and stop points can be out of bounds and the polygon cast still works
-	if not (has_point(bounds, start) and has_point(bounds, stop)):
+	if not (rect_has_point(bounds, start) and rect_has_point(bounds, stop)):
 		printerr("Invalid `line` in cast_polygon. Both points in `line` must be within the bounds.")
 		return ERR_INVALID_PARAMETER
 	
@@ -552,7 +591,7 @@ func find_corners(point1: Vector2, point2: Vector2, target:Vector2, bounds:Rect2
 	Find the appropriate corner coordinates based on the given edges, points, target, and bounds.
 	This uses the target point to work out which direction the polygon is being cast and from there
 	which corner points need to be included. If `direction` is true then the corners will be added in
-	a clockwise order, otherwise an anticlockwise order will be used. 
+	a clockwise order, otherwise an anticlockwise order will be used.
 	"""
 	# determine the direction using cross products
 	var cross = (point1 - target).cross(point2 - target)
@@ -650,3 +689,131 @@ func get_local_bounds(node:Node, margin:float = 64) -> Rect2: # TODO: Make this 
 	
 	# convert to local coordinates before returning.
 	return to_local_rect(node, global_rect)
+
+func get_segments(polygon:PackedVector2Array):
+	"""
+	Returns a list of all the line segments that make up the polygon/line (each consists of two points).
+	If the polygon/line has 1 or no points then print and return and error.
+	"""
+	if len(polygon) <= 1:
+		printerr("get_segments requires the polygon to have at least 2 points.")
+		return FAILED
+	
+	var segments:Array[PackedVector2Array] = []
+	for count in range(len(polygon)-1): # ignore the last point as it will be taken by the previous one.
+		segments.append(PackedVector2Array([
+			polygon[count],
+			polygon[count + 1]
+		]))
+
+func segment_has_point(segment:PackedVector2Array, point:Vector2):
+	"""
+	Returns true if `point` lies on the line segment `segment`. Note that `segment`
+	must have exactly 2 points. If `point` is one of the end points then return false.
+	"""
+	if len(segment) != 2:
+		printerr("segment_has_point requires the given segment to have only 2 points.")
+		return FAILED
+	
+	if point==segment[0] or point==segment[1]:
+		return false
+	
+	if not are_colinear(PackedVector2Array([segment[0], segment[1], point])):
+		return false
+	
+	if (point.x < min(segment[0].x, segment[1].x)) or (point.x > max(segment[0].x, segment[1].x)):
+		# if the point is further left than the leftmost point on the segment or further right than
+		# the rightmost point on the segment then it can't be on it.
+		return false
+	
+	if (point.y < min(segment[0].y, segment[1].y)) or (point.y > max(segment[0].y, segment[1].y)):
+		# if the point is further up than the upmost point on the segment or further down than
+		# the downmost point on the segment then it can't be on it.
+		return false
+	
+	# if the point is colinear with the segment and is within its bounding box then it must be on it.
+	return true
+
+func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Array):
+	"""
+	Returns the line segment representing the overlap between segment1 and segment2. If
+	there is no overlap then return an empty PackedVector2Array. If the two segments are
+	non-colinear but intersect at a single point then return an empty PackedVector2Array.
+	Both segments should (being segments) only have two points in their arrays.
+	"""
+	if len(segment1) != 2 or len(segment2) != 2:
+		printerr("get_segment_overlap expects both segments to have a length of 2")
+	
+	# ensure all the 4 points are colinear
+	if not are_colinear(PackedVector2Array([segment1[0],segment1[1],segment2[0],segment2[1]])):
+		return false
+	
+	# We need to find the vector parametric form of the line containing both segments.
+	# This requires at least two distinct points to whos difference forms the direction
+	# vector. Given that both segments have to have a non-zero length for there to be
+	# any non-zero overlap we can first ensure that both segments have two distinct points.
+	if segment1[0] == segment1[1] or segment2[0] == segment2[1]:
+		return false
+	
+	var direction = segment1[0] - segment1[1]
+	
+	# The constant at the end (r = D * t + C) can be any point on the line so we can pick
+	var constant = segment1[0]
+	
+	# The parametric form is now:
+	# point = direction * t + constant
+	# solving for t gives:
+	# t = (point - constant).n / direction.n
+	# where n is any of x or y as can be seen by expanding the vector form
+	
+	# We now find t for all the 4 points
+	var t_10 = (segment1[0] - constant).x/direction.x
+	var t_11 = (segment1[1] - constant).x/direction.x
+	var t_20 = (segment2[0] - constant).x/direction.x
+	var t_21 = (segment2[1] - constant).x/direction.x
+	
+	var seg1_min = min(t_10,t_11)
+	var seg1_max = max(t_10,t_11)
+	var seg2_min = min(t_20,t_21)
+	var seg2_max = max(t_20,t_21)
+	
+	var t_start = max(seg1_min, seg2_min)
+	var t_stop = min(seg1_max, seg2_max)
+	
+	if t_start >= t_stop:
+		return false
+	
+	var point1 = direction * t_start + constant
+	var point2 = direction * t_stop  + constant
+	
+	return Vector2(point1, point2)
+
+func find_connected_edges(polygons:Array[PackedVector2Array]):
+	"""
+	For each polygon in the array return a list containing each continuous line (PackedVector2Array) on that polygon
+	that is shared with the border of another polygon in the array. If only a portion of a line segment is a shared border
+	then only return the shared section. This function returns an array where each item corresponds to a polygon in the
+	argument so len(polygons) == len(find_connected_edges(polygons)) and each item is an array of the shared line segments
+	of that polygon (which is in itself an array) Array[Array[PackedVector2Array]]. Note that single point intersections,
+	i.e. those between non-colinear lines, are not counted. Borders (or sections of border) that lie inside other polygons
+	are not counted either, the border must be exactly on the border of another polygon.
+	"""
+	var overlaps:Array[Array] = []
+	for count in range(len(polygons)):
+		# the target polygon
+		var polygon = polygons[count]
+		
+		# all the other polygons
+		var other_polygons = polygons.duplicate()
+		other_polygons.remove_at(count)
+		
+		# the line segments of the target polygon
+		var segments = get_segments(polygon)
+		
+		# the line segments from all the other polygons
+		var other_segments = []
+		for p in other_polygons:
+			other_segments.extend(get_segments(p))
+		
+		# for each segment in the target polygon check it against all the other segments from the other polygons
+		pass

@@ -8,8 +8,9 @@ var wader_scene = preload("res://features/water/water.tscn")
 func create_regions(id:int, atlas:Array=[], remove:bool=true):
 	"""
 	Returns an array of polygons of the merged tiles of the given id.
-	If atlas has items then only use tiles with atlas positions in atlas.
-	If remove is true tiles will be removed from the tilemap. Otherwise... they won't.
+	If `atlas` has items then only use tiles with atlas positions in `atlas`.
+	If `remove` is true then tiles will be removed from the tilemap.
+	NOTE: Because polygons are generated from a grid of tiles they never overlap so clipping is not required.
 	"""
 	var shapes:Array[PackedVector2Array] = []
 	for cell in get_used_cells_by_id(id):
@@ -21,18 +22,18 @@ func create_regions(id:int, atlas:Array=[], remove:bool=true):
 			# map_to_local returns the cell centre.
 			map_to_local(cell)+Vector2(-tile_set.tile_size.x/2.0,-tile_set.tile_size.y/2.0), # top left. ( ⌜ )
 			map_to_local(cell)+Vector2(+tile_set.tile_size.x/2.0,-tile_set.tile_size.y/2.0), # top right ( ⌝ )
-			map_to_local(cell)+Vector2(+tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom right ( ⌞ )
-			map_to_local(cell)+Vector2(-tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom left ( ⌟ )
+			map_to_local(cell)+Vector2(+tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom right ( ⌟ )
+			map_to_local(cell)+Vector2(-tile_set.tile_size.x/2.0,+tile_set.tile_size.y/2.0), # bottom left ( ⌞ )
 		]))
 		
 		# remove the cell
 		if remove:
 			set_cell(cell)
+	return shapes
 	
 	# merge the polygons
 	shapes = Core.tools.merge_polygons(shapes)
 	
-	return shapes
 
 func create_water_regions(id:int):
 	"""
@@ -49,6 +50,8 @@ func create_water_regions(id:int):
 			etc
 		]
 	]
+	TODO: Change this format so that there is a regular polygon deffining the edge of the water region
+	and another polygon defining the points on that first polygon which are special (surface).
 	This is the format expected by the water setup method.
 	"""
 	var old_regions = create_regions(id, [], false) # don't delete the regions yet.
@@ -105,6 +108,10 @@ func update_regions():
 	# points should then be positioned accordingly.
 
 func _ready():
+	print("Six Seeeeevun")
+	print(len(get_used_cells_by_id(1)))
+	print(create_regions(1))
+	return
 	update_regions()
 	
 	#TODO: This is a temporary test of water.tscn
