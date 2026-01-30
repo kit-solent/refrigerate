@@ -5,15 +5,19 @@
 [node name="misc" type="Node2D"]
 script = ExtResource("1_yh37i")
 
-[node name="polygons" type="Node2D" parent="."]
+[node name="line_2d" type="Line2D" parent="."]
+points = PackedVector2Array(48, 120, 320, 256)
+default_color = Color(0, 1, 1, 1)
 
-[node name="polygon_2d" type="Polygon2D" parent="polygons"]
-position = Vector2(58, 163)
-polygon = PackedVector2Array(128, 58, 109, 305, 222, 308, 222, -27)
+[node name="line_2d2" type="Line2D" parent="."]
+points = PackedVector2Array(128, 160, 256, 224)
 
-[node name="polygon_2d3" type="Polygon2D" parent="polygons"]
-position = Vector2(23, 155)
-polygon = PackedVector2Array(788, 281, 337, 277, 94, -41, 755, -118)
+[node name="line_2d3" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(154, 150, 329, 128)
+default_color = Color(1, 0.33333334, 0.44705883, 1)
 
-[node name="camera_2d" type="Camera2D" parent="."]
-zoom = Vector2(-0.055, -0.055)
+[node name="line_2d4" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(224, 234, 351, 26)
+default_color = Color(1, 0.33333334, 0.44705883, 1)

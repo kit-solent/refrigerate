@@ -1,10 +1,14 @@
 extends Node2D
 
 func _ready():
-	var new_poly = Geometry2D.clip_polygons($polygons/polygon_2d.polygon,$polygons/polygon_2d3.polygon)
-	var poly = Polygon2D.new()
-	poly.polygon = new_poly
-	add_child(poly)
-	poly.color = Color(1.0, 0.0, 0.0, 1.0)
-	print(new_poly)
-	poly.show()
+	var clip = Core.tools.clip_segments(
+		PackedVector2Array([$line_2d.points[0], $line_2d.points[1]]),
+		PackedVector2Array([$line_2d2.points[0], $line_2d2.points[1]])
+	)
+	print(clip)
+	
+	$line_2d3.points = clip[0]
+	$line_2d3.show()
+	if len(clip) == 2:
+		$line_2d4.points = clip[1]
+		$line_2d4.show()

@@ -25,6 +25,46 @@ func all(booleans:Array):
 			return false
 	return true
 
+func chain_lt(values:Array, strict = true):
+	"""
+	Represents a chained "less than" inequality of all the items in `values`.
+	If `strict` is true then use a strict inequality and if false use a non-strict inequality.
+	e.g. chain_lt([a, b, c, d]) => a < b < c < d
+	If `values` has 1 or less item(s) then return FAILED
+	"""
+	if len(values) <= 1:
+		printerr("chain_lt expects at least 2 arguments.")
+		return FAILED
+
+	var val = values[0]
+	for index in range(1, len(values)):
+		var next_val = values[index]
+		
+		# each successive item should be bigger than the previous
+		if strict:
+			if not (next_val > val):
+				return false
+		else:
+			if not (next_val >= val):
+				return false
+		
+		# update the value
+		val = next_val
+	
+	return true
+
+func chain_gt(values:Array, strict = true):
+	"""
+	Represents a chained "greater than" inequality of all the items in `values`.
+	If `strict` is true then use a strict inequality and if false use a non-strict inequality.
+	e.g. chain_gt([a, b, c, d]) => a < b < c < d
+	If `values` has 1 or less item(s) then return FAILED
+	"""
+	var values_copy = values.duplicate()
+	values_copy.rever()
+	return chain_lt(values_copy, strict)
+
+
 func rect_to_polygon(rect:Rect2) -> PackedVector2Array:
 	"""
 	Converts the given Rect2 to a polygon (PackedVector2Array).
@@ -734,7 +774,7 @@ func segment_has_point(segment:PackedVector2Array, point:Vector2):
 	# if the point is colinear with the segment and is within its bounding box then it must be on it.
 	return true
 
-func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Array):
+func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Array) -> PackedVector2Array:
 	"""
 	Returns the line segment representing the overlap between segment1 and segment2. If
 	there is no overlap then return an empty PackedVector2Array. If the two segments are
@@ -788,35 +828,172 @@ func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Arra
 	
 	return PackedVector2Array([point1, point2])
 
-func find_connected_edges(polygons:Array[PackedVector2Array]):
+func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 	"""
-	For each polygon in the array return a list containing each continuous line (PackedVector2Array) on that polygon
-	that is shared with the border of another polygon in the array. If only a portion of a line segment is a shared border
-	then only return the shared section. This function returns an array where each item corresponds to a polygon in the
-	argument so len(polygons) == len(find_connected_edges(polygons)) and each item is an array of the shared line segments
-	of that polygon (which is in itself an array) Array[Array[PackedVector2Array]]. Note that single point intersections,
-	i.e. those between non-colinear lines, are not counted. Borders (or sections of border) that lie inside other polygons
-	are not counted either, the border must be exactly on the border of another polygon.
+	Returns the portion of segment that is not shared with mask. This only removes non-zero
+	length sections from segment so single point intersections or end to end connections are not
+	counted as overlap. If segment has 0 length then return an empty Array regardless of whether
+	segment had points in it. Both segments must (being segments) have exactly 2 points. This
+	method returns an array of segments because if mask is in the middle of segment then
+	removing it results in two endpoint segments. 
 	"""
-	var overlaps:Array[Array] = []
-	for count in range(len(polygons)):
-		# the target polygon
-		var polygon = polygons[count]
-		
-		# all the other polygons
-		var other_polygons = polygons.duplicate()
-		other_polygons.remove_at(count)
-		
-		# the line segments of the target polygon
-		var segments = get_segments(polygon)
-		
-		# the line segments from all the other polygons
-		var other_segments = []
-		for p in other_polygons:
-			other_segments.extend(get_segments(p))
-		
-		# for each segment in the target polygon check it against all the other segments from the other polygons
-		for segment in segments:
-			for other_segment in other_segments:
-				var overlap = get_segment_overlap(segment,other_segment)
-				
+	if len(segment)!=2 or len(mask)!=2:
+		printerr("clip_segments expects both segments to have exactly 2 points.")
+		return FAILED
+	
+	if segment[0]==segment[1]:
+		return []
+	
+	var overlap = get_segment_overlap(segment, mask)
+	
+	if len(overlap)==0:
+		return [segment]
+	
+	# if there is an overlap we need to remove that section from segment. 
+	# we already know that overlap and segment are colinear so we can put
+	# them both in vector parametric form and use the parameter intervals to
+	# remove the overlapping section
+	
+	# point = direction * t + constant
+	var direction = segment[1] - segment[0]
+	var constant = segment[0]
+	
+	# find the parameter (t) values for the end points of both segment and the overlap.
+	# seethe comments in the get_segment_overlap method for a more in depth description.
+	# t = (point - constant).n / direction.n
+	var t_seg1_0    = (segment[0] - constant).x / direction.x
+	var t_seg1_1    = (segment[1] - constant).x / direction.x
+	var t_overlap_0 = (overlap[0] - constant).x / direction.x
+	var t_overlap_1 = (overlap[1] - constant).x / direction.x
+	var seg1_int = [min(t_seg1_0, t_seg1_1), max(t_seg1_0, t_seg1_1)]
+	var overlap_int = [min(t_overlap_0, t_overlap_1), max(t_overlap_0, t_overlap_1)]
+	
+	# now remove the interval `overlap_int` from the interval `seg1_int`
+	var new_interval
+	var new_interval_2 = null
+	
+	# if they are entierly seperate then the new interval is just seg1
+	if seg1_int[0] >= overlap_int[1] or seg1_int[1] <= overlap_int[0]:
+		print("case 1")
+		new_interval = seg1_int
+	
+	# where the overlap interval takes the bottom of seg1
+	elif chain_lt([overlap_int[0], seg1_int[0], overlap_int[1], seg1_int[1]], false):
+		print("case 2")
+		print(seg1_int[0])
+		print(seg1_int[1])
+		print(overlap_int[0])
+		print(overlap_int[1])
+		print(direction)
+		new_interval = [overlap_int[1], seg1_int[1]]
+	
+	# where the overlap interval takes the top of seg1
+	elif chain_lt([seg1_int[0], overlap_int[0], seg1_int[1], overlap_int[1]], false):
+		print("case 3")
+		new_interval = [seg1_int[0], overlap_int[0]]
+	
+	# if the overlap interval entierly contains seg1
+	elif overlap_int[0] <= seg1_int[0] and overlap_int[1] >= seg1_int[1]:
+		print("case 4")
+		return []
+	
+	# if the overlap interval takes the middle out of seg1. This is a strict inequality
+	# because all non-strict cases should have already been covered.
+	elif chain_lt([seg1_int[0], overlap_int[0], overlap_int[1], seg1_int[1]]):
+		print("taking out the middle")
+		new_interval = [seg1_int[0], overlap_int[0]]
+		new_interval_2 = [overlap_int[1], seg1_int[1]]
+	
+	else:
+		printerr("Something went wrong in clip_segments. This statment should be unreachable.")
+		return FAILED
+	
+	# some of the non-strict tests allow for zero-length results so remove them
+	if new_interval[0]==new_interval[1]:
+		return []
+	if new_interval_2 and (new_interval_2[0]==new_interval_2[1]):
+		new_interval_2 = null
+	
+	var new_seg = PackedVector2Array([
+		direction * new_interval[0] + constant,
+		direction * new_interval[1] + constant
+	])
+	
+	if not new_interval_2:
+		return [new_seg]
+	else:
+		var new_seg_2 = PackedVector2Array([
+			direction * new_interval_2[0] + constant,
+			direction * new_interval_2[1] + constant
+		])
+		return [new_seg, new_seg_2]
+
+func merge_lines(lines:Array[PackedVector2Array]):
+	"""
+	Merges the lines in the array such that lines with shared endpoints or overlapping sections
+	are merged and lines entierly within other lines are removed. This starts by splitting each
+	line into its segments so lines that internally overlap will also be simplified.
+	"""
+	# split the lines into segments.
+	lines = segment_lines(lines)
+	
+	# remove 0 length segments
+	var temp = []
+	for line in lines:
+		if line[0]==line[1]:
+			continue
+		else:
+			temp.append(line)
+	lines = temp
+	
+	var new_lines:Array[PackedVector2Array] = []
+	for line in lines:
+		for new_line in new_lines:
+			# check for overlap before checking shared endpoints
+			var overlap = get_segment_overlap(line, new_line)
+			
+			if len(overlap): # if there is any overlap at all
+				if overlap == line: # if whole line overlaps then remove it as it is redundant
+					continue
+				else: # otherwise remove the overlapping section from
+					pass # TODO
+#
+#func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
+	#"""
+	#For each polygon in the array return a list containing each continuous line (PackedVector2Array) on that polygon
+	#that is shared with the border of another polygon in the array. If only a portion of a line segment is a shared border
+	#then only return the shared section. This function returns an array where each item corresponds to a polygon in the
+	#argument so len(polygons) == len(find_connected_edges(polygons)) and each item is an array of the shared line segments
+	#of that polygon (which is in itself an array) Array[Array[PackedVector2Array]]. Note that single point intersections,
+	#i.e. those between non-colinear lines, are not counted. Borders (or sections of border) that lie inside other polygons
+	#are not counted either, the border must be exactly on the border of another polygon.
+	#"""
+	#var all_overlaps:Array[Array] = []
+	#for count in range(len(polygons)):
+		## store the overlapping sections for this polygon
+		#var overlaps:Array[PackedVector2Array] = []
+		#
+		## the target polygon
+		#var polygon = polygons[count]
+		#
+		## all the other polygons
+		#var other_polygons = polygons.duplicate()
+		#other_polygons.remove_at(count)
+		#
+		## the line segments of the target polygon
+		#var segments = get_segments(polygon)
+		#
+		## the line segments from all the other polygons
+		#var other_segments = []
+		#for p in other_polygons:
+			#other_segments.extend(get_segments(p))
+		#
+		## for each segment in the target polygon check it against all the other segments from the other polygons
+		#for segment in segments:
+			#for other_segment in other_segments:
+				#var overlap = get_segment_overlap(segment,other_segment)
+				#
+				## if there is an overlap store it and join them all together at the end
+				#if len(overlap):
+					#overlaps.append(overlap)
+					#
