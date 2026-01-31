@@ -1,14 +1,13 @@
 extends Node2D
 
 func _ready():
-	var clip = Core.tools.clip_segments(
-		PackedVector2Array([$line_2d.points[0], $line_2d.points[1]]),
-		PackedVector2Array([$line_2d2.points[0], $line_2d2.points[1]])
-	)
-	print(clip)
+	var lines:Array[PackedVector2Array] = []
+	for child in $node_2d.get_children():
+		lines.append(child.points)
 	
-	$line_2d3.points = clip[0]
-	$line_2d3.show()
-	if len(clip) == 2:
-		$line_2d4.points = clip[1]
-		$line_2d4.show()
+	var new_lines = Core.tools.merge_lines(lines)
+	print(new_lines)
+	for n in new_lines:
+		var new = Line2D.new()
+		new.points = n
+		$trala.add_child(new)

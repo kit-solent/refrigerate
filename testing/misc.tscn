@@ -1,23 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://cro7v0jnxb4g7"]
+[gd_scene format=3 uid="uid://cro7v0jnxb4g7"]
 
 [ext_resource type="Script" uid="uid://d02qxnuk6ltgi" path="res://testing/misc.gd" id="1_yh37i"]
 
-[node name="misc" type="Node2D"]
+[node name="misc" type="Node2D" unique_id=667484584]
 script = ExtResource("1_yh37i")
 
-[node name="line_2d" type="Line2D" parent="."]
+[node name="node_2d" type="Node2D" parent="." unique_id=1477226514]
+
+[node name="line_2d" type="Line2D" parent="node_2d" unique_id=1833563389]
 points = PackedVector2Array(48, 120, 320, 256)
 default_color = Color(0, 1, 1, 1)
 
-[node name="line_2d2" type="Line2D" parent="."]
-points = PackedVector2Array(128, 160, 256, 224)
+[node name="line_2d2" type="Line2D" parent="node_2d" unique_id=108063606]
+points = PackedVector2Array(160, 352, 320, 256, 208, 136, 96, 272)
+default_color = Color(0, 1, 1, 1)
 
-[node name="line_2d3" type="Line2D" parent="."]
-visible = false
-points = PackedVector2Array(154, 150, 329, 128)
-default_color = Color(1, 0.33333334, 0.44705883, 1)
-
-[node name="line_2d4" type="Line2D" parent="."]
-visible = false
-points = PackedVector2Array(224, 234, 351, 26)
-default_color = Color(1, 0.33333334, 0.44705883, 1)
+[node name="trala" type="Node2D" parent="." unique_id=974464486]

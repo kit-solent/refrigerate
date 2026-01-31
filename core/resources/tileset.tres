@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=66 format=3 uid="uid://b2s0nutp63jpv"]
+[gd_resource type="TileSet" format=3 uid="uid://b2s0nutp63jpv"]
 
 [ext_resource type="Texture2D" uid="uid://cy17vuxs8proy" path="res://assets/mossy_tileset.png" id="1_ow7sq"]
 [ext_resource type="Texture2D" uid="uid://dg0a4lrrejvrb" path="res://assets/topdown.tres" id="2_nyunl"]

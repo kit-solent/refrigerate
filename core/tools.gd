@@ -874,12 +874,10 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 	
 	# if they are entierly seperate then the new interval is just seg1
 	if seg1_int[0] >= overlap_int[1] or seg1_int[1] <= overlap_int[0]:
-		print("case 1")
 		new_interval = seg1_int
 	
 	# where the overlap interval takes the bottom of seg1
 	elif chain_lt([overlap_int[0], seg1_int[0], overlap_int[1], seg1_int[1]], false):
-		print("case 2")
 		print(seg1_int[0])
 		print(seg1_int[1])
 		print(overlap_int[0])
@@ -889,18 +887,15 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 	
 	# where the overlap interval takes the top of seg1
 	elif chain_lt([seg1_int[0], overlap_int[0], seg1_int[1], overlap_int[1]], false):
-		print("case 3")
 		new_interval = [seg1_int[0], overlap_int[0]]
 	
 	# if the overlap interval entierly contains seg1
 	elif overlap_int[0] <= seg1_int[0] and overlap_int[1] >= seg1_int[1]:
-		print("case 4")
 		return []
 	
 	# if the overlap interval takes the middle out of seg1. This is a strict inequality
 	# because all non-strict cases should have already been covered.
 	elif chain_lt([seg1_int[0], overlap_int[0], overlap_int[1], seg1_int[1]]):
-		print("taking out the middle")
 		new_interval = [seg1_int[0], overlap_int[0]]
 		new_interval_2 = [overlap_int[1], seg1_int[1]]
 	
@@ -928,36 +923,75 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 		])
 		return [new_seg, new_seg_2]
 
-func merge_lines(lines:Array[PackedVector2Array]):
+func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	"""
 	Merges the lines in the array such that lines with shared endpoints or overlapping sections
 	are merged and lines entierly within other lines are removed. This starts by splitting each
 	line into its segments so lines that internally overlap will also be simplified.
 	"""
 	# split the lines into segments.
-	lines = segment_lines(lines)
-	
-	# remove 0 length segments
-	var temp = []
-	for line in lines:
-		if line[0]==line[1]:
-			continue
-		else:
-			temp.append(line)
-	lines = temp
+	lines = segment_lines(lines).duplicate()
 	
 	var new_lines:Array[PackedVector2Array] = []
-	for line in lines:
-		for new_line in new_lines:
-			# check for overlap before checking shared endpoints
-			var overlap = get_segment_overlap(line, new_line)
+	while len(lines): # while we have at least one line left
+		var line = lines.pop_back() # faster than pop_front because indices don't have to be updated 
+		print("doing line: "+str(line))
+		# remove 0 length segments by not adding them to the new_lines array
+		if line[0] == line[1]:
+			continue
+		
+		print("Line pt 1: "+str(line))
+		
+		# used to carry the continue statment through two nested loops
+		var cont:bool = false
+		
+		# remove/trim overlapping segments
+		for new_line_segment in segment_lines(new_lines):
+			var clip = clip_segments(line, new_line_segment)
 			
-			if len(overlap): # if there is any overlap at all
-				if overlap == line: # if whole line overlaps then remove it as it is redundant
-					continue
-				else: # otherwise remove the overlapping section from
-					pass # TODO
-#
+			# if all of the line got clipped then continue
+			if len(clip)==0:
+				cont = true
+				break
+			
+			# if we get two resultant segments then keep working
+			# with one of them and just do the other one next.
+			if len(clip) == 2:
+				lines.append(clip[1])
+			
+			line = clip[0]
+		if cont:
+			continue
+		cont = false
+		
+		print("Line pt 2: "+str(line))
+		
+		# join segments with shared endpoints
+		for new_line in new_lines:
+			if new_line[0] == line[0]:
+				new_line.insert(0, line[1])
+				cont = true
+				break
+			elif new_line[0] == line[1]:
+				new_line.insert(0, line[0])
+				cont = true
+				break
+			elif new_line[1] == line[0]:
+				new_line.append(line[1])
+				cont = true
+				break
+			elif new_line[1] == line[1]:
+				new_line.append(line[0])
+				cont = true
+				break
+		if cont:
+			continue
+		
+		print("Line pt 3: "+str(line))
+		new_lines.append(line)
+	print("returning new lines: "+str(new_lines))
+	return new_lines
+
 #func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
 	#"""
 	#For each polygon in the array return a list containing each continuous line (PackedVector2Array) on that polygon
