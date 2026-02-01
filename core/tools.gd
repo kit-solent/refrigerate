@@ -206,34 +206,64 @@ func fix_angle(angle:float) -> float:
 
 func make_line_unique(line:PackedVector2Array):
 	"""
-	Remove double up points from the array so that there is only 1 of each.
+	Remove any adjacent double up points from the array so that each point is distinct
+	from its neibours.
 	"""
-	var new = PackedVector2Array([])
-	for point in line:
-		if point in new:
+	# Can't remove double up points if there is 1 or no points.
+	if len(line) < 2:
+		return line
+	
+	# start with just the first point
+	var new = PackedVector2Array([line[0]])
+	var prev_point = line[0]
+	
+	# loop from the 2nd to the last point adding as we go
+	for index in range(1, len(line)):
+		if line[index] == prev_point:
 			continue
 		else:
-			new.append(point)
+			new.append(line[index])
+			prev_point = line[index]
 	
 	return new
 
-func are_colinear(points:PackedVector2Array, epsilon = 0.000001) -> bool:
+func are_colinear(points:PackedVector2Array, ordered:bool = false, epsilon = 0.0000001) -> bool:
 	"""
-	Returns `true` if the given points are colinear. This works for vertical lines btw.
-	epsilon is the difference in gradients allowed between the points (probs keep >0 for error margin)
+	Returns `true` if the given points are colinear, i.e. if they all lie on the same 1D
+	line. `epsilon` is a slight error margin used in the cross product test.
+	If `ordered` is false (default) then the method simply checks that all points occupy the
+	same 1D line regardless of their order along that line. If true then the method returns
+	false for points where traveling from the first to the last point would require a change
+	of direction (even by 180°). This method begins by removing double up points (because
+	direction is only deffined between distinct points).
 	"""
-	points = make_line_unique(points)
+	# make sure we don't edit the original array.
+	points = make_line_unique(points.duplicate())
 	
-	# lines with 0, 1, or 2 points are always colinear
+	# you need at least 3 points for them not to be trivially colinear.
 	if len(points) < 3:
 		return true
 	
-	var grad = (points[1].y - points[0].y)/(points[1].x - points[0].x)
-	for i in range(1,len(points)-1): # start from 1 to skip the trivial first segment (which is just grad)
-		var new_grad = (points[i+1].y - points[i].y)/(points[i+1].x - points[i].x)
+	# get the direction between the first and second points.
+	var direction = points[1] - points[0]
+	points.remove_at(0)
+	
+	for index in range(len(points)-1): # loop from the (new) first point to the 2nd to last point.
+		# check that the angle between the pre-calculated direction and the new direction is sufficiently small.
+		var new_direction = points[index + 1] - points[index]
+		var angle = direction.angle_to(new_direction)
 		
-		# for the points to be colinear either the gradients can be the same or both can be positive or negative infinity.
-		if not (abs(new_grad- grad) < epsilon or (abs(new_grad)==INF and abs(grad)==INF)):
+		# cross product test
+		var condition = abs(angle) < epsilon # strict test.
+		
+		# include the non-strict case
+		if not ordered:
+			condition = condition or (abs(angle) - PI < epsilon)
+		
+		if condition:
+			continue # if the point passes the test then keep iterating.
+		else:
+			# if the vectors point in different directions then the array is not colinear
 			return false
 	
 	return true
@@ -241,7 +271,9 @@ func are_colinear(points:PackedVector2Array, epsilon = 0.000001) -> bool:
 func decolinearise_line(line:PackedVector2Array) -> PackedVector2Array:
 	"""
 	Removes any points that are colinear with their neibours from the line as they are redundant
-	and have no effect on the shape of the line.
+	and have no effect on the shape of the line. This method assumes that the last point of the
+	line is connected to the first point and will remove end points if they are colinear with
+	their wrapped neibours.
 	"""
 	if len(line) < 3:
 		return line
@@ -251,16 +283,18 @@ func decolinearise_line(line:PackedVector2Array) -> PackedVector2Array:
 	
 	# add all the other points if they are not colinear with their neibours.
 	for i in range(1, len(line) - 1): # loop from the 2nd point to the 2nd to last point
-		if not are_colinear(PackedVector2Array([line[i-1], line[i], line[i+1]])):
+		# perform an ordered colinearity check. i.e. line[i] must be in
+		# the middle of the other two for it to be redundant.
+		if not are_colinear(PackedVector2Array([line[i-1], line[i], line[i+1]]), true):
 			new.append(line[i])
 	
 	# add the final point
 	new.append(line[-1])
 	
 	# check the first and last points
-	if are_colinear(PackedVector2Array([new[-1], new[0], new[1]])):
+	if are_colinear(PackedVector2Array([new[-1], new[0], new[1]]), true):
 		new.remove_at(0)
-	if are_colinear(PackedVector2Array([new[-2], new[-1], new[0]])):
+	if are_colinear(PackedVector2Array([new[-2], new[-1], new[0]]), true):
 		# remove_at doesn't support negative indices.
 		new.remove_at(new.size() - 1)
 	
@@ -758,6 +792,8 @@ func segment_has_point(segment:PackedVector2Array, point:Vector2):
 	if point==segment[0] or point==segment[1]:
 		return false
 	
+	print("yeet")
+	print(are_colinear(PackedVector2Array([segment[0], segment[1], point])))
 	if not are_colinear(PackedVector2Array([segment[0], segment[1], point])):
 		return false
 	
@@ -773,6 +809,21 @@ func segment_has_point(segment:PackedVector2Array, point:Vector2):
 	
 	# if the point is colinear with the segment and is within its bounding box then it must be on it.
 	return true
+
+func segment_has_point2(segment:PackedVector2Array, point:Vector2):
+	"""
+	Returns true if `point` lies on the line segment `segment`. Note that `segment`
+	must have exactly 2 points. If `point` is one of the end points then return false.
+	"""
+	if len(segment) != 2:
+		printerr("segment_has_point requires the given segment to have only 2 points.")
+		return FAILED
+	
+	if point==segment[0] or point==segment[1]:
+		return false
+	
+	return are_colinear(PackedVector2Array([segment[0], point, segment[1]]), true)
+
 
 func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Array) -> PackedVector2Array:
 	"""
@@ -935,12 +986,14 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	var new_lines:Array[PackedVector2Array] = []
 	while len(lines): # while we have at least one line left
 		var line = lines.pop_back() # faster than pop_front because indices don't have to be updated 
-		print("doing line: "+str(line))
+		
+		print("-- New Iteration --")
+		print(line)
+		print(new_lines)
+		
 		# remove 0 length segments by not adding them to the new_lines array
 		if line[0] == line[1]:
 			continue
-		
-		print("Line pt 1: "+str(line))
 		
 		# used to carry the continue statment through two nested loops
 		var cont:bool = false
@@ -957,6 +1010,7 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			# if we get two resultant segments then keep working
 			# with one of them and just do the other one next.
 			if len(clip) == 2:
+				print("adding one item to lines")
 				lines.append(clip[1])
 			
 			line = clip[0]
@@ -964,32 +1018,41 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			continue
 		cont = false
 		
-		print("Line pt 2: "+str(line))
-		
 		# join segments with shared endpoints
+		print("Newwww")
+		print(new_lines)
 		for new_line in new_lines:
 			if new_line[0] == line[0]:
 				new_line.insert(0, line[1])
+				print("skibibi: 0,0")
+				print(new_lines)
 				cont = true
 				break
-			elif new_line[0] == line[1]:
+			elif new_line[0] == line[-1]:
 				new_line.insert(0, line[0])
+				print("skibibi: 0,1")
+				print(new_lines)
 				cont = true
 				break
-			elif new_line[1] == line[0]:
+			elif new_line[-1] == line[0]:
 				new_line.append(line[1])
+				print("skibibi: 1,0")
+				print(new_lines)
 				cont = true
 				break
-			elif new_line[1] == line[1]:
+			elif new_line[-1] == line[-1]:
+				print(new_line[1])
+				print(line[1])
 				new_line.append(line[0])
+				print("skibibi: 1,1")
+				print(new_lines)
 				cont = true
 				break
 		if cont:
 			continue
 		
-		print("Line pt 3: "+str(line))
 		new_lines.append(line)
-	print("returning new lines: "+str(new_lines))
+	
 	return new_lines
 
 #func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:

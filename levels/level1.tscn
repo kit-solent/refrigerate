@@ -1,40 +1,40 @@
-[gd_scene load_steps=5 format=3 uid="uid://s8hhu4jxydb"]
+[gd_scene format=3 uid="uid://s8hhu4jxydb"]
 
 [ext_resource type="PackedScene" uid="uid://c6awmk0g3vary" path="res://core/map.tscn" id="1_japuw"]
 [ext_resource type="Script" uid="uid://b37kt74l127tb" path="res://levels/level_1.gd" id="2_qxjqb"]
 [ext_resource type="PackedScene" uid="uid://dkrdhmdbjussb" path="res://features/water/water.tscn" id="3_w0b2p"]
 [ext_resource type="PackedScene" uid="uid://ctwsyo8iq6tg8" path="res://features/portals/portal.tscn" id="4_ua5ty"]
 
-[node name="level1" instance=ExtResource("1_japuw")]
-tile_map_data = PackedByteArray(0, 0, 237, 10, 228, 251, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0)
+[node name="level1" unique_id=464038650 instance=ExtResource("1_japuw")]
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 237, 10, 228, 251, 0, 0, 1, 0, 2, 0, 0, 0)
 script = ExtResource("2_qxjqb")
 
-[node name="water" parent="." index="0" instance=ExtResource("3_w0b2p")]
+[node name="water" parent="." index="0" unique_id=1102997464 instance=ExtResource("3_w0b2p")]
 position = Vector2(1088, -1472)
 
-[node name="portal" parent="." index="1" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
+[node name="portal" parent="." index="1" unique_id=1420139700 node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
 position = Vector2(246, -625)
 pair = NodePath("../portal2")
 
-[node name="line" type="Line2D" parent="portal" index="5"]
+[node name="line" type="Line2D" parent="portal" index="5" unique_id=1931861795]
 visible = false
 points = PackedVector2Array(12, -117, 58, 10, -48, 81)
 default_color = Color(1, 0, 1, 1)
 
-[node name="portal2" parent="." index="2" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
+[node name="portal2" parent="." index="2" unique_id=694897535 node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
 position = Vector2(1546, -356)
 pair = NodePath("../portal")
 
-[node name="line" type="Line2D" parent="portal2" index="5"]
+[node name="line" type="Line2D" parent="portal2" index="5" unique_id=1354269456]
 visible = false
 points = PackedVector2Array(215, -190, 58, 10, -48, 81)
 default_color = Color(1, 0, 1, 1)
 
-[node name="portal3" parent="." index="3" node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
+[node name="portal3" parent="." index="3" unique_id=600985648 node_paths=PackedStringArray("pair") instance=ExtResource("4_ua5ty")]
 position = Vector2(2670, 1086)
 pair = NodePath("../portal")
 
-[node name="line" type="Line2D" parent="portal3" index="5"]
+[node name="line" type="Line2D" parent="portal3" index="5" unique_id=1580829289]
 visible = false
 points = PackedVector2Array(12, -117, 58, 10, -48, 81)
 default_color = Color(1, 0, 1, 1)
