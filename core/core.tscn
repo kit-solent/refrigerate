@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://chs1uj1yhcdod"]
+[gd_scene format=3 uid="uid://chs1uj1yhcdod"]
 
 [ext_resource type="Script" uid="uid://behdr5pql8avk" path="res://core/core.gd" id="1_ktj8o"]
 [ext_resource type="World2D" uid="uid://du6b6aum2bav5" path="res://core/resources/world.tres" id="2_e4puy"]
@@ -7,7 +7,7 @@
 [ext_resource type="Environment" uid="uid://cuprafktv5kd0" path="res://core/resources/environment.tres" id="5_o56yt"]
 [ext_resource type="FontFile" uid="uid://4dgbqqukt8q1" path="res://core/resources/arial.ttf" id="6_py2gr"]
 
-[node name="core" type="Node"]
+[node name="core" type="Node" unique_id=1120645772]
 process_priority = -8
 process_physics_priority = -8
 script = ExtResource("1_ktj8o")
@@ -19,4 +19,4 @@ tileset = ExtResource("4_fs2cf")
 environment = ExtResource("5_o56yt")
 font = ExtResource("6_py2gr")
 
-[node name="http_request" type="HTTPRequest" parent="."]
+[node name="http_request" type="HTTPRequest" parent="." unique_id=1187136569]

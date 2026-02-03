@@ -3,6 +3,39 @@ class_name Tools extends Node
 ## A collection of utility functions used by other parts
 ## of the Refrigerate game.
 
+# Error code policy: When an error is caught by the code return the
+# default/empty/smallest return value that fits the type and
+# assert(false) after printing an error message. Don't return FAILED
+
+func print_nth(text, n:int = Core.nth_frame_default, force_0th_frame:bool = false):
+	"""
+	Print the message only if Core.tools.is_nth_frame(n, force_0th_frame) == true.
+	This is equivalent to writing the following
+	if Core.tools.is_nth_frame(n, force_0th_frame):
+		print(text)
+	"""
+	if is_nth_frame(n, force_0th_frame):
+		print(text)
+
+func is_nth_frame(n:int = Core.nth_frame_default, force_0th_frame:bool = false):
+	"""
+	Returns true if the game is in its nth frame where n defaults to
+	Core.nth_frame_default. Used to trigger debug prints in code that
+	runs every frame (i.e. code called in _process) so that output is
+	only generated once. n can be made larger to trigger debug code
+	after initial loading that happens in the early frames, e.g. loading
+	screens. If force_oth_frame is true then the frame count is taken
+	directly from Engine.get_frames_drawn() and ignores the custom offset
+	tool. This will only return true in debug mode (Core.debug == true)
+	"""
+	if not Core.debug:
+		return false
+	
+	if force_0th_frame:
+		return Engine.get_frames_drawn() == n
+	else:
+		return Engine.get_frames_drawn() - Core.nth_frame_offset == n
+
 func any(booleans:Array):
 	"""
 	Performs an or check on all booleans in the array. This function returns
@@ -25,7 +58,7 @@ func all(booleans:Array):
 			return false
 	return true
 
-func chain_lt(values:Array, strict = true):
+func chain_lt(values:Array, strict = true) -> bool:
 	"""
 	Represents a chained "less than" inequality of all the items in `values`.
 	If `strict` is true then use a strict inequality and if false use a non-strict inequality.
@@ -34,7 +67,9 @@ func chain_lt(values:Array, strict = true):
 	"""
 	if len(values) <= 1:
 		printerr("chain_lt expects at least 2 arguments.")
-		return FAILED
+		# stop the code for debugging
+		assert(false)
+		return false
 
 	var val = values[0]
 	for index in range(1, len(values)):
@@ -61,9 +96,8 @@ func chain_gt(values:Array, strict = true):
 	If `values` has 1 or less item(s) then return FAILED
 	"""
 	var values_copy = values.duplicate()
-	values_copy.rever()
+	values_copy.reverse()
 	return chain_lt(values_copy, strict)
-
 
 func rect_to_polygon(rect:Rect2) -> PackedVector2Array:
 	"""
@@ -107,15 +141,15 @@ func angle_diff(angle_a:float, angle_b:float) -> float:
 	
 	return max_angle - min_angle
 
-func get_centre(points) -> Vector2:
+func get_centre(points:PackedVector2Array) -> Vector2:
 	"""
 	Returns the centroid of the given points.
 	This is the average of the points or the point in the centre of
 	the points
 	"""
 	var centroid = Vector2.ZERO
-	for i in points:
-		centroid += i
+	for point in points:
+		centroid += point
 	centroid /= len(points)
 	
 	return centroid
@@ -253,15 +287,15 @@ func are_colinear(points:PackedVector2Array, ordered:bool = false, epsilon = 0.0
 		var new_direction = points[index + 1] - points[index]
 		var angle = direction.angle_to(new_direction)
 		
-		# cross product test
 		var condition = abs(angle) < epsilon # strict test.
 		
 		# include the non-strict case
 		if not ordered:
-			condition = condition or (abs(angle) - PI < epsilon)
+			condition = condition or (abs(abs(angle) - PI) < epsilon)
 		
 		if condition:
-			continue # if the point passes the test then keep iterating.
+			# if the point passes the test then keep iterating.
+			continue
 		else:
 			# if the vectors point in different directions then the array is not colinear
 			return false
@@ -318,7 +352,7 @@ func is_between(angle:float, a:float, b:float) -> bool:
 		# anticlockwise only happens when the positive x axis is inside the angle
 		return angle < small_angle or angle > big_angle
 
-func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float) -> PackedVector2Array:
+func clip_segment_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:float) -> PackedVector2Array:
 	"""
 	Vertically clippes the line segment from start to stop against the upper and lower limits.
 	Regardless of the input points the line segment will be returned from the top down.
@@ -350,7 +384,7 @@ func clip_line_vrt(start:Vector2, stop:Vector2, upper_limit:float, lower_limit:f
 	
 	return PackedVector2Array([stop, start] if flipped else [start, stop])
 
-func clip_line_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float) -> PackedVector2Array:
+func clip_segment_hor(start:Vector2, stop:Vector2, left_limit:float, right_limit:float) -> PackedVector2Array:
 	"""
 	Vertically clippes the line segment from start to stop against the upper and lower limits.
 	Regardless of the input points the line segment will be returned from the top down.
@@ -391,7 +425,7 @@ func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2) -> PackedVecto
 	var clip
 	
 	# clip the line vertically
-	clip = clip_line_vrt(start, stop, bounds.position.y, bounds.position.y + bounds.size.y)
+	clip = clip_segment_vrt(start, stop, bounds.position.y, bounds.position.y + bounds.size.y)
 	if len(clip)==0:
 		return clip
 	
@@ -399,7 +433,7 @@ func clip_line_segment(start:Vector2, stop:Vector2, bounds:Rect2) -> PackedVecto
 	stop = clip[1]
 	
 	# clip the line horizontally
-	clip = clip_line_hor(start, stop, bounds.position.x, bounds.position.x + bounds.size.x)
+	clip = clip_segment_hor(start, stop, bounds.position.x, bounds.position.x + bounds.size.x)
 	
 	if len(clip)==0:
 		return clip
@@ -621,7 +655,7 @@ func cast_point(target:Vector2, point:Vector2, bounds:Rect2) -> Array[Vector2]:
 	
 	return [intersect, edge]
 
-func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
+func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2) -> PackedVector2Array:
 	"""
 	Casts the line segment from `start` to `stop` against `bounds` from the perspective of `target` and returns the resulting polygon.
 	Both `start` and `stop` must be inside the bounds but `target` may be outside
@@ -629,7 +663,9 @@ func cast_polygon(target:Vector2, start:Vector2, stop:Vector2, bounds:Rect2):
 	# TODO: modify so that the start and stop points can be out of bounds and the polygon cast still works
 	if not (rect_has_point(bounds, start) and rect_has_point(bounds, stop)):
 		printerr("Invalid `line` in cast_polygon. Both points in `line` must be within the bounds.")
-		return ERR_INVALID_PARAMETER
+		# stop the code for debugging
+		assert(false)
+		return PackedVector2Array([])
 	
 	# initialise the polygon with the line
 	var polygon = PackedVector2Array([start, stop])
@@ -764,14 +800,16 @@ func get_local_bounds(node:Node, margin:float = 64) -> Rect2: # TODO: Make this 
 	# convert to local coordinates before returning.
 	return to_local_rect(node, global_rect)
 
-func get_segments(polygon:PackedVector2Array):
+func get_segments(polygon:PackedVector2Array) -> Array[PackedVector2Array]:
 	"""
 	Returns a list of all the line segments that make up the polygon/line (each consists of two points).
 	If the polygon/line has 1 or no points then print and return and error.
 	"""
 	if len(polygon) <= 1:
 		printerr("get_segments requires the polygon to have at least 2 points.")
-		return FAILED
+		# stop the code for debugging
+		assert(false)
+		return []
 	
 	var segments:Array[PackedVector2Array] = []
 	for count in range(len(polygon)-1): # ignore the last point as it will be taken by the previous one.
@@ -779,21 +817,24 @@ func get_segments(polygon:PackedVector2Array):
 			polygon[count],
 			polygon[count + 1]
 		]))
+	
+	return segments
 
-func segment_has_point(segment:PackedVector2Array, point:Vector2):
+func _segment_has_point(segment:PackedVector2Array, point:Vector2) -> bool:
 	"""
 	Returns true if `point` lies on the line segment `segment`. Note that `segment`
 	must have exactly 2 points. If `point` is one of the end points then return false.
+	This method is redundant because segment_has_point is simpler and probs better.
 	"""
 	if len(segment) != 2:
 		printerr("segment_has_point requires the given segment to have only 2 points.")
-		return FAILED
+		# stop the code for debugging
+		assert(false)
+		return false
 	
 	if point==segment[0] or point==segment[1]:
 		return false
 	
-	print("yeet")
-	print(are_colinear(PackedVector2Array([segment[0], segment[1], point])))
 	if not are_colinear(PackedVector2Array([segment[0], segment[1], point])):
 		return false
 	
@@ -810,20 +851,22 @@ func segment_has_point(segment:PackedVector2Array, point:Vector2):
 	# if the point is colinear with the segment and is within its bounding box then it must be on it.
 	return true
 
-func segment_has_point2(segment:PackedVector2Array, point:Vector2):
+func segment_has_point(segment:PackedVector2Array, point:Vector2) -> bool:
 	"""
 	Returns true if `point` lies on the line segment `segment`. Note that `segment`
 	must have exactly 2 points. If `point` is one of the end points then return false.
+	This method uses the are_colinear method with an ordered test.
 	"""
 	if len(segment) != 2:
 		printerr("segment_has_point requires the given segment to have only 2 points.")
-		return FAILED
+		# stop the code for debugging
+		assert(false)
+		return false
 	
 	if point==segment[0] or point==segment[1]:
 		return false
 	
 	return are_colinear(PackedVector2Array([segment[0], point, segment[1]]), true)
-
 
 func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Array) -> PackedVector2Array:
 	"""
@@ -834,6 +877,9 @@ func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Arra
 	"""
 	if len(segment1) != 2 or len(segment2) != 2:
 		printerr("get_segment_overlap expects both segments to have a length of 2")
+		# stop the code for debugging
+		assert(false)
+		return PackedVector2Array([])
 	
 	# ensure all the 4 points are colinear
 	if not are_colinear(PackedVector2Array([segment1[0],segment1[1],segment2[0],segment2[1]])):
@@ -857,11 +903,10 @@ func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Arra
 	# t = (point - constant).n / direction.n
 	# where n is any of x or y as can be seen by expanding the vector form
 	
-	# We now find t for all the 4 points
-	var t_10 = (segment1[0] - constant).x/direction.x
-	var t_11 = (segment1[1] - constant).x/direction.x
-	var t_20 = (segment2[0] - constant).x/direction.x
-	var t_21 = (segment2[1] - constant).x/direction.x
+	var t_10 = get_parameter(segment1[0], direction, constant)
+	var t_11 = get_parameter(segment1[1], direction, constant)
+	var t_20 = get_parameter(segment2[0], direction, constant)
+	var t_21 = get_parameter(segment2[1], direction, constant)
 	
 	var seg1_min = min(t_10,t_11)
 	var seg1_max = max(t_10,t_11)
@@ -879,18 +924,20 @@ func get_segment_overlap(segment1:PackedVector2Array, segment2:PackedVector2Arra
 	
 	return PackedVector2Array([point1, point2])
 
-func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
+func clip_segment(segment:PackedVector2Array, mask:PackedVector2Array) -> Array[PackedVector2Array]:
 	"""
 	Returns the portion of segment that is not shared with mask. This only removes non-zero
 	length sections from segment so single point intersections or end to end connections are not
 	counted as overlap. If segment has 0 length then return an empty Array regardless of whether
 	segment had points in it. Both segments must (being segments) have exactly 2 points. This
 	method returns an array of segments because if mask is in the middle of segment then
-	removing it results in two endpoint segments. 
+	removing it results in two endpoint segments.
 	"""
 	if len(segment)!=2 or len(mask)!=2:
-		printerr("clip_segments expects both segments to have exactly 2 points.")
-		return FAILED
+		printerr("clip_segment expects both segments to have exactly 2 points.")
+		# stop the code for debugging
+		assert(false)
+		return []
 	
 	if segment[0]==segment[1]:
 		return []
@@ -912,10 +959,11 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 	# find the parameter (t) values for the end points of both segment and the overlap.
 	# seethe comments in the get_segment_overlap method for a more in depth description.
 	# t = (point - constant).n / direction.n
-	var t_seg1_0    = (segment[0] - constant).x / direction.x
-	var t_seg1_1    = (segment[1] - constant).x / direction.x
-	var t_overlap_0 = (overlap[0] - constant).x / direction.x
-	var t_overlap_1 = (overlap[1] - constant).x / direction.x
+	
+	var t_seg1_0    = get_parameter(segment[0], direction, constant)
+	var t_seg1_1    = get_parameter(segment[1], direction, constant)
+	var t_overlap_0 = get_parameter(overlap[0], direction, constant)
+	var t_overlap_1 = get_parameter(overlap[1], direction, constant)
 	var seg1_int = [min(t_seg1_0, t_seg1_1), max(t_seg1_0, t_seg1_1)]
 	var overlap_int = [min(t_overlap_0, t_overlap_1), max(t_overlap_0, t_overlap_1)]
 	
@@ -929,11 +977,6 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 	
 	# where the overlap interval takes the bottom of seg1
 	elif chain_lt([overlap_int[0], seg1_int[0], overlap_int[1], seg1_int[1]], false):
-		print(seg1_int[0])
-		print(seg1_int[1])
-		print(overlap_int[0])
-		print(overlap_int[1])
-		print(direction)
 		new_interval = [overlap_int[1], seg1_int[1]]
 	
 	# where the overlap interval takes the top of seg1
@@ -951,8 +994,10 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 		new_interval_2 = [overlap_int[1], seg1_int[1]]
 	
 	else:
-		printerr("Something went wrong in clip_segments. This statment should be unreachable.")
-		return FAILED
+		printerr("Something went wrong in clip_segment. This statment should be unreachable.")
+		# stop the code for debugging
+		assert(false)
+		return []
 	
 	# some of the non-strict tests allow for zero-length results so remove them
 	if new_interval[0]==new_interval[1]:
@@ -974,6 +1019,88 @@ func clip_segments(segment:PackedVector2Array, mask:PackedVector2Array):
 		])
 		return [new_seg, new_seg_2]
 
+func clip_lines(line:PackedVector2Array, mask:PackedVector2Array) -> Array[PackedVector2Array]:
+	"""
+	Returns the portion of line that is not shared with mask. This only removes non-zero
+	length sections from line so single point intersections or end to end connections are not
+	counted as overlap. If line has 0 length then return an empty Array regardless of whether
+	line had points in it. This method returns an array of lines because if mask is in the
+	middle of segment then removing it results in two endpoint segments. This is the same as
+	the clip_segment method but works for multi-segment lines. Clips are calculated segment
+	by segment.
+	"""
+	var line_segments:Array[PackedVector2Array] = segment_line(line)
+	var mask_segments:Array[PackedVector2Array] = segment_line(mask)
+	
+	var clipped_segments:Array[PackedVector2Array] = []
+	
+	while len(line_segments):
+		# pop_back is preferable to pop_front for performance
+		var segment:PackedVector2Array = line_segments.pop_back()
+		
+		for mask_segment in mask_segments:
+			var clip:Array[PackedVector2Array] = clip_segment(segment, mask_segment)
+			
+			# take the first piece as the segment
+			segment = clip[0]
+			# and add the rest to line_segments to finish checking later.
+			line_segments.append_array(clip.slice(1))
+		
+		clipped_segments.append(segment)
+	
+	# merge the segments back together again
+	var clipped_line = merge_lines(clipped_segments)
+	
+	return clipped_line
+
+func clip_line_sets(lines:Array[PackedVector2Array], mask:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	"""
+	For each line in lines clip it against all lines in mask and return the result. This can
+	generate a list bigger than lines as clipping a line can split it into pieces. After clipping
+	an attempt is made to merge lines so if lines isn't already in its simplest form the resulting
+	array may be smaller than lines (or even if it is in its simplest form because clipping could
+	entierly remove disconnected sections).
+	"""
+	# collect all the segments from lines and from mask
+	var line_segments:Array[PackedVector2Array]
+	for line in lines:
+		line_segments.append_array(segment_line(line))
+	
+	var mask_segments:Array[PackedVector2Array]
+	for mask_line in mask:
+		mask_segments.append_array(segment_line(mask_line))
+	
+	# TODO: From here downward the code is the same as in clip_lines so I could remove
+	# clip_lines entierly and just use this function for single line cases.
+	var clipped_segments:Array[PackedVector2Array] = []
+	
+	while len(line_segments):
+		# pop_back is preferable to pop_front for performance
+		var segment:PackedVector2Array = line_segments.pop_back()
+		
+		for mask_segment in mask_segments:
+			var clip:Array[PackedVector2Array] = clip_segment(segment, mask_segment)
+			
+			# if there's nothing left of the segment then leave it blank and skip
+			# the rest of the mask.
+			if len(clip)==0:
+				segment = PackedVector2Array([])
+				break
+			
+			# take the first piece as the segment
+			segment = clip[0]
+			# and add the rest to line_segments to finish checking later.
+			line_segments.append_array(clip.slice(1))
+		
+		# don't add empty segments.
+		if len(segment):
+			clipped_segments.append(segment)
+	
+	# merge the segments back together again
+	var clipped_line = merge_lines(clipped_segments)
+	
+	return clipped_line
+
 func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	"""
 	Merges the lines in the array such that lines with shared endpoints or overlapping sections
@@ -987,10 +1114,6 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	while len(lines): # while we have at least one line left
 		var line = lines.pop_back() # faster than pop_front because indices don't have to be updated 
 		
-		print("-- New Iteration --")
-		print(line)
-		print(new_lines)
-		
 		# remove 0 length segments by not adding them to the new_lines array
 		if line[0] == line[1]:
 			continue
@@ -1000,7 +1123,7 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		
 		# remove/trim overlapping segments
 		for new_line_segment in segment_lines(new_lines):
-			var clip = clip_segments(line, new_line_segment)
+			var clip = clip_segment(line, new_line_segment)
 			
 			# if all of the line got clipped then continue
 			if len(clip)==0:
@@ -1010,7 +1133,6 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			# if we get two resultant segments then keep working
 			# with one of them and just do the other one next.
 			if len(clip) == 2:
-				print("adding one item to lines")
 				lines.append(clip[1])
 			
 			line = clip[0]
@@ -1019,33 +1141,21 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		cont = false
 		
 		# join segments with shared endpoints
-		print("Newwww")
-		print(new_lines)
 		for new_line in new_lines:
 			if new_line[0] == line[0]:
 				new_line.insert(0, line[1])
-				print("skibibi: 0,0")
-				print(new_lines)
 				cont = true
 				break
 			elif new_line[0] == line[-1]:
 				new_line.insert(0, line[0])
-				print("skibibi: 0,1")
-				print(new_lines)
 				cont = true
 				break
 			elif new_line[-1] == line[0]:
 				new_line.append(line[1])
-				print("skibibi: 1,0")
-				print(new_lines)
 				cont = true
 				break
 			elif new_line[-1] == line[-1]:
-				print(new_line[1])
-				print(line[1])
 				new_line.append(line[0])
-				print("skibibi: 1,1")
-				print(new_lines)
 				cont = true
 				break
 		if cont:
@@ -1055,42 +1165,64 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	
 	return new_lines
 
-#func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
-	#"""
-	#For each polygon in the array return a list containing each continuous line (PackedVector2Array) on that polygon
-	#that is shared with the border of another polygon in the array. If only a portion of a line segment is a shared border
-	#then only return the shared section. This function returns an array where each item corresponds to a polygon in the
-	#argument so len(polygons) == len(find_connected_edges(polygons)) and each item is an array of the shared line segments
-	#of that polygon (which is in itself an array) Array[Array[PackedVector2Array]]. Note that single point intersections,
-	#i.e. those between non-colinear lines, are not counted. Borders (or sections of border) that lie inside other polygons
-	#are not counted either, the border must be exactly on the border of another polygon.
-	#"""
-	#var all_overlaps:Array[Array] = []
-	#for count in range(len(polygons)):
-		## store the overlapping sections for this polygon
-		#var overlaps:Array[PackedVector2Array] = []
-		#
-		## the target polygon
-		#var polygon = polygons[count]
-		#
-		## all the other polygons
-		#var other_polygons = polygons.duplicate()
-		#other_polygons.remove_at(count)
-		#
-		## the line segments of the target polygon
-		#var segments = get_segments(polygon)
-		#
-		## the line segments from all the other polygons
-		#var other_segments = []
-		#for p in other_polygons:
-			#other_segments.extend(get_segments(p))
-		#
-		## for each segment in the target polygon check it against all the other segments from the other polygons
-		#for segment in segments:
-			#for other_segment in other_segments:
-				#var overlap = get_segment_overlap(segment,other_segment)
-				#
-				## if there is an overlap store it and join them all together at the end
-				#if len(overlap):
-					#overlaps.append(overlap)
-					#
+func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
+	"""
+	For each polygon in the array return a list containing each continuous line (PackedVector2Array) on that polygon
+	that is shared with the border of another polygon in the array. If only a portion of a line segment is a shared border
+	then only return the shared section. This function returns an array where each item corresponds to a polygon in the
+	argument so len(polygons) == len(find_connected_edges(polygons)) and each item is an array of the shared line segments
+	of that polygon (which is in itself an array) Array[Array[PackedVector2Array]]. Note that single point intersections,
+	i.e. those between non-colinear lines, are not counted. Borders (or sections of border) that lie inside other polygons
+	are not counted either, the border must be exactly on the border of another polygon. This method starts by simplifying
+	the polygons by removing all adjacent points that are the same and any points made redundant by colinearity.
+	"""
+	var temp:Array[PackedVector2Array] = []
+	for polygon in polygons:
+		temp.append(decolinearise_line(make_line_unique(polygon)))
+	polygons = temp
+	
+	var all_overlaps:Array[Array] = []
+	for count in range(len(polygons)):
+		# store the overlapping sections for this polygon
+		var overlaps:Array[PackedVector2Array] = []
+		
+		# the target polygon
+		var polygon = polygons[count]
+		
+		# all the other polygons
+		var other_polygons = polygons.duplicate()
+		other_polygons.remove_at(count)
+		
+		# the line segments of the target polygon
+		var segments = get_segments(polygon)
+		
+		# the line segments from all the other polygons
+		var other_segments = []
+		for p in other_polygons:
+			other_segments.append_array(get_segments(p))
+		
+		# for each segment in the target polygon check it against all the other segments from the other polygons
+		for segment in segments:
+			for other_segment in other_segments:
+				var overlap = get_segment_overlap(segment,other_segment)
+				
+				# if there is an overlap store it and join them all together at the end
+				if len(overlap):
+					overlaps.append(overlap)
+		
+		all_overlaps.append(merge_lines(overlaps))
+	
+	return all_overlaps
+
+func get_parameter(point:Vector2, direction:Vector2, constant:Vector2) -> float:
+	"""
+	Uses the vector equation point = direction * t + constant
+	to solve for t given the 3 other values. This method assumes
+	all vectors are in 2-space.
+	"""
+	var parameter:float
+	if direction.x != 0:
+		parameter = (point - constant).x/direction.x
+	else:
+		parameter = (point - constant).y/direction.y
+	return parameter

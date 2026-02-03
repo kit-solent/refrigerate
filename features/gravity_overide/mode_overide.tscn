@@ -1,24 +1,24 @@
-[gd_scene load_steps=2 format=3 uid="uid://buv31evgnkci"]
+[gd_scene format=3 uid="uid://buv31evgnkci"]
 
 [ext_resource type="Script" uid="uid://wc1kyx5fu1h5" path="res://features/gravity_overide/mode_overide.gd" id="1_b20d0"]
 
-[node name="mode_overide" type="Area2D" groups=["mode overrides"]]
+[node name="mode_overide" type="Area2D" unique_id=1321510640 groups=["mode overrides"]]
 gravity_space_override = 3
 gravity_point_center = Vector2(0, 0)
 gravity_direction = Vector2(0, 0)
 script = ExtResource("1_b20d0")
 
-[node name="collision" type="CollisionPolygon2D" parent="."]
+[node name="collision" type="CollisionPolygon2D" parent="." unique_id=392766145]
 visible = false
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
-[node name="visuals" type="Polygon2D" parent="."]
+[node name="visuals" type="Polygon2D" parent="." unique_id=1180911249]
 
-[node name="on_screen" type="VisibleOnScreenNotifier2D" parent="."]
+[node name="on_screen" type="VisibleOnScreenNotifier2D" parent="." unique_id=344387303]
 
-[node name="lines" type="Node2D" parent="."]
+[node name="lines" type="Node2D" parent="." unique_id=121060998]
 
-[node name="line" type="Line2D" parent="."]
+[node name="_line_template" type="Line2D" parent="." unique_id=1179544601]
 points = PackedVector2Array(28, 25, 263, 38, 255, 284, 43, 258, 29, 46)
 width = 15.0
 default_color = Color(0, 1, 1, 1)

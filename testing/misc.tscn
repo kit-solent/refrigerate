@@ -4,27 +4,3 @@
 
 [node name="misc" type="Node2D" unique_id=667484584]
 script = ExtResource("1_yh37i")
-
-[node name="node_2d" type="Node2D" parent="." unique_id=1477226514]
-visible = false
-
-[node name="line_2d" type="Line2D" parent="node_2d" unique_id=1833563389]
-points = PackedVector2Array(48, 120, 320, 256)
-default_color = Color(0, 1, 1, 1)
-
-[node name="line_2d2" type="Line2D" parent="node_2d" unique_id=108063606]
-points = PackedVector2Array(160, 352, 320, 256, 192, 128, 96, 272)
-default_color = Color(0, 1, 1, 1)
-
-[node name="line_2d3" type="Line2D" parent="node_2d" unique_id=552123238]
-points = PackedVector2Array(256, 192, 224, 160, 16, 104, 96, 144)
-
-[node name="trala" type="Node2D" parent="." unique_id=974464486]
-visible = false
-
-[node name="marker_2d" type="Marker2D" parent="." unique_id=1665195460]
-position = Vector2(104, 48)
-
-[node name="line_2d" type="Line2D" parent="." unique_id=1836448557]
-points = PackedVector2Array(0, 0, 128, 64)
-width = 1.0

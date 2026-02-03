@@ -4,7 +4,7 @@ extends Node
 
 ## If true runs the game in debug mode. This includes features such as turning off the canvas modulate
 ## and enabling Godot's built in debugging features like visable collision shapes, paths, navigation, and avoidance.
-@export var debug = false
+@export var debug = true # TODO: Dissable before deployment.
 
 @export_group("Mode Overide Colors")
 ## The color ascociated with the top down gravity mode.
@@ -32,7 +32,16 @@ var tools:Tools = Tools.new()
 var debug_frame:bool = false
 var debug_state:bool = false
 
+# could be made larger if setup is still happening in the early frames
+# e.g. loading screens/etc.
+var nth_frame_default:int = 1
+
+# This is used to start the nth frame count from a custom point
+var nth_frame_offset:int = 0
+
 func _ready():
+	print_rich("[color=purple]core.gd DEBUG STATUS: debug mode is " + ("[/color][color=green]en" if debug else "[/color][color=red]dis") + "abled[/color]")
+	
 	# if we are in the `ingame` scene then get a reference to the root `ingame` node.
 	if has_node("/root/ingame"):
 		main = get_node("/root/ingame")
@@ -50,6 +59,9 @@ func _process(_delta:float):
 	# emit the debug_action when the debug key is pressed.
 	if debug_frame:
 		debug_action.emit()
+	
+	if Input.is_action_just_pressed("nth frame reset"):
+		nth_frame_offset = Engine.get_frames_drawn()
 
 ## User Authentication
 #const host="https://refrigerate-580a7-default-rtdb.firebaseio.com/"

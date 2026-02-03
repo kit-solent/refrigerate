@@ -5,7 +5,7 @@ class_name Map extends TileMapLayer
 var mode_overide_scene = preload("res://features/gravity_overide/mode_overide.tscn")
 var wader_scene = preload("res://features/water/water.tscn")
 
-func create_regions(id:int, atlas:Array=[], remove:bool=true):
+func create_regions(id:int, atlas:Array=[], remove:bool=true) -> Array[PackedVector2Array]:
 	"""
 	Returns an array of polygons of the merged tiles of the given id.
 	If `atlas` has items then only use tiles with atlas positions in `atlas`.
@@ -29,11 +29,11 @@ func create_regions(id:int, atlas:Array=[], remove:bool=true):
 		# remove the cell
 		if remove:
 			set_cell(cell)
-	return shapes
 	
 	# merge the polygons
 	shapes = Core.tools.merge_polygons(shapes)
 	
+	return shapes
 
 func create_water_regions(id:int):
 	"""
@@ -69,6 +69,9 @@ func create_water_regions(id:int):
 	return []
 
 func clear_regions():
+	"""
+	Delete all the mode overide regions.
+	"""
 	for region in mode_overides.get_children():
 		mode_overides.remove_child(region)
 		region.queue_free()
@@ -76,22 +79,25 @@ func clear_regions():
 func update_regions():
 	clear_regions()
 	
-	for id in [1, 2, 3, 4, 5]: # these are the gravity regions.
+	 # gravity regions
+	for id in [1]:#, 2, 3, 4, 5]:
+		var gravity_dir
+		if id == 1:
+			# account for top down mode.
+			gravity_dir = Vector2.ZERO
+		else:
+			# generate the gravity direction by rotating the DOWN vector anticlockwise
+			# (id - 2) times. (Because index 2 is the down direction).
+			gravity_dir = Vector2.DOWN.rotated((TAU/4) * (id - 2))
+		
 		var regions = create_regions(id) # TODO: This is not creating the polygons right.
-		for region in regions:
+		var connected_edges = Core.tools.find_connected_edges(regions)
+		print(connected_edges) # TODO
+		for index in range(len(regions)):
 			var overide = mode_overide_scene.instantiate()
-			
-			var gravity_dir
-			if id == 1:
-				# account for top down mode.
-				gravity_dir = Vector2.ZERO
-			else:
-				# generate the gravity direction by rotating the DOWN vector anticlockwise
-				# (id - 2) times. (Because index 2 is the down direction).
-				gravity_dir = Vector2.DOWN.rotated((TAU/4) * (id - 2))
-			
 			overide.change_gravity_direction(gravity_dir)
-			overide.set_polygon(region)
+			overide.set_polygon(regions[index])
+			overide.set_empty_edges(connected_edges[index])
 			mode_overides.add_child(overide)
 	
 	# add the water.
@@ -108,49 +114,4 @@ func update_regions():
 	# points should then be positioned accordingly.
 
 func _ready():
-	print("Six Seeeeevun")
-	print(len(get_used_cells_by_id(1)))
-	print(create_regions(1))
-	return
 	update_regions()
-	
-	#TODO: This is a temporary test of water.tscn
-	@warning_ignore("unused_variable")
-	var poly:Array[PackedVector2Array] = [
-		PackedVector2Array([
-			Vector2(9, -2) * 64,
-			Vector2(6, -2) * 64,
-			Vector2(6, -1) * 64,
-			Vector2(5, -1) * 64,
-			Vector2(5,  1) * 64,
-			Vector2(-5, 1) * 64,
-			Vector2(-5, 0) * 64,
-			Vector2(-6, 0) * 64,
-			Vector2(-6, -2) * 64,
-		]),
-		PackedVector2Array([
-			Vector2(-6, -3) * 64,
-			Vector2(-5, -3) * 64,
-			Vector2(-4, -3) * 64,
-			Vector2(-3, -3) * 64,
-			Vector2(-2, -3) * 64,
-			Vector2(-1, -3) * 64,
-		]),
-		PackedVector2Array([
-			Vector2(-1, -2) * 64,
-			Vector2(-3, -2) * 64,
-			Vector2(-3, -1) * 64,
-			Vector2(3, -1) * 64,
-			Vector2(3, -2) * 64,
-			Vector2(4, -2) * 64,
-			Vector2(4, -3) * 64,
-		]),
-		PackedVector2Array([
-			Vector2(5, -3) * 64,
-			Vector2(6, -3) * 64,
-			Vector2(7, -3) * 64,
-			Vector2(8, -3) * 64,
-			Vector2(9, -3) * 64,
-		])
-	]
-	#$water.set_polygon(poly)

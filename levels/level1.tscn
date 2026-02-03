@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://s8hhu4jxydb"]
+[gd_scene format=4 uid="uid://s8hhu4jxydb"]
 
 [ext_resource type="PackedScene" uid="uid://c6awmk0g3vary" path="res://core/map.tscn" id="1_japuw"]
 [ext_resource type="Script" uid="uid://b37kt74l127tb" path="res://levels/level_1.gd" id="2_qxjqb"]
@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ctwsyo8iq6tg8" path="res://features/portals/portal.tscn" id="4_ua5ty"]
 
 [node name="level1" unique_id=464038650 instance=ExtResource("1_japuw")]
-tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 237, 10, 228, 251, 0, 0, 1, 0, 2, 0, 0, 0)
+tile_map_data = PackedByteArray("AAAAAAAAAQAAAAAAAAABAAAAAQAAAAAAAADtCuT7AAABAAIAAAAAAAEAAQAAAAAAAAACAAAAAQAAAAAAAAACAAEAAQAAAAAAAAACAAIAAQAAAAAAAAAAAAIAAQAAAAAAAAABAAIAAQAAAAAAAAA=")
 script = ExtResource("2_qxjqb")
 
 [node name="water" parent="." index="0" unique_id=1102997464 instance=ExtResource("3_w0b2p")]
