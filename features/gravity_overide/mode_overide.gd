@@ -12,6 +12,11 @@ func _on_body_entered(body):
 		body.set_gravity_direction(gravity_direction)
 
 func set_polygon(polygon:PackedVector2Array) -> Error:
+	"""
+	Sets the bounding line for this mode overide. Note that dispite the
+	name the argument to this method is a bounding line where the first
+	point in the array included again at the end.
+	"""
 	if not $collision:
 		printerr("The ModeOveride must be added to the scene tree before set_polygon can be called.")
 		return ERR_DOES_NOT_EXIST
@@ -35,6 +40,10 @@ func change_gravity_direction(direction:Vector2):
 	else:
 		$visuals.color = Core.platformer_color
 
+# TODO: for fixing the line borders: find all lines with same endpoints
+# and have one mode_overide "steal" the line for itself, joining it to
+# the existing line.
+
 func _process(_delta:float):
 	if $on_screen.is_on_screen():
 		# remove the preexisting lines
@@ -47,15 +56,16 @@ func _process(_delta:float):
 		
 		# for each polygon, append the first point to turn it into a line and clip it against the empty_edges array
 		var lines:Array[PackedVector2Array] = []
+		
 		for polygon in polygons:
-			var new_polygon = polygon
-			new_polygon.append(new_polygon[0])
+			var line = polygon
+			line.append(line[0])
 			
 			# clipping the line can result in multiple lines so store them in an array
-			var clipped_polygons:Array[PackedVector2Array] = Core.tools.clip_line_sets([new_polygon], empty_edges)
+			var clipped_lines:Array[PackedVector2Array] = Core.tools.clip_line_sets([line], empty_edges)
 			
 			# then add that array to the new_polygons
-			lines.append_array(clipped_polygons)
+			lines.append_array(clipped_lines)
 		
 		# for each line add it to $lines
 		for line in lines:
@@ -63,7 +73,10 @@ func _process(_delta:float):
 			new.show()
 			new.points = line
 			
-			# add the 2nd point of the line on again so that the end corner displays properly
-			# new.add_point(new.points[1]) # TODO: Fix stuff first
+			# add the 2nd point of the line on again so that the end corner displays properly but only if the
+			# line is meant to connect in a loop, i.e. if the first and last points are equal. Note that
+			# new.points and line are the same for read only purposes
+			if line[0] == line[-1]:
+				new.add_point(line[1])
 			
 			$lines.add_child(new)

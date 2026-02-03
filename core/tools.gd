@@ -7,16 +7,6 @@ class_name Tools extends Node
 # default/empty/smallest return value that fits the type and
 # assert(false) after printing an error message. Don't return FAILED
 
-func print_nth(text, n:int = Core.nth_frame_default, force_0th_frame:bool = false):
-	"""
-	Print the message only if Core.tools.is_nth_frame(n, force_0th_frame) == true.
-	This is equivalent to writing the following
-	if Core.tools.is_nth_frame(n, force_0th_frame):
-		print(text)
-	"""
-	if is_nth_frame(n, force_0th_frame):
-		print(text)
-
 func is_nth_frame(n:int = Core.nth_frame_default, force_0th_frame:bool = false):
 	"""
 	Returns true if the game is in its nth frame where n defaults to
@@ -35,6 +25,16 @@ func is_nth_frame(n:int = Core.nth_frame_default, force_0th_frame:bool = false):
 		return Engine.get_frames_drawn() == n
 	else:
 		return Engine.get_frames_drawn() - Core.nth_frame_offset == n
+
+func print_nth(text, n:int = Core.nth_frame_default, force_0th_frame:bool = false):
+	"""
+	Print the message only if Core.tools.is_nth_frame(n, force_0th_frame) == true.
+	This is equivalent to writing the following
+	if Core.tools.is_nth_frame(n, force_0th_frame):
+		print(text)
+	"""
+	if is_nth_frame(n, force_0th_frame):
+		print(text)
 
 func any(booleans:Array):
 	"""
@@ -98,6 +98,51 @@ func chain_gt(values:Array, strict = true):
 	var values_copy = values.duplicate()
 	values_copy.reverse()
 	return chain_lt(values_copy, strict)
+
+func polygon_to_line(polygon:PackedVector2Array) -> PackedVector2Array:
+	"""
+	Godot stores polygons as a list of points where the last is connected to the first
+	so to find the border line of a polygon the first point must be appended to that 
+	array. Lines don't automatically connect their end point to the start.
+	See also line_to_polygon
+	"""
+	# don't modify the original
+	polygon = polygon.duplicate()
+	polygon.append(polygon[0])
+	return polygon
+
+func line_to_polygon(line:PackedVector2Array) -> PackedVector2Array:
+	"""
+	The bounding line for a polygon in Godot must include the start point again at the
+	end in order to connect it up but polygons do this automatically so to convert a line
+	into a polygon the last point must be removed.
+	See also polygon_to_line
+	"""
+	if line[0] != line[-1]:
+		printerr("Warning: in line_to_polygon the first and last points on the line are not equal so the line probably doesn't represent a closed polygon. Continuing anyway.")
+	
+	# don't modify the original
+	line = line.duplicate()
+	line.remove_at(-1)
+	return line
+
+func polygons_to_lines(polygons:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	"""
+	Calls polygon_to_line on each polygon in polygons returning the results in an array.
+	"""
+	var lines:Array[PackedVector2Array] = []
+	for polygon in polygons:
+		lines.append(polygon_to_line(polygon))
+	return lines
+
+func lines_to_polygons(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
+	"""
+	Calls line_to_polygon on each polygon in polygons returning the results in an array.
+	"""
+	var polygons:Array[PackedVector2Array] = []
+	for line in lines:
+		lines.append(line_to_polygon(line))
+	return polygons
 
 func rect_to_polygon(rect:Rect2) -> PackedVector2Array:
 	"""
@@ -1112,18 +1157,18 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	
 	var new_lines:Array[PackedVector2Array] = []
 	while len(lines): # while we have at least one line left
-		var line = lines.pop_back() # faster than pop_front because indices don't have to be updated 
+		var segment = lines.pop_back() # faster than pop_front because indices don't have to be updated 
 		
 		# remove 0 length segments by not adding them to the new_lines array
-		if line[0] == line[1]:
+		if segment[0] == segment[1]:
 			continue
 		
-		# used to carry the continue statment through two nested loops
+		# used to carry continue statments through two nested loops
 		var cont:bool = false
 		
 		# remove/trim overlapping segments
 		for new_line_segment in segment_lines(new_lines):
-			var clip = clip_segment(line, new_line_segment)
+			var clip = clip_segment(segment, new_line_segment)
 			
 			# if all of the line got clipped then continue
 			if len(clip)==0:
@@ -1135,35 +1180,92 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			if len(clip) == 2:
 				lines.append(clip[1])
 			
-			line = clip[0]
-		if cont:
+			segment = clip[0]
+		
+		if cont: # the segment we've been working with has been merged already
 			continue
-		cont = false
 		
 		# join segments with shared endpoints
-		for new_line in new_lines:
-			if new_line[0] == line[0]:
-				new_line.insert(0, line[1])
+		var joined_line_index:int
+		for index in range(len(new_lines)):
+			# this is a reference to the actual line in the new_lines array so we
+			# can edit it and have changes reflected in the return value.
+			var new_line = new_lines[index]
+			if new_line[0] == segment[0]:
+				new_line.insert(0, segment[1])
 				cont = true
-				break
-			elif new_line[0] == line[-1]:
-				new_line.insert(0, line[0])
+			elif new_line[0] == segment[-1]:
+				new_line.insert(0, segment[0])
 				cont = true
-				break
-			elif new_line[-1] == line[0]:
-				new_line.append(line[1])
+			elif new_line[-1] == segment[0]:
+				new_line.append(segment[1])
 				cont = true
-				break
-			elif new_line[-1] == line[-1]:
-				new_line.append(line[0])
+			elif new_line[-1] == segment[-1]:
+				new_line.append(segment[0])
 				cont = true
+			
+			if cont: # this happens if any of the conditions were true
+				joined_line_index = index
 				break
+		
 		if cont:
+			# perform a second pass to see if the newly extended line
+			# can connect again (handles the case where one segment joins
+			# two lines in the middle).
+			var new_lines_copy = new_lines.duplicate()
+			new_lines_copy.remove_at(joined_line_index)
+			
+			for new_line in new_lines_copy:
+				# we were only adding a segment before but now we could
+				# be adding a multipart line.
+				
+				# This is the line to which we have just added a segment and is
+				# a reference to an item in the actual new_lines array so we can
+				# edit it and have changes be reflected in the return value.
+				var joined_line = new_lines[joined_line_index]
+				
+				# try to add new_line to joined_line.
+				# to prepend an array I think I have to do the double
+				# reverse thing but if theres a better way then... (TODO)
+				if new_line[0] == joined_line[0]:
+					joined_line.reverse()
+					joined_line.append_array(new_line.slice(1))
+					joined_line.reverse()
+				elif new_line[0] == joined_line[-1]:
+					joined_line.append_array(new_line.slice(1))
+				elif new_line[-1] == joined_line[0]:
+					joined_line.reverse()
+					new_line.reverse()
+					joined_line.append_array(new_line.slice(1))
+					joined_line.reverse()
+				elif new_line[-1] == joined_line[-1]:
+					# flip new_line first becase it's the last point that matces.
+					new_line.reverse()
+					joined_line.append_array(new_line.slice(1))
+			
+			# the segment we've been working with has been merged already
 			continue
 		
-		new_lines.append(line)
+		# if none of the attempts to merge the segment so far have worked then
+		# just add it as a new line.
+		new_lines.append(segment)
+	
+	Core.tools.print_nth("smple: "+str(new_lines))
 	
 	return new_lines
+	
+	# TODO: There is one case this code misses.
+	# If you have a loop where the first and last points are the same that will
+	# not (and cannot) be simplified. If there is another line that shared an
+	# endpoint with some point in the middle of this loop the end joining algorithm
+	# won't connect it because it's not an end to end common point. But loops can
+	# have their end point adjusted to any of their points without changing the line
+	# so if the join was moved to the location of that other line's endpoint then
+	# the two lines could become one. Think of a unit square joined at the top left
+	# with another line connected to the bottom right. The line could be re-written
+	# as going from the bottom right round the loop then off down the other line but
+	# this code won't make that simplification. I think this particular simplification
+	# won't have visual implications like endpoint connections at corners would though.
 
 func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
 	"""
@@ -1180,6 +1282,8 @@ func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
 	for polygon in polygons:
 		temp.append(decolinearise_line(make_line_unique(polygon)))
 	polygons = temp
+	
+	print(polygons)
 	
 	var all_overlaps:Array[Array] = []
 	for count in range(len(polygons)):

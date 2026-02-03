@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ctwsyo8iq6tg8" path="res://features/portals/portal.tscn" id="4_ua5ty"]
 
 [node name="level1" unique_id=464038650 instance=ExtResource("1_japuw")]
-tile_map_data = PackedByteArray("AAAAAAAAAQAAAAAAAAABAAAAAQAAAAAAAADtCuT7AAABAAIAAAAAAAEAAQAAAAAAAAACAAAAAQAAAAAAAAACAAEAAQAAAAAAAAACAAIAAQAAAAAAAAAAAAIAAQAAAAAAAAABAAIAAQAAAAAAAAA=")
+tile_map_data = PackedByteArray("AAACAAIAAQAAAAAAAAACAAAAAQAAAAAAAAACAAEAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAIAAQAAAAAAAAABAAAAAQAAAAAAAAABAAIAAQAAAAAAAADtCuT7AAABAAIAAAA=")
 script = ExtResource("2_qxjqb")
 
 [node name="water" parent="." index="0" unique_id=1102997464 instance=ExtResource("3_w0b2p")]

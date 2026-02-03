@@ -90,9 +90,11 @@ func update_regions():
 			# (id - 2) times. (Because index 2 is the down direction).
 			gravity_dir = Vector2.DOWN.rotated((TAU/4) * (id - 2))
 		
-		var regions = create_regions(id) # TODO: This is not creating the polygons right.
-		var connected_edges = Core.tools.find_connected_edges(regions)
-		print(connected_edges) # TODO
+		# find the polygons representing the mode overide areas
+		var regions = create_regions(id)
+		
+		var connected_edges = Core.tools.find_connected_edges(Core.tools.polygons_to_lines(regions))
+		
 		for index in range(len(regions)):
 			var overide = mode_overide_scene.instantiate()
 			overide.change_gravity_direction(gravity_dir)
