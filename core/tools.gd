@@ -1155,12 +1155,17 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	# split the lines into segments.
 	lines = segment_lines(lines).duplicate()
 	
+	print_nth("merging segments: "+str(lines))
+	
 	var new_lines:Array[PackedVector2Array] = []
 	while len(lines): # while we have at least one line left
 		var segment = lines.pop_back() # faster than pop_front because indices don't have to be updated 
 		
+		print_nth("####performing pass with: "+str(segment))
+		
 		# remove 0 length segments by not adding them to the new_lines array
 		if segment[0] == segment[1]:
+			print_nth("    skipping 0 length segment")
 			continue
 		
 		# used to carry continue statments through two nested loops
@@ -1173,86 +1178,93 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			# if all of the line got clipped then continue
 			if len(clip)==0:
 				cont = true
+				print_nth("    all of the line overlaps with other lines")
 				break
 			
 			# if we get two resultant segments then keep working
 			# with one of them and just do the other one next.
 			if len(clip) == 2:
+				print_nth("    (adding the other half of the split to the array.)")
 				lines.append(clip[1])
 			
 			segment = clip[0]
 		
-		if cont: # the segment we've been working with has been merged already
+		if cont: # the segment we've been working with has been merged already.
 			continue
 		
-		# join segments with shared endpoints
-		var joined_line_index:int
+		# find the 0 to 2 existing lines with which segment shares it's endpoints.
+		# this array stores joined lines as follows: [index, line_end, segment_end]
+		# index is the index in new_lines of the joined line
+		# line_end is 0 if the shared point is at the beginning of the line and -1 if it's at the end.
+		# segment_end is 0 if the shared point is at the beginning of the segment and -1 if it's at the end.
+		var joined_lines:Array[PackedInt32Array] = []
 		for index in range(len(new_lines)):
-			# this is a reference to the actual line in the new_lines array so we
-			# can edit it and have changes reflected in the return value.
 			var new_line = new_lines[index]
-			if new_line[0] == segment[0]:
-				new_line.insert(0, segment[1])
-				cont = true
-			elif new_line[0] == segment[-1]:
-				new_line.insert(0, segment[0])
-				cont = true
-			elif new_line[-1] == segment[0]:
-				new_line.append(segment[1])
-				cont = true
-			elif new_line[-1] == segment[-1]:
-				new_line.append(segment[0])
-				cont = true
+			for combos in [[0,0],[0,-1],[-1,0],[-1,-1]]:
+				# conbos[0] is the line endpoint and combos[1] is the segment endpoint.
+				if new_line[combos[0]] == segment[combos[1]]:
+					joined_lines.append(PackedInt32Array([index, combos[0], combos[1]]))
 			
-			if cont: # this happens if any of the conditions were true
-				joined_line_index = index
+			if len(joined_lines) == 2:
+				# keep looping until we find 2 ends to join or we run out of lines to check.
 				break
 		
-		if cont:
-			# perform a second pass to see if the newly extended line
-			# can connect again (handles the case where one segment joins
-			# two lines in the middle).
-			var new_lines_copy = new_lines.duplicate()
-			new_lines_copy.remove_at(joined_line_index)
+		print_nth("    found "+str(len(joined_lines))+" joined lines to merge")
+		
+		if len(joined_lines) == 0:
+			# if the segment doesn't share endpoints with any lines then don't do any merging.
+			pass
+		elif len(joined_lines) == 1:
+			# if the segment only shares an endpoint with one other line then add it on.
+			var index = joined_lines[0][0]
+			var line_end = joined_lines[0][1]
+			var segment_end = joined_lines[0][2]
+			# get the other point from the segment, the non-joining one.
+			var segment_point = segment[-(segment_end + 1)]
 			
-			for new_line in new_lines_copy:
-				# we were only adding a segment before but now we could
-				# be adding a multipart line.
-				
-				# This is the line to which we have just added a segment and is
-				# a reference to an item in the actual new_lines array so we can
-				# edit it and have changes be reflected in the return value.
-				var joined_line = new_lines[joined_line_index]
-				
-				# try to add new_line to joined_line.
-				# to prepend an array I think I have to do the double
-				# reverse thing but if theres a better way then... (TODO)
-				if new_line[0] == joined_line[0]:
-					joined_line.reverse()
-					joined_line.append_array(new_line.slice(1))
-					joined_line.reverse()
-				elif new_line[0] == joined_line[-1]:
-					joined_line.append_array(new_line.slice(1))
-				elif new_line[-1] == joined_line[0]:
-					joined_line.reverse()
-					new_line.reverse()
-					joined_line.append_array(new_line.slice(1))
-					joined_line.reverse()
-				elif new_line[-1] == joined_line[-1]:
-					# flip new_line first becase it's the last point that matces.
-					new_line.reverse()
-					joined_line.append_array(new_line.slice(1))
+			if line_end == 0:
+				# if the line joins the segment at its start
+				new_lines[index].reverse()
+				new_lines[index].append(segment_point)
+				new_lines[index].reverse()
+			else:
+				# if the line joins the segment at the end
+				new_lines[index].append(segment_point)
+			continue
+		else:
+			# if the segment joines two lines in the middle then we add the 1st line to the 2nd.
+			var index1 = joined_lines[0][0]
+			var index2 = joined_lines[1][0]
+			var line_end1 = joined_lines[0][1]
+			var line_end2 = joined_lines[1][1]
 			
-			# the segment we've been working with has been merged already
+			# if the first line joins from it's end then flip it.
+			if line_end1 == -1:
+				new_lines[index1].reverse()
+			
+			# if the 2nd line joins from it's last point then flip it before appending.
+			# NOTE: This reversing does not get undone but that shouldn't matter
+			# as the direction of the line isn't important.
+			if line_end2 == -1:
+				new_lines[index2].reverse()
+			
+			# add the lines together and remove the newly redundant one.
+			new_lines[index2].append_array(new_lines[index1])
+			new_lines.remove_at(index1)
+			
 			continue
 		
 		# if none of the attempts to merge the segment so far have worked then
 		# just add it as a new line.
 		new_lines.append(segment)
 	
-	Core.tools.print_nth("smple: "+str(new_lines))
+	var new_lines_temp:Array[PackedVector2Array] = []
+	for line in new_lines:
+		new_lines_temp.append(decolinearise_line(line))
 	
-	return new_lines
+	print_nth("returning merged lines: "+str(new_lines_temp))
+	
+	return new_lines_temp
 	
 	# TODO: There is one case this code misses.
 	# If you have a loop where the first and last points are the same that will

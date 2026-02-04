@@ -40,7 +40,7 @@ var nth_frame_default:int = 1
 var nth_frame_offset:int = 0
 
 func _ready():
-	print_rich("[color=purple]core.gd DEBUG STATUS: debug mode is " + ("[/color][color=green]en" if debug else "[/color][color=red]dis") + "abled[/color]")
+	print_rich("[color=purple]core/core.gd DEBUG STATUS: debug mode is " + ("[/color][color=green]en" if debug else "[/color][color=red]dis") + "abled[/color]")
 	
 	# if we are in the `ingame` scene then get a reference to the root `ingame` node.
 	if has_node("/root/ingame"):
