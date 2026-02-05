@@ -1160,7 +1160,7 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	var new_lines:Array[PackedVector2Array] = []
 	while len(lines): # while we have at least one line left
 		var segment = lines.pop_back() # faster than pop_front because indices don't have to be updated 
-		
+		print_nth("    new lines is now: "+str(new_lines))
 		print_nth("####performing pass with: "+str(segment))
 		
 		# remove 0 length segments by not adding them to the new_lines array
