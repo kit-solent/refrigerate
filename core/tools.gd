@@ -229,7 +229,7 @@ func merge_polygons(polygons:Array[PackedVector2Array]) -> Array[PackedVector2Ar
 	var new_polygons:Array[PackedVector2Array] = []
 	for polygon in merged_polygons:
 		# decolinearise_line works just as well on polygons.
-		new_polygons.append(decolinearise_line(polygon))
+		new_polygons.append(decolinearise_line(polygon, true))
 	
 	return new_polygons
 
@@ -347,12 +347,12 @@ func are_colinear(points:PackedVector2Array, ordered:bool = false, epsilon = 0.0
 	
 	return true
 
-func decolinearise_line(line:PackedVector2Array) -> PackedVector2Array:
+func decolinearise_line(line:PackedVector2Array, ends_join:bool = false) -> PackedVector2Array:
 	"""
 	Removes any points that are colinear with their neibours from the line as they are redundant
-	and have no effect on the shape of the line. This method assumes that the last point of the
-	line is connected to the first point and will remove end points if they are colinear with
-	their wrapped neibours.
+	and have no effect on the shape of the line. If `ends_join` is true then the method will
+	treat the line as if its ends are joined to eachother as with a polygon and will remove
+	redundant endpoints accordingly.
 	"""
 	if len(line) < 3:
 		return line
@@ -371,11 +371,12 @@ func decolinearise_line(line:PackedVector2Array) -> PackedVector2Array:
 	new.append(line[-1])
 	
 	# check the first and last points
-	if are_colinear(PackedVector2Array([new[-1], new[0], new[1]]), true):
-		new.remove_at(0)
-	if are_colinear(PackedVector2Array([new[-2], new[-1], new[0]]), true):
-		# remove_at doesn't support negative indices.
-		new.remove_at(new.size() - 1)
+	if ends_join:
+		if are_colinear(PackedVector2Array([new[-1], new[0], new[1]]), true):
+			new.remove_at(0)
+		if are_colinear(PackedVector2Array([new[-2], new[-1], new[0]]), true):
+			# remove_at doesn't support negative indices.
+			new.remove_at(new.size() - 1)
 	
 	return new
 
@@ -1155,17 +1156,13 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	# split the lines into segments.
 	lines = segment_lines(lines).duplicate()
 	
-	print_nth("merging segments: "+str(lines))
 	
 	var new_lines:Array[PackedVector2Array] = []
 	while len(lines): # while we have at least one line left
 		var segment = lines.pop_back() # faster than pop_front because indices don't have to be updated 
-		print_nth("    new lines is now: "+str(new_lines))
-		print_nth("####performing pass with: "+str(segment))
 		
 		# remove 0 length segments by not adding them to the new_lines array
 		if segment[0] == segment[1]:
-			print_nth("    skipping 0 length segment")
 			continue
 		
 		# used to carry continue statments through two nested loops
@@ -1178,13 +1175,11 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			# if all of the line got clipped then continue
 			if len(clip)==0:
 				cont = true
-				print_nth("    all of the line overlaps with other lines")
 				break
 			
 			# if we get two resultant segments then keep working
 			# with one of them and just do the other one next.
 			if len(clip) == 2:
-				print_nth("    (adding the other half of the split to the array.)")
 				lines.append(clip[1])
 			
 			segment = clip[0]
@@ -1209,8 +1204,6 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 				# keep looping until we find 2 ends to join or we run out of lines to check.
 				break
 		
-		print_nth("    found "+str(len(joined_lines))+" joined lines to merge")
-		
 		if len(joined_lines) == 0:
 			# if the segment doesn't share endpoints with any lines then don't do any merging.
 			pass
@@ -1232,33 +1225,24 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 				new_lines[index].append(segment_point)
 			continue
 		else:
-			print_nth("IN THE THANG WITH DA JOINING OF 2 LINES IN THE MIDDLE.")
 			# if the segment joines two lines in the middle then we add the 1st line to the 2nd.
 			var index1 = joined_lines[0][0]
 			var index2 = joined_lines[1][0]
 			var line_end1 = joined_lines[0][1]
 			var line_end2 = joined_lines[1][1]
 			
-			print_nth(new_lines[index1])
-			print_nth(new_lines[index2])
-			print_nth(line_end1)
-			print_nth(line_end2)
-			
 			# if the first line joins from its end then flip it.
 			if line_end1 == -1:
-				print_nth("first line joins from its end")
 				new_lines[index1].reverse()
 			
 			# if the 2nd line joins from it's first point then flip it before appending.
 			# NOTE: This reversing does not get undone but that shouldn't matter
 			# as the direction of the line isn't important.
 			if line_end2 == 0:
-				print_nth("second line joins from the first point.")
 				new_lines[index2].reverse()
 			
 			# add the lines together and remove the newly redundant one.
 			new_lines[index2].append_array(new_lines[index1])
-			print_nth("adding line 1 to line 2 to get: "+str(new_lines[index2]))
 			new_lines.remove_at(index1)
 			
 			continue
@@ -1267,13 +1251,10 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		# just add it as a new line.
 		new_lines.append(segment)
 	
-	print_nth("returning merged lines YEEEEEE: "+str(new_lines))
-	
 	var new_lines_temp:Array[PackedVector2Array] = []
 	for line in new_lines:
 		new_lines_temp.append(decolinearise_line(line))
 	
-	print_nth("returning merged lines: "+str(new_lines_temp))
 	
 	return new_lines_temp
 	
@@ -1303,10 +1284,9 @@ func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
 	"""
 	var temp:Array[PackedVector2Array] = []
 	for polygon in polygons:
-		temp.append(decolinearise_line(make_line_unique(polygon)))
+		temp.append(decolinearise_line(make_line_unique(polygon), true))
 	polygons = temp
 	
-	print(polygons)
 	
 	var all_overlaps:Array[Array] = []
 	for count in range(len(polygons)):
