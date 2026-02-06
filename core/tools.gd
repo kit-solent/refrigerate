@@ -1232,24 +1232,33 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 				new_lines[index].append(segment_point)
 			continue
 		else:
+			print_nth("IN THE THANG WITH DA JOINING OF 2 LINES IN THE MIDDLE.")
 			# if the segment joines two lines in the middle then we add the 1st line to the 2nd.
 			var index1 = joined_lines[0][0]
 			var index2 = joined_lines[1][0]
 			var line_end1 = joined_lines[0][1]
 			var line_end2 = joined_lines[1][1]
 			
-			# if the first line joins from it's end then flip it.
+			print_nth(new_lines[index1])
+			print_nth(new_lines[index2])
+			print_nth(line_end1)
+			print_nth(line_end2)
+			
+			# if the first line joins from its end then flip it.
 			if line_end1 == -1:
+				print_nth("first line joins from its end")
 				new_lines[index1].reverse()
 			
-			# if the 2nd line joins from it's last point then flip it before appending.
+			# if the 2nd line joins from it's first point then flip it before appending.
 			# NOTE: This reversing does not get undone but that shouldn't matter
 			# as the direction of the line isn't important.
-			if line_end2 == -1:
+			if line_end2 == 0:
+				print_nth("second line joins from the first point.")
 				new_lines[index2].reverse()
 			
 			# add the lines together and remove the newly redundant one.
 			new_lines[index2].append_array(new_lines[index1])
+			print_nth("adding line 1 to line 2 to get: "+str(new_lines[index2]))
 			new_lines.remove_at(index1)
 			
 			continue
@@ -1257,6 +1266,8 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		# if none of the attempts to merge the segment so far have worked then
 		# just add it as a new line.
 		new_lines.append(segment)
+	
+	print_nth("returning merged lines YEEEEEE: "+str(new_lines))
 	
 	var new_lines_temp:Array[PackedVector2Array] = []
 	for line in new_lines:
