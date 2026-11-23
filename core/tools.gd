@@ -14,7 +14,7 @@ func is_nth_frame(n:int = Core.nth_frame_default, force_0th_frame:bool = false):
 	runs every frame (i.e. code called in _process) so that output is
 	only generated once. n can be made larger to trigger debug code
 	after initial loading that happens in the early frames, e.g. loading
-	screens. If force_oth_frame is true then the frame count is taken
+	screens. If force_0th_frame is true then the frame count is taken
 	directly from Engine.get_frames_drawn() and ignores the custom offset
 	tool. This will only return true in debug mode (Core.debug == true)
 	"""
@@ -1107,6 +1107,11 @@ func clip_line_sets(lines:Array[PackedVector2Array], mask:Array[PackedVector2Arr
 	array may be smaller than lines (or even if it is in its simplest form because clipping could
 	entierly remove disconnected sections).
 	"""
+	if Core.debug_frame:
+		print("in clip_line_sets")
+		print(lines)
+		print(mask)
+	
 	# collect all the segments from lines and from mask
 	var line_segments:Array[PackedVector2Array]
 	for line in lines:
@@ -1115,6 +1120,11 @@ func clip_line_sets(lines:Array[PackedVector2Array], mask:Array[PackedVector2Arr
 	var mask_segments:Array[PackedVector2Array]
 	for mask_line in mask:
 		mask_segments.append_array(segment_line(mask_line))
+	
+	if Core.debug_frame:
+		print(line_segments)
+		print(mask_segments)
+	
 	
 	# TODO: From here downward the code is the same as in clip_lines so I could remove
 	# clip_lines entierly and just use this function for single line cases.
@@ -1142,8 +1152,22 @@ func clip_line_sets(lines:Array[PackedVector2Array], mask:Array[PackedVector2Arr
 		if len(segment):
 			clipped_segments.append(segment)
 	
+	if Core.debug_frame:
+		print(clipped_segments)
+	
 	# merge the segments back together again
 	var clipped_line = merge_lines(clipped_segments)
+	
+	if Core.debug_frame:
+		print("returning")
+		print(clipped_line)
+		print("error here???")
+		print(merge_lines([
+			[Vector2(192.0, -64.0), Vector2(192.0, 192.0)],
+			[Vector2(0.0, -64.0), Vector2(192.0, -64.0)],
+			[Vector2(0.0, 192.0), Vector2(0.0, -64.0)],
+			[Vector2(192.0, 192.0), Vector2(0.0, 192.0)]
+		]))
 	
 	return clipped_line
 
@@ -1154,15 +1178,25 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 	line into its segments so lines that internally overlap will also be simplified.
 	"""
 	# split the lines into segments.
-	lines = segment_lines(lines).duplicate()
+	lines = segment_lines(lines).duplicate(true)
 	
+	if Core.debug_frame:
+		print("in merge_lines")
+		print(lines)
 	
 	var new_lines:Array[PackedVector2Array] = []
 	while len(lines): # while we have at least one line left
+		if Core.debug_frame:
+			print()
+			print("starting an iteration with state: "+str(new_lines))
 		var segment = lines.pop_back() # faster than pop_front because indices don't have to be updated 
+		if Core.debug_frame:
+			print("popping line "+str(segment)+", we now have "+str(len(lines))+" lines left")
 		
 		# remove 0 length segments by not adding them to the new_lines array
 		if segment[0] == segment[1]:
+			if Core.debug_frame:
+				print("removing a zero length segment: "+str(segment))
 			continue
 		
 		# used to carry continue statments through two nested loops
@@ -1185,6 +1219,8 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 			segment = clip[0]
 		
 		if cont: # the segment we've been working with has been merged already.
+			if Core.debug_frame:
+				print("moving onto the next segment because this segment has been merged already")
 			continue
 		
 		# find the 0 to 2 existing lines with which segment shares it's endpoints.
@@ -1196,7 +1232,7 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		for index in range(len(new_lines)):
 			var new_line = new_lines[index]
 			for combos in [[0,0],[0,-1],[-1,0],[-1,-1]]:
-				# conbos[0] is the line endpoint and combos[1] is the segment endpoint.
+				# combos[0] is the line endpoint and combos[1] is the segment endpoint.
 				if new_line[combos[0]] == segment[combos[1]]:
 					joined_lines.append(PackedInt32Array([index, combos[0], combos[1]]))
 			
@@ -1206,30 +1242,68 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		
 		if len(joined_lines) == 0:
 			# if the segment doesn't share endpoints with any lines then don't do any merging.
+			if Core.debug_frame:
+				print("segment "+str(segment)+" shares no endpoints with existing lines "+str(new_lines))
 			pass
 		elif len(joined_lines) == 1:
+			if Core.debug_frame:
+				print("segment "+str(segment)+" shares one endpoint with "+str(new_lines)+" so we're adding it")
 			# if the segment only shares an endpoint with one other line then add it on.
 			var index = joined_lines[0][0]
 			var line_end = joined_lines[0][1]
 			var segment_end = joined_lines[0][2]
 			# get the other point from the segment, the non-joining one.
-			var segment_point = segment[-(segment_end + 1)]
+			var segment_point = segment[(segment_end + 1)%2] # or -(segment_end + 1) but modular calculations are nicer
 			
 			if line_end == 0:
 				# if the line joins the segment at its start
 				new_lines[index].reverse()
-				new_lines[index].append(segment_point)
+				new_lines[index].append(segment_point) # prepend hack
 				new_lines[index].reverse()
 			else:
 				# if the line joins the segment at the end
 				new_lines[index].append(segment_point)
 			continue
-		else:
+		else: # len(joined_lines) == 2
+			if Core.debug_frame:
+				print("segment "+str(segment)+" joines two lines")
 			# if the segment joines two lines in the middle then we add the 1st line to the 2nd.
 			var index1 = joined_lines[0][0]
 			var index2 = joined_lines[1][0]
 			var line_end1 = joined_lines[0][1]
 			var line_end2 = joined_lines[1][1]
+			
+			if Core.debug_frame:
+				print("Am I right? They're the same?")
+				print(str(index1)+" "+str(index2))
+			
+			# handle the special case where the two lines being joined are the
+			# two ends of the same line, i.e. this segment is closing a loop
+			# This case should be handled by just connecting the segment to one
+			# of the two available edges
+			if index1 == index2:
+				# TODO: This code is essentially a copy paste of the len(joined_lines)==1
+				# block so maybe encapsulate this code to avoid repetition
+				
+				
+				# if the segment only shares an endpoint with one other line then add it on.
+				var index = joined_lines[0][0]
+				var line_end = joined_lines[0][1]
+				var segment_end = joined_lines[0][2]
+				# get the other point from the segment, the non-joining one.
+				var segment_point = segment[(segment_end + 1)%2] # or -(segment_end + 1) but modular calculations are nicer
+				
+				if line_end == 0:
+					# if the line joins the segment at its start
+					new_lines[index].reverse()
+					new_lines[index].append(segment_point) # prepend hack
+					new_lines[index].reverse()
+				else:
+					# if the line joins the segment at the end
+					new_lines[index].append(segment_point)
+				
+				
+				continue # don't run the rest of this block, the line has been handled
 			
 			# if the first line joins from its end then flip it.
 			if line_end1 == -1:
@@ -1249,7 +1323,14 @@ func merge_lines(lines:Array[PackedVector2Array]) -> Array[PackedVector2Array]:
 		
 		# if none of the attempts to merge the segment so far have worked then
 		# just add it as a new line.
+		if Core.debug_frame:
+			print("adding our first new_line "+str(segment))
+		
 		new_lines.append(segment)
+	
+	if Core.debug_frame:
+		print("does this happen??")
+		print(new_lines)
 	
 	var new_lines_temp:Array[PackedVector2Array] = []
 	for line in new_lines:
@@ -1286,7 +1367,6 @@ func find_connected_edges(polygons:Array[PackedVector2Array]) -> Array[Array]:
 	for polygon in polygons:
 		temp.append(decolinearise_line(make_line_unique(polygon), true))
 	polygons = temp
-	
 	
 	var all_overlaps:Array[Array] = []
 	for count in range(len(polygons)):
@@ -1333,3 +1413,32 @@ func get_parameter(point:Vector2, direction:Vector2, constant:Vector2) -> float:
 	else:
 		parameter = (point - constant).y/direction.y
 	return parameter
+
+func extend_line_ends(line:PackedVector2Array, ammount:float) -> PackedVector2Array:
+	"""
+	Extends the ends of the given line by the given ammount. This can
+	be used to account for the fact that lines stop exactly at their 
+	endpoint by extending them to fully cover the width of the endpoint
+	pixel. The result is returned and no in-place changes are made.
+	"""
+	# make sure the line has at least two points
+	if len(line) < 2:
+		printerr("extend_line_ends (tools.gd 1346) called on a line with less\
+		than two points.")
+	
+	# find the direction vector pointing along the line toward the start point
+	var first_segment = (line[0] - line[1]).normalized() * ammount
+	var second_segment = (line[-1] - line[-2]).normalized() * ammount
+	
+	# now use these vectors to calculate new start and end points
+	var new_start = line[0] + first_segment
+	var new_end = line[-1] + second_segment
+	
+	# now make a new line from the given line where the start and end points
+	# are replaced with the new start and end points
+	var result:PackedVector2Array = PackedVector2Array([])
+	result.append(new_start)
+	result.append_array(line.slice(1,-1))
+	result.append(new_end)
+	
+	return result
